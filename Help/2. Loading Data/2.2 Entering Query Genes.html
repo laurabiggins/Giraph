@@ -13,10 +13,32 @@
 </head>
 <body>
 <h1>Entering a list of genes</h1>
+<h2>Query genes</h2>
 <p>
 A list of genes can be pasted in to the query gene field.
-They must be gene symbols 
+They must be gene symbols. 
 </p>
+<br>
+<h2>Background genes</h2>
+<p>
+By default all the genes in the genome (is this all that are in the gmt file??) are used as the background set.
+This is not usually the most appropriate set. 
+Custom background genes can be entered by changing the dropdown box from 'Use all genes in genome' 
+to 'Enter custom background genes'. The background genes can then be pasted in. Again, these must be gene symbols.  
+</p>
+<br>
+<h2>Setting options</h2>
+<h3>p-value</h3>
+The p-value can be adjusted before the data is loaded - this may be preferable if the data produces a large number of 
+significant categories. It can be adjusted further once the data has been loaded and processed. For more details on 
+the p-value see the help page p-value help....
+<h3>Number of genes in functional category</h3>
+This refers to the processing of the gmt file. The functional categories can contain as few as 1 gene or many thousands of genes. 
+At the extremes these categories aren't very useful so it is preferable to filter these out.
 
 </body>
 </html>
+
+
+
+
