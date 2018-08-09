@@ -27,17 +27,28 @@ public class Cluster implements Runnable{
 	private GeneList [] gl;
 	public ProgressListener appPL;
 	private boolean colouredByProximity;
+	private boolean running;
 	
 	public Cluster(GeneList [] genelist, boolean colouredByProximity){
 		
 		this.gl = genelist;
 		clusterPairs = new Vector<ClusterPair>();
 		this.colouredByProximity = colouredByProximity;
+		running = true;
 	}
-	 	
+	
+	public void stopRunning(){
+		running=false;
+	}
+	
+	public void startRunning(){
+		running=true;
+	}
+	
 	public void run(){
 		
-		java.util.Date date= new java.util.Date();
+		startRunning();
+		//java.util.Date date= new java.util.Date();
 		//System.out.println("At start of run method in Cluster: " + new Timestamp(date.getTime()));
 		
 		createInitialClusterPairs(gl);		
@@ -85,7 +96,11 @@ public class Cluster implements Runnable{
 		 WHILE_LOOP: while (clusterPairs.size() > 1){ 
 		 
 			System.err.println("clusterpairs size = " + clusterPairs.size()); 
-			 
+			
+			if(running==false){
+				break WHILE_LOOP;
+			}
+			
 			Float meanCorr = (float) 0;
 			GeneList [] geneListsInClusterPair1;
 			GeneList [] geneListsInClusterPair2;

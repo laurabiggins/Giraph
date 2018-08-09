@@ -14,7 +14,7 @@ import javax.swing.UIManager;
 import uk.ac.babraham.giraph.Application.giraphMenuBar;
 import uk.ac.babraham.giraph.DataParser.ExternalResultsParser;
 import uk.ac.babraham.giraph.DataParser.ProgressListener;
-import uk.ac.babraham.giraph.DataTypes.GeneCollection;
+import uk.ac.babraham.giraph.DataTypes.GeneCollection; 
 import uk.ac.babraham.giraph.DataTypes.GeneList;
 import uk.ac.babraham.giraph.DataTypes.GeneListCollection;
 import uk.ac.babraham.giraph.Displays.GraphPanel;
@@ -120,6 +120,8 @@ public class giraphApplication extends JFrame implements ProgressListener, Filte
 	private GeneCollection queryGenes;
 	
 	private GeneListCollection geneListCollection;	
+	
+	private Cluster clusters = null;
 	
 	
 	public giraphApplication () {		
@@ -375,6 +377,12 @@ public class giraphApplication extends JFrame implements ProgressListener, Filte
 	public void filtersUpdated(float pvalue) {
 		
 		menuBar.dataLoaded();
+		
+		// kill the current thread if one is running
+		if(clusters != null){
+			clusters.stopRunning();
+		}
+		
 		calculateClusters();		
 	}
 	
@@ -423,13 +431,14 @@ public class giraphApplication extends JFrame implements ProgressListener, Filte
 		}
 	}
 	
+	
 	public void calculateClusters(){
 		
-		Cluster clusters = new Cluster(getGeneListCollection().getValidGeneLists(), colouredByProximity);
+		clusters = new Cluster(getGeneListCollection().getValidGeneLists(), colouredByProximity);
 		clusters.addProgressListener(this);
 		Runnable r = clusters;
 		Thread thr = new Thread(r);
-		thr.start();		
+		thr.start();
 	}
 	
 	public void loadExternalResultsFile(boolean gorilla, boolean david){

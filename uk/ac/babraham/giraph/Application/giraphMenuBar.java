@@ -470,7 +470,7 @@ public class giraphMenuBar extends JMenuBar implements ActionListener{//, Change
 		    
 		    addSeparator();
 		    
-		    ImageIcon clusterAdjustIcon = new ImageIcon(ClassLoader.getSystemResource("uk/ac/babraham/giraph/Icons/coloursIcon.png"));
+		    ImageIcon clusterAdjustIcon = new ImageIcon(ClassLoader.getSystemResource("uk/ac/babraham/giraph/Icons/adjust_no_of_clusters.png"));
 		    JButton clusterAdjust = new JButton(clusterAdjustIcon);
 		    clusterAdjust.setActionCommand("adjust_cluster_r_val");
 		    clusterAdjust.setToolTipText("adjust the number of clusters");
@@ -479,7 +479,8 @@ public class giraphMenuBar extends JMenuBar implements ActionListener{//, Change
 			  
 		    addSeparator();
 		    
-		    colourOption = new JToggleButton(clusterAdjustIcon);
+		    ImageIcon colourOptionIcon = new ImageIcon(ClassLoader.getSystemResource("uk/ac/babraham/giraph/Icons/coloursIcon.png"));
+		    colourOption = new JToggleButton(colourOptionIcon);
 		    colourOption.setActionCommand("change_colour_option");
 		    colourOption.setToolTipText("colour by proximity or relatedness");
 		    colourOption.addActionListener(menu);
@@ -519,7 +520,7 @@ public class giraphMenuBar extends JMenuBar implements ActionListener{//, Change
 		    addSeparator();
 		    
 		    ImageIcon showLines  = new ImageIcon(ClassLoader.getSystemResource("uk/ac/babraham/giraph/Icons/more_lines.png"));
-		    ImageIcon removeLines  = new ImageIcon(ClassLoader.getSystemResource("uk/ac/babraham/giraph/Icons/more_lines.png"));
+		    ImageIcon removeLines  = new ImageIcon(ClassLoader.getSystemResource("uk/ac/babraham/giraph/Icons/remove_lines.png"));
 		    JToggleButton linesToggleButton = new JToggleButton();
 		    linesToggleButton.setSelectedIcon(showLines);
 		    linesToggleButton.setIcon(removeLines);
