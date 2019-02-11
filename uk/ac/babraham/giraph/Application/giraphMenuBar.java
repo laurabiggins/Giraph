@@ -167,7 +167,8 @@ public class giraphMenuBar extends JMenuBar implements ActionListener{//, Change
 			
 			if(answer == 0){
 				application.removeOldData();
-				disableButtons();
+				toolbar.resetButtons();
+				disableButtons();				
 			}
 			return answer;
 		}
@@ -390,9 +391,8 @@ public class giraphMenuBar extends JMenuBar implements ActionListener{//, Change
 			}
 			else{
 				application.setColouredByProximity(false);
-				application.calculateClusters();//dByProximity(false);
+				application.calculateClusters();
 			}
-			
 		}
 			
 		
@@ -432,6 +432,8 @@ public class giraphMenuBar extends JMenuBar implements ActionListener{//, Change
 		private JToggleButton goAnnotationButton;
 		
 		private JToggleButton colourOption;
+		
+		private JToggleButton linesToggleButton;
 		
 		
 		public GiraphToolbar (giraphMenuBar menu) {
@@ -521,7 +523,7 @@ public class giraphMenuBar extends JMenuBar implements ActionListener{//, Change
 		    
 		    ImageIcon showLines  = new ImageIcon(ClassLoader.getSystemResource("uk/ac/babraham/giraph/Icons/more_lines.png"));
 		    ImageIcon removeLines  = new ImageIcon(ClassLoader.getSystemResource("uk/ac/babraham/giraph/Icons/remove_lines.png"));
-		    JToggleButton linesToggleButton = new JToggleButton();
+		    linesToggleButton = new JToggleButton();
 		    linesToggleButton.setSelectedIcon(showLines);
 		    linesToggleButton.setIcon(removeLines);
 		    linesToggleButton.setActionCommand("update_lines");
@@ -556,10 +558,21 @@ public class giraphMenuBar extends JMenuBar implements ActionListener{//, Change
 			add(checkGC);
 			
 		}
+		
+		// reset the toggle buttons in case they've been selected 
+		private void resetButtons() {
+			
+			colourOption.setSelected(false);
+			goAnnotationButton.setSelected(false);
+			linesToggleButton.setSelected(false);
+			
+		}
+		
+		
 		/** these aren't being used properly at the moment */
 
 		private void disableButtons() {
-			/** Disable everything on the toolbar.  I think that this is causing problems  when I'm trying to delete buttons.*/
+			
 			Component [] c = toolbar.getComponents();
 			System.out.println("component length = " + c.length);
 			

@@ -224,7 +224,7 @@ public class ExternalResultsParser implements Cancellable{
 			// description isn't required
 			if(categoryDescriptionColValue >=0) functionalSetInfo.setDescription(sections[categoryDescriptionColValue]);
 			else functionalSetInfo.setDescription(sections[categoryNameColValue]);
-						
+			System.err.println("adding description " + functionalSetInfo.description());			
 			
 			/** This will be changed into a gene list once all the genes have been processed */ 
 			ArrayList<Gene> geneArrayList = new ArrayList<Gene>();
@@ -254,13 +254,15 @@ public class ExternalResultsParser implements Cancellable{
 				gl.setFunctionalSetInfo(functionalSetInfo);
 				
 				PValue pvalue = new PValue();
-				//pvalue.setP(Double.parseDouble(result[4]));
-				pvalue.setQ(Double.parseDouble(sections[pValueColValue]));
+				//pvalue.setQ(Double.parseDouble(sections[pValueColValue]));
+				pvalue.setQ(Double.valueOf(sections[pValueColValue]));
 				
 				gl.setPvalue(pvalue);
 				
 				// add the gene list to the collection
 				glc.addGeneList(gl);
+				
+				System.err.println("adding gene list " + functionalSetInfo.description());
 			}				
 		}
 		// We're finished with the file.
