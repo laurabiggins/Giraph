@@ -211,11 +211,11 @@ public class OptionsFrame extends JFrame implements ActionListener, OptionsListe
 			
 			if(optionsPanel.species().startsWith("Human")){
 				
-				f = "uk/ac/babraham/giraph/Utilities/Human_GO_AllPathways_no_GO_iea_June_01_2018_symbol.gmt";
+				f = "uk/ac/babraham/giraph/Utilities/Human_GO_AllPathways_no_GO_iea_February_01_2019_symbol.gmt.txt.gz";
 			}
 			else if(optionsPanel.species().startsWith("Mouse")){
 				
-				f = "uk/ac/babraham/giraph/Utilities/Mouse_GO_AllPathways_no_GO_iea_June_01_2018_symbol.gmt";
+				f = "uk/ac/babraham/giraph/Utilities/Mouse_GO_AllPathways_no_GO_iea_February_01_2019_symbol.gmt.txt.gz";
 			}
 			//else if(optionsPanel.species().startsWith("C Elegans")){
 				

@@ -20,6 +20,7 @@
 package uk.ac.babraham.giraph.Displays.Help;
 
 import java.io.File;
+import java.io.InputStream;
 
 import javax.swing.JDialog;
 import javax.swing.JScrollPane;
@@ -119,6 +120,5 @@ public class HelpDialog extends JDialog implements TreeSelectionListener {
 		if (o instanceof HelpPage && ((HelpPage)o).isLeaf()) {
 			DisplayPage((HelpPage)o);
 		}
-	}
-	
+	}	
 }

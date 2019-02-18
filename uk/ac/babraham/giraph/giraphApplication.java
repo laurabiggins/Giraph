@@ -108,7 +108,7 @@ public class giraphApplication extends JFrame implements ProgressListener, Filte
 
 	StopPauseListener spl;
 	
-	private boolean colouredByProximity = false;
+	private boolean colouredByProximity = true;
 	
 	private DataFilter df; 
 	

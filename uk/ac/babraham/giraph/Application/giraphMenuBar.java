@@ -13,6 +13,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.io.File;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -247,6 +248,9 @@ public class giraphMenuBar extends JMenuBar implements ActionListener{//, Change
 					}
 				}
 				new HelpDialog(new File(url.toURI()));
+				//InputStream in = ClassLoader.getSystemResourceAsStream("/Help");
+				//new HelpDialog(in);
+				
 			}
 			catch (URISyntaxException ux) {
 				System.err.println("Couldn't parse URL falling back to path");
@@ -550,13 +554,13 @@ public class giraphMenuBar extends JMenuBar implements ActionListener{//, Change
 			add(adjustMinGenes);
 			
 			addSeparator();
-*/			
+			
 			checkGC = new JButton("QC");
 			checkGC.setToolTipText("");
 			checkGC.setActionCommand("QC_plots");
 			checkGC.addActionListener(menu);
 			add(checkGC);
-			
+*/			
 		}
 		
 		// reset the toggle buttons in case they've been selected 
@@ -641,13 +645,13 @@ public class giraphMenuBar extends JMenuBar implements ActionListener{//, Change
 		//toolbar.playButton.setEnabled(true);
 		//toolbar.adjustMinGenes.setEnabled(true);
 		toolbar.adjustPValue.setEnabled(true);
-		toolbar.checkGC.setEnabled(true);
+		//toolbar.checkGC.setEnabled(true);
 	}
 	public void circlesReady(){
 		toolbar.playButton.setEnabled(true);
 		//toolbar.infoButton.setEnabled(true);
 		toolbar.adjustPValue.setEnabled(true);
-		toolbar.checkGC.setEnabled(true);
+		//toolbar.checkGC.setEnabled(true);
 	}
 	
 	public void addStopPauseListener(StopPauseListener spl){

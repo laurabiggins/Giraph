@@ -24,6 +24,8 @@ public class CalculateCoordinates implements Runnable, StopPauseListener {
 	
 	int minNoOfImprovingPositions = 4;
 	
+	int movementFactor = 16;
+	
 	
 	/**
 	 * The constructor 
@@ -78,12 +80,14 @@ public class CalculateCoordinates implements Runnable, StopPauseListener {
 		float minDistance = (float) 0.4;
 		
 		/** To work out when to stop calculating */
-		float [] previousTotalDifference = new float [20];
+		int numberToCheck = validGeneLists.length/2;
+		float [] previousTotalDifference = new float [numberToCheck];
 		int totalDifferenceIndex = 0;
 				
 		LOOP: while (continueCalculating == true){
 		
 			float thisTotalDifference = 0;			
+			
 			/**
 			 * calculate overall trajectory for gene list i
 			 */
@@ -153,16 +157,28 @@ public class CalculateCoordinates implements Runnable, StopPauseListener {
 							//float movement = (1-correlation)/actualDistance;
 							float movement;
 							
-							if(correlation < 0.01){
-								movement = (float)0.01/actualDistance;
+							if(correlation < 0.1){
+								//movement = (float)0.01/actualDistance;
+								movement = (float)0.01*actualDistance;
 							}
 							else{
 								movement = correlation/actualDistance;
+								//movement = correlation*actualDistance;
+								//movement = correlation*correlation*actualDistance*4;
+								/** when 2 lists are exactly the same, they sometimes struggle to come together completely when there are 
+								lots of categories - they get there eventually but the pull between the 2 isn't strong enough. We can't just
+								up the movement factor or it all goes wrong.
+								 **/								
+								//movement = correlation*correlation*correlation*actualDistance*movementFactor;
+								movement = Math.abs(correlation*correlation*correlation*difference*movementFactor);
+								
 							}								
 							
-						/*	if(validGeneLists[i].getTerm().startsWith("BIOLOGICAL OXIDATION")){
+							/*
+							if(validGeneLists[i].getFunctionalSetInfo().description().startsWith("response to tumor necrosis") && validGeneLists[j].getFunctionalSetInfo().description().startsWith("cellular response to tumor necrosis")){
 								System.out.println("========================================");
-								System.out.println(validGeneLists[j].getTerm());
+								System.out.println("description =  " + validGeneLists[i].getFunctionalSetInfo().description());
+								System.out.println("correlation = " + correlation);
 								System.out.println("difference = " + difference);
 								System.out.println("actual distance = " + actualDistance);
 								//System.out.println("difference = " + difference);
@@ -170,15 +186,28 @@ public class CalculateCoordinates implements Runnable, StopPauseListener {
 								System.out.println("distanceX = " + distanceX);
 								System.out.println("distanceY = " + distanceY);
 							}
-						*/	
-							if(difference < -diffThreshold){
+							if(validGeneLists[j].getFunctionalSetInfo().description().startsWith("response to tumor necrosis") && validGeneLists[i].getFunctionalSetInfo().description().startsWith("cellular response to tumor necrosis")){
+								System.out.println("========================================");
+								System.out.println("description =  " + validGeneLists[i].getFunctionalSetInfo().description());
+								System.out.println("correlation = " + correlation);
+								System.out.println("difference = " + difference);
+								System.out.println("actual distance = " + actualDistance);
+								//System.out.println("difference = " + difference);
+								System.out.println("movement = " + movement);
+								System.out.println("distanceX = " + distanceX);
+								System.out.println("distanceY = " + distanceY);
+							}
+							*/
+							
+							
+							if((difference < -diffThreshold) || (correlation > 0.95 && difference < -0.01)){
 							/** move closer */
 								
 								sumDiffX = sumDiffX - (distanceX * movement);
 								sumDiffY = sumDiffY - (distanceY * movement);
 
 							}
-							else if (difference > diffThreshold){
+							else if (difference > diffThreshold || (correlation > 0.95 && difference > 0.01)){
 							/** move further away */
 								
 								sumDiffX = sumDiffX + (distanceX * movement); 
@@ -200,7 +229,7 @@ public class CalculateCoordinates implements Runnable, StopPauseListener {
 			
 			previousTotalDifference[totalDifferenceIndex] = thisTotalDifference;
 			
-			if(totalDifferenceIndex < 19){
+			if(totalDifferenceIndex < numberToCheck-1){
 				totalDifferenceIndex = totalDifferenceIndex +1; 
 			}
 			else {
@@ -208,7 +237,7 @@ public class CalculateCoordinates implements Runnable, StopPauseListener {
 			}
 			
 			/** If it's the first iteration, notify the app that the first coordinates are ready. */
-			if (x == 1){
+			if (x == 1){				
 				
 				/** notify app to create graph panel */
 				appPL.firstCoordinatesReady();
@@ -218,13 +247,13 @@ public class CalculateCoordinates implements Runnable, StopPauseListener {
 
 			/** We want to check whether we're still moving in the right direction, if not, stop if we're getting too few improving positions.
 			 * or stop if the percentage difference is so small that it's not worth carrying on. */
-			if (x%20 == 0){
+			if (x%numberToCheck == 0){
 								
 				/** To check whether we're still moving in the right direction*/
 				int improvingPositions = 0;
 				float improvingMagnitude = 0;
 				
-				for (int i = 1; i < 20; i++){
+				for (int i = 1; i < numberToCheck; i++){
 					
 					float diffDiff = previousTotalDifference[i-1] - previousTotalDifference[i];
 					
@@ -234,15 +263,28 @@ public class CalculateCoordinates implements Runnable, StopPauseListener {
 					}
 				}
 				
-				if((improvingPositions < 5) || (improvingMagnitude < 0.00001)){
-					
-					// stopCalculating
-					continueCalculating = false;
-					appPL.calculatingCoordinatesStopped();
-					
-					System.out.println("stopped calculating at x = " + x + " because...");
+				if(movementFactor > 1){
+					movementFactor = movementFactor/2;
+				}
+				
+				if(x < 1000 || x%(numberToCheck*10) == 0){
+					System.out.println("haven't stopped calculating at x = " + x);
 					System.out.println("no of improvingPositions " + improvingPositions);	
 					System.out.println("improvingMagnitude " + improvingMagnitude);	
+				}
+				
+				if(x > numberToCheck *3 && x > 50){
+					//if((improvingPositions < numberToCheck/4) || (improvingMagnitude < 0.0005)){
+					if(improvingMagnitude < 0.0005){	
+						// stopCalculating
+						continueCalculating = false;
+						appPL.calculatingCoordinatesStopped();
+						
+						System.out.println("stopped calculating at x = " + x + " because...");
+						System.out.println("no of improvingPositions " + improvingPositions);	
+						System.out.println("improvingMagnitude " + improvingMagnitude);	
+						
+					}
 					
 				}
 			}
