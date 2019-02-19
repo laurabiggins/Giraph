@@ -98,7 +98,7 @@ public class giraphApplication extends JFrame implements ProgressListener, Filte
 	ClusterPair clusterPair;
 	
 	/** for the clusters */
-	float rValueCutoff = (float)0.2;
+	float rValueCutoff = (float)0.6;
 	
 	/** The main display panel */
 	GraphPanel gp; 

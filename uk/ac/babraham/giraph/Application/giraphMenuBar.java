@@ -1,8 +1,6 @@
 package uk.ac.babraham.giraph.Application;
 
 /*
- * TODO: the correlation for the lines doesn't quite match the r values for the clustering. This is because the correlation values
- * are max correlation but the clustering is done by taking averages.
  * 
  */
 
@@ -46,29 +44,15 @@ import uk.ac.babraham.giraph.giraphApplication;
 import uk.ac.babraham.giraph.Dialogs.ClusterRValueSelector;
 import uk.ac.babraham.giraph.Utilities.StopPauseListener;
 
-public class giraphMenuBar extends JMenuBar implements ActionListener{//, ChangeListener{
+public class giraphMenuBar extends JMenuBar implements ActionListener{
 		
-	/**
-	 *  I should do this more like SeqMonk and have more stored menu items so that they can be selectively enabled when options become available.
-	 */
 	private static final long serialVersionUID = 1L;
 	private giraphApplication application;
 	private GiraphToolbar toolbar;
 	
 	/** This is for the calculate coordinates object */
 	StopPauseListener spl; 
-	
-	/** How much the circles will move around - it wants to be high if there are loads of circles and calculations to do, small if 
-	 * it's already been worked out. This is where the diff factor stuff in calculateCoordinates would be useful.  
-	 */
-	//JSlider jiggleFactor;
-	
-	/** so the minimum no of genes in the genelist can be adjusted */
-	//JSlider adjustGeneListSize;
-	
-	/** so the user can adjust the p value cut off */ 
-	//JSlider adjustStringency;
-	
+		
 	/** For doing the filtering through the menu options rather than the toolbar */
 	JMenu filterMenu = new JMenu("Filters");
 	
@@ -76,10 +60,6 @@ public class giraphMenuBar extends JMenuBar implements ActionListener{//, Change
 	JMenuItem fileSaveImage;
 	
 	JPanel filterPanel = new JPanel(new BorderLayout());
-	//JLabel geneNoSliderLabel;
-	
-	//int geneListSizeCutOff = 3; 
-	//float pValCutoff = (float)0.05;
 
 	
 	public giraphMenuBar (giraphApplication application) {
@@ -224,11 +204,15 @@ public class giraphMenuBar extends JMenuBar implements ActionListener{//, Change
 			
 			//application.calculateClusters();
 			application.getGraphPanel().updateCalculatingStatus(false);
+			if(application.getColouredByProximity()){
+				application.calculateClusters();
+			}	
 			application.getGraphPanel().revalidate();
 			application.getGraphPanel().repaint();
 			disableStopButton();
 			enablePlayButton();	
 			enableSaveImageOption();
+			
 		}
 		
 		else if (command.equals("help_contents")) {
@@ -285,34 +269,8 @@ public class giraphMenuBar extends JMenuBar implements ActionListener{//, Change
 				}
 			}	
 		}
-/*		else if (command.equals("filter_by_size")) {	
-		
-			String msg = "Enter minimum number of genes within functional group, this is currently set at " + application.dataFilter().getMinNoGenes(); 
-			
-			String s = (String)JOptionPane.showInputDialog(application, msg, "gene list size filter",  JOptionPane.PLAIN_MESSAGE);
-		
-			if (s != null){
-				try{
-			
-					int geneListSizeCutOff = Integer.parseInt(s);
-					
-					if (geneListSizeCutOff >= 1){
-					
-						if (spl != null){
-							spl.stopCalculating();
-						}
-						application.setFilters(geneListSizeCutOff, application.dataFilter().getPvalueCutoff());
-					}					
-					else {
-						JOptionPane.showMessageDialog(application,"size filter must be greater than 0", "incompatible value entered", JOptionPane.ERROR_MESSAGE);
-					}
-				}
-				catch(NumberFormatException n){
-					JOptionPane.showMessageDialog(application,"value entered must be an integer", "value entered must be an integer", JOptionPane.ERROR_MESSAGE);
-				}
-			}
-		}
-*/		else if (command.equals("QC_plots")) {
+
+	/*	else if (command.equals("QC_plots")) {
 		
 			if(application.queryGenes() != null && (application.genomicBackgroundGenes != null || application.customBackgroundGenes != null)){
 			
@@ -330,7 +288,7 @@ public class giraphMenuBar extends JMenuBar implements ActionListener{//, Change
 				JOptionPane.showMessageDialog(application,"query genes must be entered to use this function", "no query genes", JOptionPane.INFORMATION_MESSAGE);
 			}			
 		}
-		
+		*/
 		else if (command.equals("filter_by_mult")) {					 
 			// create a optionDialog 
 		}
@@ -428,10 +386,8 @@ public class giraphMenuBar extends JMenuBar implements ActionListener{//, Change
 		private JButton infoButton;
 
 		private JButton adjustPValue;
-		
-//		private JButton adjustMinGenes;
 
-		private JButton checkGC;
+		//private JButton checkGC;
 		
 		private JToggleButton goAnnotationButton;
 		
@@ -547,15 +503,8 @@ public class giraphMenuBar extends JMenuBar implements ActionListener{//, Change
 			
 			addSeparator();
 			
-/*			adjustMinGenes = new JButton("set min");
-			adjustMinGenes.setToolTipText("");
-			adjustMinGenes.setActionCommand("filter_by_size");
-			adjustMinGenes.addActionListener(menu);
-			add(adjustMinGenes);
 			
-			addSeparator();
-			
-			checkGC = new JButton("QC");
+	/*		checkGC = new JButton("QC");
 			checkGC.setToolTipText("");
 			checkGC.setActionCommand("QC_plots");
 			checkGC.addActionListener(menu);
@@ -567,6 +516,7 @@ public class giraphMenuBar extends JMenuBar implements ActionListener{//, Change
 		private void resetButtons() {
 			
 			colourOption.setSelected(false);
+			application.setColouredByProximity(true); // ouch, why are we passing this through the application??
 			goAnnotationButton.setSelected(false);
 			linesToggleButton.setSelected(false);
 			

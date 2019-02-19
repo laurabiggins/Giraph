@@ -61,7 +61,7 @@ public class GraphPanel extends JPanel implements FilterListener{
 	private GeneList currentClickedGeneList; 
 	
 	/** Minimum correlation shown by lines */
-	float minCorrelation = (float) 0.4;
+	float minCorrelation = (float) 0.3;
 	
 	int minCircleSize = 15;
 	

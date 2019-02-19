@@ -23,28 +23,40 @@ public class GOrillaParser {
 	public String [] parseGenes(){
 		
 		String trimmedString = allGenesString.trim();
-
+		System.err.println("trimmedString = " + trimmedString);
+		
 		ArrayList<String> cleanedGenesTemp = new ArrayList<String>();
 		
 		if(trimmedString.startsWith("\"[") && trimmedString.endsWith("]\"")){
 			
 			trimmedString = trimmedString.substring(2, trimmedString.length()-2);
 			
-			String [] splitGenes = trimmedString.split(delimiter);
-
+		} else if(trimmedString.startsWith("[") && trimmedString.endsWith("]")){
 			
-			for (int i=0; i<splitGenes.length; i++){
-				
-				String tempGene = splitGenes[i].trim();
-				
-				if(tempGene.contains(" - ")){
-				
-					cleanedGenesTemp.add(tempGene.substring(0,  tempGene.indexOf(" - ")));
-				}	
-				else continue;
-				
-			}
+			trimmedString = trimmedString.substring(1, trimmedString.length()-1);
+		}	
+		
+		else{
+			return null;
+		}	
+						
+		String [] splitGenes = trimmedString.split(delimiter);
+
+		
+		for (int i=0; i<splitGenes.length; i++){
+			
+			String tempGene = splitGenes[i].trim();
+			
+			System.err.println("tempGene = " + tempGene);
+			
+			if(tempGene.contains(" - ")){
+				System.err.println("tempGene cleaned = " + tempGene.substring(0,  tempGene.indexOf(" - ")));
+				cleanedGenesTemp.add(tempGene.substring(0,  tempGene.indexOf(" - ")));
+			}	
+			else continue;
+			
 		}
+		
 		return cleanedGenesTemp.toArray(new String[0]);
 	}
 	

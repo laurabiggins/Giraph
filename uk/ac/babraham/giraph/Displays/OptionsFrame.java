@@ -96,6 +96,11 @@ public class OptionsFrame extends JFrame implements ActionListener, OptionsListe
 				JOptionPane.showMessageDialog(this, msg, "No genes to analyse", JOptionPane.ERROR_MESSAGE);
 			}
 			
+			else if(optionsPanel.getBackgroundGenesOption().equals("Enter custom background genes") && (optionsPanel.backgroundGenes().isEmpty())){
+				String msg = ("Please enter some background genes or select the option to Use all genes in genome.");
+				JOptionPane.showMessageDialog(this, msg, "No genes to analyse", JOptionPane.ERROR_MESSAGE);
+			}
+			
 			else if(optionsPanel.minGenesInSet() > optionsPanel.maxGenesInSet()){
 				JOptionPane.showMessageDialog(giraphApplication.getInstance(), "Minimum number of genes in set cannot be greater than maximum.", "Number of genes needs adjusting", JOptionPane.ERROR_MESSAGE);
 				return;

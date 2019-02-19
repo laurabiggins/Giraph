@@ -13,7 +13,6 @@ import uk.ac.babraham.giraph.Utilities.StopPauseListener;
 
 public class CalculateCoordinates implements Runnable, StopPauseListener {
 
-	float shiftFactor = (float)0.5;
 	boolean continueCalculating;
 	private ProgressListener appPL;
 	
@@ -24,7 +23,9 @@ public class CalculateCoordinates implements Runnable, StopPauseListener {
 	
 	int minNoOfImprovingPositions = 4;
 	
-	int movementFactor = 16;
+	//int movementFactor = 8;
+	
+	float coolingOff = (float)1;
 	
 	
 	/**
@@ -46,19 +47,6 @@ public class CalculateCoordinates implements Runnable, StopPauseListener {
 	}
 	
 
-	/** 
-	 * Getting the info required before calculating can start 
-	 */
-	/*private void initialSetUp(GeneListCollection geneListCollection){
-		
-		this.geneListCollection = geneListCollection;
-		validGeneLists = geneListCollection.getValidGeneLists();
-		if(validGeneLists.length < (minNoOfImprovingPositions * 4)){
-			minNoOfImprovingPositions = (validGeneLists.length/4); 
-		}
-	}
-*/	
-	
 	/**
 	 * Run the calculations
 	 */
@@ -66,8 +54,7 @@ public class CalculateCoordinates implements Runnable, StopPauseListener {
 		
 		/** The minimum correlation that we care about - if they're not remotely correlated we don't mind where they are in relation to each other,
 		 * they'll get pulled around enough by others that they are correlated with anyway... not necessarily true. */
-		//float minCorrelation = (float)0.3;
-		float minCorrelation = (float)0.0;
+		float minCorrelation = (float)0.2;
 		
 		/** If two circles are at an optimum distance (within threshold of the diffFactor) then they won't be moved. 
 		 * Do not reduce this number or everything starts going around in circles if there aren't many gene lists. */
@@ -83,7 +70,10 @@ public class CalculateCoordinates implements Runnable, StopPauseListener {
 		int numberToCheck = validGeneLists.length/2;
 		float [] previousTotalDifference = new float [numberToCheck];
 		int totalDifferenceIndex = 0;
-				
+		
+		int sumMoveCloser = 0;
+		int sumMoveAway = 0;
+		
 		LOOP: while (continueCalculating == true){
 		
 			float thisTotalDifference = 0;			
@@ -101,6 +91,7 @@ public class CalculateCoordinates implements Runnable, StopPauseListener {
 					
 				/** I'm not entirely sure why we get NaN values occasionally, it's something to do with relaxing the filters */				
 				if(Float.isNaN(validGeneLists[i].coordinates().unscaledX)){
+					System.out.println("coolingOff = " + coolingOff);
 					System.out.println("changing unScaledX i " + validGeneLists[i].coordinates().unscaledX +  " to 0.5");
 					validGeneLists[i].coordinates().unscaledX  = (float)0.5;
 					System.out.println("unScaledX " + validGeneLists[i].coordinates().unscaledX);
@@ -145,7 +136,7 @@ public class CalculateCoordinates implements Runnable, StopPauseListener {
 						/** The difference between the actual distance and the ideal distance */
 						float difference = (1 - correlation) - actualDistance;
 						
-						thisTotalDifference = thisTotalDifference + Math.abs(difference);
+						thisTotalDifference += Math.abs(difference);
 											
 						
 						if((correlation > minCorrelation) || ((correlation <= minCorrelation)&& (Math.abs(difference)>minDistance))){														
@@ -158,24 +149,24 @@ public class CalculateCoordinates implements Runnable, StopPauseListener {
 							float movement;
 							
 							if(correlation < 0.1){
-								//movement = (float)0.01/actualDistance;
-								movement = (float)0.01*actualDistance;
+
+								movement = Math.abs((float)0.01*difference*coolingOff);
 							}
-							else{
-								movement = correlation/actualDistance;
-								//movement = correlation*actualDistance;
-								//movement = correlation*correlation*actualDistance*4;
+							else if(correlation > 0.95){
 								/** when 2 lists are exactly the same, they sometimes struggle to come together completely when there are 
 								lots of categories - they get there eventually but the pull between the 2 isn't strong enough. We can't just
 								up the movement factor or it all goes wrong.
-								 **/								
-								//movement = correlation*correlation*correlation*actualDistance*movementFactor;
-								movement = Math.abs(correlation*correlation*correlation*difference*movementFactor);
+								 **/
+								movement = Math.abs(10*difference*coolingOff);
+							}
+							else{						
+								
+								movement = Math.abs(correlation*correlation*difference*coolingOff);
 								
 							}								
 							
-							/*
-							if(validGeneLists[i].getFunctionalSetInfo().description().startsWith("response to tumor necrosis") && validGeneLists[j].getFunctionalSetInfo().description().startsWith("cellular response to tumor necrosis")){
+							
+						/*	if(validGeneLists[i].getFunctionalSetInfo().description().startsWith("response to tumor necrosis") && validGeneLists[j].getFunctionalSetInfo().description().startsWith("cellular response to tumor necrosis")){
 								System.out.println("========================================");
 								System.out.println("description =  " + validGeneLists[i].getFunctionalSetInfo().description());
 								System.out.println("correlation = " + correlation);
@@ -205,13 +196,18 @@ public class CalculateCoordinates implements Runnable, StopPauseListener {
 								
 								sumDiffX = sumDiffX - (distanceX * movement);
 								sumDiffY = sumDiffY - (distanceY * movement);
+								
+								sumMoveCloser +=1;
 
 							}
-							else if (difference > diffThreshold || (correlation > 0.95 && difference > 0.01)){
+							//else if (difference > diffThreshold || (correlation > 0.95 && difference > 0.01)){
+							else if (difference > (diffThreshold*2)){
 							/** move further away */
 								
 								sumDiffX = sumDiffX + (distanceX * movement); 
 								sumDiffY = sumDiffY + (distanceY * movement);
+								
+								sumMoveAway +=1;
 
 			 				}
 						}			
@@ -220,17 +216,14 @@ public class CalculateCoordinates implements Runnable, StopPauseListener {
 				float meanDiffX = sumDiffX/(float)(validGeneLists.length-1);
 				float meanDiffY = sumDiffY/(float)(validGeneLists.length-1);	
 				
-				float xShift = (float) (meanDiffX*shiftFactor);
-				float yShift = (float) (meanDiffY*shiftFactor);				
-				validGeneLists[i].coordinates().unscaledX = (float)(validGeneLists[i].coordinates().unscaledX + xShift); 
-				validGeneLists[i].coordinates().unscaledY = (float)(validGeneLists[i].coordinates().unscaledY + yShift);	
-				
+				validGeneLists[i].coordinates().unscaledX += meanDiffX;
+				validGeneLists[i].coordinates().unscaledY += meanDiffY;
 			}	
 			
 			previousTotalDifference[totalDifferenceIndex] = thisTotalDifference;
 			
 			if(totalDifferenceIndex < numberToCheck-1){
-				totalDifferenceIndex = totalDifferenceIndex +1; 
+				totalDifferenceIndex += 1; 
 			}
 			else {
 				totalDifferenceIndex = 0;
@@ -263,19 +256,13 @@ public class CalculateCoordinates implements Runnable, StopPauseListener {
 					}
 				}
 				
-				if(movementFactor > 1){
-					movementFactor = movementFactor/2;
-				}
-				
-				if(x < 1000 || x%(numberToCheck*10) == 0){
-					System.out.println("haven't stopped calculating at x = " + x);
-					System.out.println("no of improvingPositions " + improvingPositions);	
-					System.out.println("improvingMagnitude " + improvingMagnitude);	
+				if(coolingOff > 0.1){
+					coolingOff *= 0.9;
 				}
 				
 				if(x > numberToCheck *3 && x > 50){
-					//if((improvingPositions < numberToCheck/4) || (improvingMagnitude < 0.0005)){
-					if(improvingMagnitude < 0.0005){	
+					
+					if(improvingMagnitude < 0.0001){	
 						// stopCalculating
 						continueCalculating = false;
 						appPL.calculatingCoordinatesStopped();
@@ -283,6 +270,8 @@ public class CalculateCoordinates implements Runnable, StopPauseListener {
 						System.out.println("stopped calculating at x = " + x + " because...");
 						System.out.println("no of improvingPositions " + improvingPositions);	
 						System.out.println("improvingMagnitude " + improvingMagnitude);	
+						System.out.println("sumMoveCloser =  " + sumMoveCloser);
+						System.out.println("sumMoveAway =  " + sumMoveAway);
 						
 					}
 					
@@ -306,15 +295,7 @@ public class CalculateCoordinates implements Runnable, StopPauseListener {
 	public void addProgressListener(ProgressListener pl){
 		this.appPL = pl;
 	}
-	/** Method inherited from stopPauseListener */
-//	public void changeSpeed(int frequency){
 
-//	}	
-	/** Method inherited from stopPauseListener */
-//	public void changeShiftFactor(float sf){
-//		shiftFactor = sf;
-//		System.out.println("shift factor: " + shiftFactor);
-//	}
 	/** Method inherited from stopPauseListener */
 	public void updateValidGeneLists(){
 		validGeneLists = geneListCollection.getValidGeneLists();
