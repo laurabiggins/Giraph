@@ -202,13 +202,26 @@ public class GeneInfoPanel  extends JFrame implements ActionListener{
 	
 	// for the overlapping genes
 	public void setGeneInfo(JTextArea ta, String[] geneSymbols){		
-		ta.setText(geneSymbols.length + " overlapping genes");
+	
 		if (geneSymbols.length == 0){
-			ta.append("no overlapping genes");
+			ta.setFont(font1);
+			ta.setText("no overlapping genes");
+			return;
 		}
+		else if(geneSymbols.length == 1){
+			ta.setFont(font1);
+			ta.setText("1 overlapping gene");
+		}
+		else{
+			ta.setFont(font1);
+			ta.setText(geneSymbols.length + " overlapping genes");
+		}
+		
 		for (int i = 0; i< geneSymbols.length; i++){
+			ta.setFont(font2);
 			ta.append("\n");
-			ta.append(geneSymbols[i]);			
+			ta.append(geneSymbols[i]);
+			ta.setCaretPosition(0);
 		}		
 	}
 	
@@ -217,9 +230,12 @@ public class GeneInfoPanel  extends JFrame implements ActionListener{
 		ta.setText("");
 		ta.append("Number of genes: ");
 		ta.append(Integer.toString(gl.getGenes().length));
-		ta.append("\nTotal number of genes in category: ");
-		ta.append(Integer.toString(gl.getFunctionalSetInfo().totalNoOfGenesInCategory()));
-		ta.append("\nAdjusted p value: ");
+		// we only have this information if query genes have been entered, not if a results file has been entered.
+		if(gl.getFunctionalSetInfo().totalNoOfGenesInCategory() > 0){		
+			ta.append("\nTotal number of genes in category: ");
+			ta.append(Integer.toString(gl.getFunctionalSetInfo().totalNoOfGenesInCategory()));
+		}	
+		ta.append("\np value: ");
 		ta.append(Double.toString((double)Math.round(gl.getPvalue().q()*1000000)/1000000));
 		for (int i = 0; i< geneSymbols.length; i++){
 			ta.append("\n");

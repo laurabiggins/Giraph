@@ -131,6 +131,7 @@ public class giraphApplication extends JFrame implements ProgressListener, Filte
 		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setSize(800,600);
+		setLocationRelativeTo(null);
 		setMinimumSize(new Dimension(150,150));
 		menuBar = new giraphMenuBar(this);
 		setJMenuBar(menuBar);
@@ -303,11 +304,15 @@ public class giraphApplication extends JFrame implements ProgressListener, Filte
 	public void calculatingCoordinatesStopped(){
 		
 		calculateClusters();
-		getGraphPanel().updateCalculatingStatus(false);
+		
+		menuBar.stopCirclesMoving();
+		
+		/*getGraphPanel().updateCalculatingStatus(false);
 		getGraphPanel().revalidate();
 		getGraphPanel().repaint();
 		menuBar.disableStopButton();
 		menuBar.enablePlayButton();
+		*/
 	}
 	
 	
@@ -360,11 +365,11 @@ public class giraphApplication extends JFrame implements ProgressListener, Filte
 			df.filterBySizeAndStringency();
 			
 			int noGeneLists = geneListCollection.getValidGeneLists().length;
-			if (noGeneLists > 500){
-				//JOptionPane.showMessageDialog(giraphApplication.getInstance(), "Using your list of genes and this filter (adjusted p value " + stringency + ", min no of genes in category " + geneListSize + 
-				//		" would leave " + noGeneLists + " siginficant gene ontology categories. Giraph might be able to cope with this, but it may be slow. Try increasing the stringency of the filters.", "Too many circles", JOptionPane.WARNING_MESSAGE);
+			if (noGeneLists > 400){
 				
-				JOptionPane.showMessageDialog(giraphApplication.getInstance(), "Using your list of genes and this filter (adjusted p value " + stringency + ") would leave " + noGeneLists + " siginficant gene ontology categories. Giraph might be able to cope with this, but it may be slow. Try increasing the stringency of the filters.", "Too many circles", JOptionPane.WARNING_MESSAGE);	
+				JOptionPane.showMessageDialog(giraphApplication.getInstance(), "Using your list of genes and this filter (p value " + stringency + ") would leave " + 
+				noGeneLists + " siginficant gene ontology categories.\n" + "Giraph might be able to cope with this, but it may be slow. Try increasing the stringency of the filters.", 
+				"Too many circles", JOptionPane.WARNING_MESSAGE);	
 			}
 			else{
 				JOptionPane.showMessageDialog(giraphApplication.getInstance(), "Setting p value threshold to " + stringency +

@@ -38,8 +38,9 @@ public class DataFilter implements ActionListener{
 		if (noRemaining > 1000){
 			//JOptionPane.showMessageDialog(giraphApplication.getInstance(), "Using your list of genes and this filter (adjusted p value " + stringency + ", min no of genes in category " + geneListSizeCutoff + 
 			//		" would leave " + noRemaining + " siginficant gene ontology categories. This is too many to display in Giraph, try entering a different list of genes or increase the stringency of the filters.", "Too many circles", JOptionPane.ERROR_MESSAGE);
-			JOptionPane.showMessageDialog(giraphApplication.getInstance(), "Using your list of genes and this filter (adjusted p value " + stringency +
-					") would leave " + noRemaining + " siginficant gene ontology categories. This is too many to display in Giraph, try entering a different list of genes or increase the stringency of the filters.", "Too many circles", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(giraphApplication.getInstance(), "Using your list of genes and this filter (p value " + stringency +
+					") would leave " + noRemaining + " gene ontology categories. \nThis is too many to display in Giraph, try entering a different "
+							+ "list of genes or increase the stringency of the filters.", "Too many circles", JOptionPane.ERROR_MESSAGE);
 
 			return null;
 		}

@@ -477,7 +477,7 @@ public class GraphPanel extends JPanel implements FilterListener{
 		
 		public void mouseClicked(MouseEvent e){
 			
-			if ((e.getClickCount() == 3) && (geneListClicked == true)) {
+			if ((e.getClickCount() == 2) && (geneListClicked == true)) {
 				
 				gip = new GeneInfoPanel(application);
 				gip.setGeneListInfo(currentClickedGeneList, 0, currentClickedGeneList.colour);

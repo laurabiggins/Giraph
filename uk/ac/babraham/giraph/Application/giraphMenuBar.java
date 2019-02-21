@@ -11,34 +11,23 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.io.File;
-import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JSlider;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-
-import uk.ac.babraham.giraph.Analysis.Density;
-import uk.ac.babraham.giraph.DataTypes.GeneCollection;
 import uk.ac.babraham.giraph.Displays.GeneInfoPanel;
 import uk.ac.babraham.giraph.Displays.GeneUploadPanel;
 import uk.ac.babraham.giraph.Displays.OptionsFrame;
-import uk.ac.babraham.giraph.Displays.QC.GCContentPlot;
-import uk.ac.babraham.giraph.Displays.QC.QCPanel;
 import uk.ac.babraham.giraph.Displays.Help.HelpDialog;
 import uk.ac.babraham.giraph.giraphApplication;
 import uk.ac.babraham.giraph.Dialogs.ClusterRValueSelector;
@@ -202,8 +191,10 @@ public class giraphMenuBar extends JMenuBar implements ActionListener{
 		else if (command.equals("stop")) {			
 			spl.stopCalculating();
 			
+			stopCirclesMoving();
+			
 			//application.calculateClusters();
-			application.getGraphPanel().updateCalculatingStatus(false);
+		/*	application.getGraphPanel().updateCalculatingStatus(false);
 			if(application.getColouredByProximity()){
 				application.calculateClusters();
 			}	
@@ -212,7 +203,7 @@ public class giraphMenuBar extends JMenuBar implements ActionListener{
 			disableStopButton();
 			enablePlayButton();	
 			enableSaveImageOption();
-			
+		*/	
 		}
 		
 		else if (command.equals("help_contents")) {
@@ -295,8 +286,7 @@ public class giraphMenuBar extends JMenuBar implements ActionListener{
 		else if (command.equals("display_info")) {	
 			
 			GeneInfoPanel gip2 = new GeneInfoPanel(application);
-			application.getGraphPanel().gip = gip2;
-			
+			application.getGraphPanel().gip = gip2;	
 		}
 		
 		else if (command.equals("delete_circle")) {		
@@ -369,6 +359,20 @@ public class giraphMenuBar extends JMenuBar implements ActionListener{
 		OptionsFrame of = new OptionsFrame();
 		of.addOptionsPanel(gup);
 				
+	}
+	
+	public void stopCirclesMoving(){
+		
+		application.getGraphPanel().updateCalculatingStatus(false);
+		
+		if(application.getColouredByProximity()){
+			application.calculateClusters();
+		}	
+		application.getGraphPanel().revalidate();
+		application.getGraphPanel().repaint();
+		disableStopButton();
+		enablePlayButton();	
+		enableSaveImageOption();	
 	}
 	
 	private class GiraphToolbar extends JToolBar {
