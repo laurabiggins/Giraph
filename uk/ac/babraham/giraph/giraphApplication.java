@@ -84,7 +84,7 @@ public class giraphApplication extends JFrame implements ProgressListener, Filte
 		
 	JSplitPane mainPane;
 	JSplitPane infoPane;
-
+	
 	StopPauseListener spl;
 	
 	private boolean colouredByProximity = true;

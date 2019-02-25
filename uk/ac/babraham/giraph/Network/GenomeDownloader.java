@@ -43,9 +43,9 @@ import java.util.zip.ZipFile;
  * to download a new genome from the main genome database and install it
  * in the local genome cache.
  */
-/*public class GenomeDownloader implements Runnable {
+public class GenomeDownloader implements Runnable {
 
-	private Vector<ProgressListener> listeners = new Vector<ProgressListener>();
+/*	private Vector<ProgressListener> listeners = new Vector<ProgressListener>();
 	private SeqMonkPreferences prefs = SeqMonkPreferences.getInstance();
 	private String species;
 	private String assembly;
@@ -98,9 +98,9 @@ import java.util.zip.ZipFile;
 	/* (non-Javadoc)
 	 * @see java.lang.Runnable#run()
 	 */
-/*	public void run() {
-		
-		// First we need to download the file from the repository
+	public void run() {}
+	}
+/*		// First we need to download the file from the repository
 		try {
 			
 //			System.out.println("Downloading "+prefs.getGenomeDownloadLocation()+species+"/"+assembly+".zip");
