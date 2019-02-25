@@ -179,13 +179,15 @@ public class GeneInfoPanel  extends JFrame implements ActionListener{
 		/** If either of the panels has been cleared by the user, then use the free panel, else overwrite the 2nd panel */
 		if (textArea1.getText().trim().length() == 0){
 			setGeneListInfo(textArea1, gl, x, gl.getGeneSymbols());
-			textArea1.setBorder(BorderFactory.createTitledBorder(textArea1.getBorder(), gl.getFunctionalSetInfo().description(), TitledBorder.CENTER, TitledBorder.TOP, font1, colour));
+			textArea1.setBorder(BorderFactory.createTitledBorder(textArea1.getBorder(), gl.getFunctionalSetInfo().description(), 
+					TitledBorder.CENTER, TitledBorder.TOP, font1, colour));
 			gl1 = gl;
 			overlappingGenes.setText("");
 		}	
 		else if (textArea2.getText().trim().length() == 0){
 			setGeneListInfo(textArea2, gl, x, gl.getGeneSymbols());
-			textArea2.setBorder(BorderFactory.createTitledBorder(textArea2.getBorder(),  gl.getFunctionalSetInfo().description(), TitledBorder.CENTER, TitledBorder.TOP, font1, colour));
+			textArea2.setBorder(BorderFactory.createTitledBorder(textArea2.getBorder(),  gl.getFunctionalSetInfo().description(), 
+					TitledBorder.CENTER, TitledBorder.TOP, font1, colour));
 			gl2 = gl;
 			overlappingGenes.setText("");
 		}
@@ -194,7 +196,8 @@ public class GeneInfoPanel  extends JFrame implements ActionListener{
 			overlappingGenes.setText("");
 			textArea2.setBorder(null);
 			setGeneListInfo(textArea2, gl, x, gl.getGeneSymbols());
-			textArea2.setBorder(BorderFactory.createTitledBorder(textArea2.getBorder(),  gl.getFunctionalSetInfo().description(), TitledBorder.CENTER, TitledBorder.TOP, font1, colour));
+			textArea2.setBorder(BorderFactory.createTitledBorder(textArea2.getBorder(),  gl.getFunctionalSetInfo().description(), 
+					TitledBorder.CENTER, TitledBorder.TOP, font1, colour));
 			gl2 = gl;
 			overlappingGenes.setText("");
 		}

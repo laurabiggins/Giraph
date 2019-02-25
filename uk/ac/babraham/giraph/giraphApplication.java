@@ -27,49 +27,28 @@ import uk.ac.babraham.giraph.Utilities.ImageSaver;
 import uk.ac.babraham.giraph.Utilities.StopPauseListener;
 
 /** 
- *  TODO: add option for uploading ensembl ids or gene names - the ids would have to be converted to symbols for using the gmt file. 
- * 
+ *  TODO: allow import of generic text file - this should work already, the code just needs tidying up.
+ *  TODO: geneInfoPanel gets passed through menuBar, application, graphPanel... clean this up
+ *  TODO: stopCalculating is similar in getting passed around 
+ *  TODO: remove splitPane, this is no longer needed
+ *  
+ *  TODO: The gtf files are used to get the genomic background genes. I don't think the QC is required here,
+ *  so we don't really need the large gtf files. Maybe we just take any gene that is in the gmt file as the background. 
+ *  
+ *  TODO: The DataFilter class and the setFilters method here do half the job of producing messages each - put in one or the other. 
+ *  
  *  TODO: allow download of gmt file
  *  
- *  
- *  TODO: instead of filter results, have a more comprehensive info display i.e. 
- *  	total no query genes
- *  		no of matched genes
- *  		no of unmatched genes
- *  	total no functional categories
- *  		no after filtering 
- *  Then, click for more info on unmatched genes OR play/continue....
- *  
- *  TODO: when a circle is deleted, it reappears when new filters are applied - maybe store the deleted categories.
- *  
+ *   
  *  TODO: OptionsFrame has lots of references to the main app using getInstance - it should probably be passed to it properly.
  *  
- *  TODO: play automatically 
- *  
  *  TODO: Catching errors - put in a load of checks
- *  TODO: Go through the process of running the tool and clean it up - sort out the little things. 
- *  
- *  TODO: Check whether the file looks right when it's selected/loaded.
- *   
- *  TODO: fix the info button so that it doesn't say DavidResultProperties and change a few of the fields plus sort out the position.
  * 
- *	TODO: If there are too few circles when the list of genes is entered, allow the filters to be adjusted.
- *	TODO: activate the p value filter when the parsing has happened - if the filters result in 0 circles you're screwed.
- *
- *  TODO: enable the removal of duplicate circles (exact duplicates) ??
  *  TODO: put in limit to number of genes you can enter. 
  * 
  *  TODO: print number of genes that were found - of the x genes that were entered, x were matched, and x were not   
- *  TODO: see if I can get something saying filters for the 2 filters.
  *  
- *  TODO: think about the steps taken to run the software - they're probably not obvious
  *  TODO: annotate Result class.
- *  TODO: have current filters displayed somewhere
- *  TODO: enable filter menu before playing
- *  
- *  TODO: sort out circle overlap function
- *  
- *  TODO: barplot for chromosomes - decide if we're showing background or not as this'll affect how the plot is constructed
  *  
  * (TODO: Export ontology info for all query genes that matched - save as tab-delimited text file.)
  *  

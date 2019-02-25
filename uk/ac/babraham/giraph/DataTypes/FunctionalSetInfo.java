@@ -1,8 +1,8 @@
 package uk.ac.babraham.giraph.DataTypes;
 
-/** This contains information from the Bader GMT file. Each line of the file becomes a FunctionalSetInfo object. 
+/** This contains information from the GMT file. Each line of the file becomes a FunctionalSetInfo object. 
  * It does not contain the genes, only the ontology (or other) information.
- * FunctionalSetInfo objects are contained in the FunctionalSetInfoCollection object.
+ * It is linked to the genelists in the GeneListCollection class.
  * 
  */
 
