@@ -74,6 +74,8 @@ public class CalculateCoordinates implements Runnable, StopPauseListener {
 		int sumMoveCloser = 0;
 		int sumMoveAway = 0;
 		
+		float highCorrelation = (float)0.95;
+		
 		LOOP: while (continueCalculating == true){
 		
 			float thisTotalDifference = 0;			
@@ -102,6 +104,9 @@ public class CalculateCoordinates implements Runnable, StopPauseListener {
 					System.out.println("unscaledY " + validGeneLists[i].coordinates().unscaledY);
 				}
 				
+				float maxMovement = 0;
+				
+				int highCorrelationCount = 0;
 				
 				/** loop through all the other gene lists to compare i to and work out where we want to move i to */
 				for (int j = 0; j < validGeneLists.length; j++){
@@ -111,7 +116,41 @@ public class CalculateCoordinates implements Runnable, StopPauseListener {
 					}
 					
 					if(j != i){	
-																			
+						
+						/** We're adding an extra iteration here as if we have a category that has a ton of others which are all subsets,
+						 * it goes mad and ends up breaking		
+						 */
+						if(validGeneLists[i].getCorrelation(validGeneLists[j]) > highCorrelation){
+							
+							highCorrelationCount += 1;
+						}
+					}
+				
+				}	
+				
+				int highCorrelationMovementFactor = 1;
+				float highCorrelationProportion = (float)highCorrelationCount/validGeneLists.length;
+				
+				if(highCorrelationProportion > 0.05){
+					highCorrelationMovementFactor = 2;
+				}
+				else if(highCorrelationProportion > 0.01){
+					highCorrelationMovementFactor = 5;
+				}
+				else if(highCorrelationProportion > 0.005){
+					highCorrelationMovementFactor = 10;
+				}		
+				else if(highCorrelationProportion > 0.001){
+					highCorrelationMovementFactor = 20;
+				}
+				
+				for (int j = 0; j < validGeneLists.length; j++){
+					
+					if(continueCalculating == false){
+						break LOOP;
+					}
+					
+					if(j != i){	
 						/** 
 						 * move closer or further away if the correlation is greater than minCorrelation. MinCorrelation is the minimum correlation that we care about.
 						 *   
@@ -152,12 +191,13 @@ public class CalculateCoordinates implements Runnable, StopPauseListener {
 
 								movement = Math.abs((float)0.01*difference*coolingOff);
 							}
-							else if(correlation > 0.95){
+							else if(correlation > highCorrelation){
 								/** when 2 lists are exactly the same, they sometimes struggle to come together completely when there are 
 								lots of categories - they get there eventually but the pull between the 2 isn't strong enough. We can't just
 								up the movement factor or it all goes wrong.
 								 **/
-								movement = Math.abs(10*difference*coolingOff);
+								//movement = Math.abs(10*difference*coolingOff);
+								movement = Math.abs(highCorrelationMovementFactor*difference*coolingOff);
 							}
 							else{						
 								
@@ -165,19 +205,27 @@ public class CalculateCoordinates implements Runnable, StopPauseListener {
 								
 							}								
 							
+							if(movement > maxMovement){
+								maxMovement = movement;
+							}
 							
-						/*	if(validGeneLists[i].getFunctionalSetInfo().description().startsWith("response to tumor necrosis") && validGeneLists[j].getFunctionalSetInfo().description().startsWith("cellular response to tumor necrosis")){
+							
+							if(i == 20 && movement > 3){
 								System.out.println("========================================");
 								System.out.println("description =  " + validGeneLists[i].getFunctionalSetInfo().description());
+								System.out.println("no of genes in set " + validGeneLists[i].getGenes().length);
+								System.out.println("description =  " + validGeneLists[j].getFunctionalSetInfo().description());
+								System.out.println("no of genes in set " + validGeneLists[j].getGenes().length);
+								System.out.println("no of overlapping genes = " + validGeneLists[i].getOverlappingGenes(validGeneLists[j]).length);
 								System.out.println("correlation = " + correlation);
 								System.out.println("difference = " + difference);
 								System.out.println("actual distance = " + actualDistance);
-								//System.out.println("difference = " + difference);
+								System.out.println("highCorrelationCount = " + highCorrelationCount);
 								System.out.println("movement = " + movement);
 								System.out.println("distanceX = " + distanceX);
 								System.out.println("distanceY = " + distanceY);
 							}
-							if(validGeneLists[j].getFunctionalSetInfo().description().startsWith("response to tumor necrosis") && validGeneLists[i].getFunctionalSetInfo().description().startsWith("cellular response to tumor necrosis")){
+						/*	if(validGeneLists[j].getFunctionalSetInfo().description().startsWith("response to tumor necrosis") && validGeneLists[i].getFunctionalSetInfo().description().startsWith("cellular response to tumor necrosis")){
 								System.out.println("========================================");
 								System.out.println("description =  " + validGeneLists[i].getFunctionalSetInfo().description());
 								System.out.println("correlation = " + correlation);
@@ -215,9 +263,10 @@ public class CalculateCoordinates implements Runnable, StopPauseListener {
 				}
 				float meanDiffX = sumDiffX/(float)(validGeneLists.length-1);
 				float meanDiffY = sumDiffY/(float)(validGeneLists.length-1);	
-				
+								
 				validGeneLists[i].coordinates().unscaledX += meanDiffX;
 				validGeneLists[i].coordinates().unscaledY += meanDiffY;
+				
 			}	
 			
 			previousTotalDifference[totalDifferenceIndex] = thisTotalDifference;
@@ -237,7 +286,7 @@ public class CalculateCoordinates implements Runnable, StopPauseListener {
 			}
 						
 			appPL.updateGraphPanel();
-
+			
 			/** We want to check whether we're still moving in the right direction, if not, stop if we're getting too few improving positions.
 			 * or stop if the percentage difference is so small that it's not worth carrying on. */
 			if (x%numberToCheck == 0){
@@ -277,6 +326,7 @@ public class CalculateCoordinates implements Runnable, StopPauseListener {
 					
 				}
 			}
+			
 			x++;		
 		}		
 	}

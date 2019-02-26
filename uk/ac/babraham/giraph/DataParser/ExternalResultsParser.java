@@ -203,17 +203,24 @@ public class ExternalResultsParser implements Cancellable{
 				DavidParser davidParser = new DavidParser(sections[queryGeneColValue], geneDelimitersValue);
 				genesInCategory = davidParser.parseGenes(); 
 			}
-
+			
+			if(genesInCategory == null){
+				String msg = "Could not find any genes in category, please check the import options";
+				progressWarningReceived(new giraphException(msg)); // this doesn't seem to do anything
+				JOptionPane.showMessageDialog(null, msg, "No genes to analyse", JOptionPane.ERROR_MESSAGE);
+				return null;
+			}
 			// either we're not parsing the list of genes properly, or it may be that some reports contain lists of genes with only one gene in - clearly this should not be included.
 			if(genesInCategory.length < 2){
 				
-				//JOptionPane.showMessageDialog(giraphApplication.getInstance(), "could not find enough genes in the gene list ", "genes not parsed",  JOptionPane.ERROR_MESSAGE);
-				progressWarningReceived(new giraphException("Not enough genes ("+genesInCategory.length+") to get a probe name on line '"+line+"'"));
+				String msg = ("Not enough genes ("+genesInCategory.length+") to get a probe name on line '"+line+"'");
+				progressWarningReceived(new giraphException(msg));
+				JOptionPane.showMessageDialog(null, msg, "No genes to analyse", JOptionPane.ERROR_MESSAGE);
 				System.err.println("fewer than 2 genes found in gene list, line skipped");
 				continue; // Skip this line...	
 				//return null;
 			}
-						
+						  
 			// Create new functional category for each line
 			FunctionalSetInfo functionalSetInfo = new FunctionalSetInfo();
 			

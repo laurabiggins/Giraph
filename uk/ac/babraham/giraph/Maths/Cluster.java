@@ -95,7 +95,7 @@ public class Cluster implements Runnable{
 		
 		 WHILE_LOOP: while (clusterPairs.size() > 1){ 
 		 
-			System.err.println("clusterpairs size = " + clusterPairs.size()); 
+			//System.err.println("clusterpairs size = " + clusterPairs.size()); 
 			
 			if(running==false){
 				break WHILE_LOOP;

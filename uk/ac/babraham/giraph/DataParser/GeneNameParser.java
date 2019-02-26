@@ -49,6 +49,7 @@ public class GeneNameParser implements Runnable{
 		}
 		else {
 			String [] geneNames = splitList(listOfGeneNames);
+			System.err.println("number of genes parsed = " + geneNames.length);
 			int unmatchedCount = 0;
 			
 			// check if they're in the background list
@@ -97,15 +98,19 @@ public class GeneNameParser implements Runnable{
 	private static String [] splitList(String listOfGeneNames){
 		
 		if(listOfGeneNames.contains("\n")){
+			System.err.println("splitting by \n");
 			return(listOfGeneNames.split("\n"));
 		}
 		else if(listOfGeneNames.contains(",")){
+			System.err.println("splitting by ,");
 			return(listOfGeneNames.split(","));
 		}
 		else if(listOfGeneNames.contains("\t")){
+			System.err.println("splitting by \t");
 			return(listOfGeneNames.split("\t"));
 		}
 		else if(listOfGeneNames.contains(" ")){
+			System.err.println("splitting by whitespace");
 			return(listOfGeneNames.split(" "));
 		}
 		else {
