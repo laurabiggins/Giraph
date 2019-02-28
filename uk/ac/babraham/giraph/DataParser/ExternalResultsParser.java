@@ -213,7 +213,7 @@ public class ExternalResultsParser implements Cancellable{
 			// either we're not parsing the list of genes properly, or it may be that some reports contain lists of genes with only one gene in - clearly this should not be included.
 			if(genesInCategory.length < 2){
 				
-				String msg = ("Not enough genes ("+genesInCategory.length+") to get a probe name on line '"+line+"'");
+				String msg = ("Only 1 gene found for category on line " + lineCount + ", skipping this line");
 				progressWarningReceived(new giraphException(msg));
 				JOptionPane.showMessageDialog(null, msg, "No genes to analyse", JOptionPane.ERROR_MESSAGE);
 				System.err.println("fewer than 2 genes found in gene list, line skipped");

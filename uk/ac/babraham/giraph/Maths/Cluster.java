@@ -126,7 +126,8 @@ public class Cluster implements Runnable{
 						
 					// This is for doing the clustering on correlation rather than distance on screen
 					else{
-						meanCorrTemp = getMeanCorrelation(geneListsInClusterPair1, geneListsInClusterPair2);  
+						//meanCorrTemp = getMeanCorrelation(geneListsInClusterPair1, geneListsInClusterPair2);  
+						meanCorrTemp = getMaximumCorrelation(geneListsInClusterPair1, geneListsInClusterPair2);
 					}  
 					
 					if(meanCorrTemp > meanCorr){
@@ -274,6 +275,39 @@ public class Cluster implements Runnable{
 	 }
 	 
 	 
+	 /**
+		 * This calculates the maximum correlation between 2 sets of gene lists
+		 * and returns the rValue 
+		 * @param gl1
+		 * @param gl2
+		 * @return
+		 */	 
+		private static float getMaximumCorrelation(GeneList[] gl1, GeneList[] gl2){		
+			
+			if(gl1.length == 1 && gl2.length == 1){
+				
+				return gl1[0].getCorrelation(gl2[0]);
+			}
+			
+			float highestCorrelation = 0;
+			
+			for (int i = 0; i < gl1.length; i++){
+				
+				for (int j = 0; j < gl2.length; j++){
+					
+					if(gl1[i].getCorrelation(gl2[j]) > highestCorrelation){
+						highestCorrelation = gl1[i].getCorrelation(gl2[j]);
+						
+						if(highestCorrelation == 1){
+							return highestCorrelation;
+						}
+					}								
+				}
+			}				
+			return highestCorrelation;
+		}
+		
+ 
 	 
 	/**
 	 * This calculates the mean correlation between 2 sets of gene lists
@@ -282,7 +316,7 @@ public class Cluster implements Runnable{
 	 * @param gl2
 	 * @return
 	 */	 
-	private static float getMeanCorrelation(GeneList[] gl1, GeneList[] gl2){		
+/*	private static float getMeanCorrelation(GeneList[] gl1, GeneList[] gl2){		
 
 		float corrSum = 0;
 		
@@ -308,7 +342,7 @@ public class Cluster implements Runnable{
 		// calculate overall mean correlation
 		return corrSum/gl1.length;
 	}
-	
+*/	
 	public void addProgressListener(ProgressListener pl){
 		//System.out.println("adding app listener in cc");
 		this.appPL = pl;
