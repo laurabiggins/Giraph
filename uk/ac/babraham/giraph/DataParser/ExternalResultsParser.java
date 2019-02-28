@@ -205,10 +205,12 @@ public class ExternalResultsParser implements Cancellable{
 			}
 			
 			if(genesInCategory == null){
-				String msg = "Could not find any genes in category, please check the import options";
+				String msg = "Could not find any genes in category on line " + lineCount + ", skipping this line";
+				System.err.println("line = " + line);
 				progressWarningReceived(new giraphException(msg)); // this doesn't seem to do anything
 				JOptionPane.showMessageDialog(null, msg, "No genes to analyse", JOptionPane.ERROR_MESSAGE);
-				return null;
+				continue;
+				//return null;
 			}
 			// either we're not parsing the list of genes properly, or it may be that some reports contain lists of genes with only one gene in - clearly this should not be included.
 			if(genesInCategory.length < 2){

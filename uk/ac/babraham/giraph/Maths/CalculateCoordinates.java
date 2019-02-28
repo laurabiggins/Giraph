@@ -23,8 +23,6 @@ public class CalculateCoordinates implements Runnable, StopPauseListener {
 	
 	int minNoOfImprovingPositions = 4;
 	
-	//int movementFactor = 8;
-	
 	float coolingOff = (float)1;
 	
 	
@@ -52,9 +50,6 @@ public class CalculateCoordinates implements Runnable, StopPauseListener {
 	 */
 	public void run(){	
 		
-		/** The minimum correlation that we care about - if they're not remotely correlated we don't mind where they are in relation to each other,
-		 * they'll get pulled around enough by others that they are correlated with anyway... not necessarily true. */
-		double minCorrelation = 0.2;
 		
 		/** If two circles are at an optimum distance (within threshold of the diffFactor) then they won't be moved. 
 		 * Do not reduce this number or everything starts going around in circles if there aren't many gene lists. */
@@ -62,9 +57,6 @@ public class CalculateCoordinates implements Runnable, StopPauseListener {
 		
 		/**  x is a count and is used to control how often coordinates are updated etc */
 		int x = 1;
-		
-		/** The circles do not want to be too far away from each other - if they try and get too far then they mess up the screen. */
-		double minDistance = 0.4;
 		
 		/** To work out when to stop calculating */
 		int numberToCheck = validGeneLists.length/2;
@@ -76,13 +68,27 @@ public class CalculateCoordinates implements Runnable, StopPauseListener {
 		
 		float highCorrelationThreshold = (float)0.90;
 		
-		minCorrelation = 0.95;
-		minDistance = 1;
+		/** The minimum correlation that we care about - if they're not remotely correlated we don't mind where they are in relation to each other,
+		 * they'll get pulled around enough by others that they are correlated with anyway... not necessarily true. 
+		 * 
+		 * This starts off high so that we only move the highly correlated circles around, and decreases on subsequent iterations.
+		 * */
+		double minCorrelation = 0.95;
+		
+		
+		/** The circles do not want to be too far away from each other - if they try and get too far then they mess up the screen. 
+		 * This is high initially so that we don't invoke the if statement (later on in this code) while the minCorrelation is really high.  
+		 * if((correlation > minCorrelation) || ((correlation <= minCorrelation)&& (Math.abs(difference)>minDistance))){	
+		 * 		then move circle
+		 * */
+		 
+		 double minDistance = 1;
 		
 		LOOP: while (continueCalculating == true){
 		
+			
 			if(x < 31){
-				minCorrelation = minCorrelation - 0.025;
+				minCorrelation -= 0.025;
 				//minDistance = minDistance - 0.02;
 			}
 			
@@ -93,14 +99,7 @@ public class CalculateCoordinates implements Runnable, StopPauseListener {
 			}
 						
 			float thisTotalDifference = 0;			
-			
-			int case0 = 0;
-			int case1 = 0;
-			int case2 = 0;
-			int case3 = 0;
-			int case4 = 0;
-			int case5 = 0;
-			
+						
 			/**
 			 * calculate overall trajectory for gene list i
 			 */
@@ -124,8 +123,6 @@ public class CalculateCoordinates implements Runnable, StopPauseListener {
 					validGeneLists[i].coordinates().unscaledY  = (float)0.5;
 					System.out.println("unscaledY " + validGeneLists[i].coordinates().unscaledY);
 				}
-				
-				float maxMovement = 0;
 				
 				int highCorrelationCount = 0;
 				
@@ -190,36 +187,26 @@ public class CalculateCoordinates implements Runnable, StopPauseListener {
 					
 					if((highCorrelationCount == 1 && validGeneLists.length > 10) || highCorrelationProportion < 0.001) {
 						highCorrelationMovementFactor = 30 * highestCorrelation;
-						case0 +=1;
+						
 					}
 					else if(highCorrelationProportion < 0.005){
 						highCorrelationMovementFactor = 20 * highestCorrelation;
-						case1 += 1;
+						
 					}
 					else if(highCorrelationProportion < 0.01){
 						highCorrelationMovementFactor = 10 * highestCorrelation;
-						case2 += 1;
+						
 					}
 					
 					else if(highCorrelationProportion < 0.05){
 						highCorrelationMovementFactor = 5 * highestCorrelation;
-						case3 += 1;
+						
 					}
 					else if(highCorrelationProportion < 0.1){
 						highCorrelationMovementFactor = 2 * highestCorrelation;
-						case4 += 1;
+						
 					}
 				}
-				
-				else{
-					case5 += 1;
-				}
-				
-				/*	else if(highCorrelationProportion < 0.001){
-				highCorrelationMovementFactor = 20;
-				case4 += 1;
-			}
-		*/
 				
 				
 				for (int j = 0; j < validGeneLists.length; j++){
@@ -262,20 +249,17 @@ public class CalculateCoordinates implements Runnable, StopPauseListener {
 							 * If difference between actual location and desired location is greater than a set value (diffThreshold) then we want to move.  
 							 * 
 							 */
-							//float movement = (1-correlation)/actualDistance;
 							float movement;
 							
 							if(correlation < 0.1){
 
 								movement = Math.abs((float)0.01*difference*coolingOff);
 							}
-							//else if(correlation > highCorrelation){
 							else if(correlation >= highestCorrelation){	
 								/** when 2 lists are exactly the same, they sometimes struggle to come together completely when there are 
 								lots of categories - they get there eventually but the pull between the 2 isn't strong enough. We can't just
 								up the movement factor or it all goes wrong.
 								 **/
-								//movement = Math.abs(10*difference*coolingOff);
 								movement = Math.abs(highCorrelationMovementFactor*difference*coolingOff);
 							}
 							else{						
@@ -283,12 +267,7 @@ public class CalculateCoordinates implements Runnable, StopPauseListener {
 								movement = Math.abs(correlation*correlation*difference*coolingOff);
 								
 							}								
-							
-							if(movement > maxMovement){
-								maxMovement = movement;
-							}
-							
-							
+						
 						/*	if(validGeneLists[j].getFunctionalSetInfo().description().startsWith("http://www.wikipathways.org/instance/WP458") && validGeneLists[i].getFunctionalSetInfo().description().startsWith("HALLMARK_EPITHELIAL_MESENCHYMAL_TRANSITION")){
 								System.out.println("========================================");
 								System.out.println("description =  " + validGeneLists[i].getFunctionalSetInfo().description());
@@ -407,13 +386,7 @@ public class CalculateCoordinates implements Runnable, StopPauseListener {
 					}					
 				}
 			}
-		/*	System.err.println("case0 = " + case0);
-			System.err.println("case1 = " + case1);
-			System.err.println("case2 = " + case2);
-			System.err.println("case3 = " + case3);
-			System.err.println("case4 = " + case4);
-			System.err.println("case5 = " + case5);
-		*/	x++;		
+			x++;		
 		}		
 	}
 		
