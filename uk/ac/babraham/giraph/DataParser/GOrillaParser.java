@@ -34,9 +34,27 @@ public class GOrillaParser {
 		} else if(trimmedString.startsWith("[") && trimmedString.endsWith("]")){
 			
 			trimmedString = trimmedString.substring(1, trimmedString.length()-1);
-		}	
+		}
+		else if(trimmedString.startsWith("\"[")){
+			
+			trimmedString = trimmedString.substring(1, trimmedString.length());
+		}
+		else if(trimmedString.endsWith("]\"")){
+			
+			trimmedString = trimmedString.substring(0, trimmedString.length()-1);
+		}
+		else if(trimmedString.startsWith("[")){
+			
+			trimmedString = trimmedString.substring(1, trimmedString.length());
+		}
+		else if(trimmedString.endsWith("]")){
+			
+			trimmedString = trimmedString.substring(0, trimmedString.length()-1);
+		}
 		
 		else{
+			
+			System.err.println("didn't find the usual characters at the end of the line");
 			return null;
 		}	
 						
