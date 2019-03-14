@@ -33,9 +33,9 @@ public class ImageSaver {
 		 */
 	public static void saveImage (Component c) throws giraphException {
 		// first we need to set the graphics object in the paint method to not be Graphics2D
-		if(c instanceof GraphPanel){
-			((GraphPanel)c).exportImage = true;
-		}
+	//	if(c instanceof GraphPanel){
+	//		((GraphPanel)c).exportImage = true;
+	//	}
 		
 		JFileChooser chooser = new JFileChooser();
 		chooser.setMultiSelectionEnabled(false);
@@ -61,6 +61,7 @@ public class ImageSaver {
 		else if (filter instanceof SVGFileFilter) {
 			if (! file.getPath().toLowerCase().endsWith(".svg")) {
 				file = new File(file.getPath()+".svg");
+				
 			}			
 		}
 		else {
@@ -87,6 +88,9 @@ public class ImageSaver {
 			}
 			else if (filter instanceof SVGFileFilter) {
 				PrintWriter pr = new PrintWriter(new FileWriter(file));
+				if(c instanceof GraphPanel){
+					((GraphPanel)c).exportImage = true;
+				}
 				pr.print(SVGGenerator.convertToSVG(c));
 				pr.close();
 			}

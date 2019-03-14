@@ -89,10 +89,6 @@ public class GraphPanel extends JPanel implements FilterListener{
 	/** whether the program is currently calculating i.e. whether calculateCoordinates is running - this is controlled by the stop or play buttons on the menu */
 	boolean calculating = false;
 	
-
-
-
-	
 	private float pvalueCutoff;
 	
 	//private int minGenesInCategory;
