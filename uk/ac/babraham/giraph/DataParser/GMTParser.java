@@ -1,6 +1,7 @@
 package uk.ac.babraham.giraph.DataParser;
 
 import java.io.BufferedReader;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
@@ -108,25 +109,26 @@ public class GMTParser implements Runnable{
 		
 		//FileReader reader;
 		
-		//try {
+		try {
 			//reader = new FileReader(filepath);
 			//BufferedReader in = new BufferedReader(reader);
 			
 			BufferedReader in = null;
 			
 			if (filepath.endsWith(".gz")) {
-				//in = new BufferedReader(new InputStreamReader(new GZIPInputStream(new FileInputStream(probeFiles[f]))));	
 				
-				in = new BufferedReader(new InputStreamReader(new GZIPInputStream(ClassLoader.getSystemResourceAsStream(filepath))));	
+				in = new BufferedReader(new InputStreamReader(new GZIPInputStream(new FileInputStream(filepath))));	
+				
+				//in = new BufferedReader(new InputStreamReader(new GZIPInputStream(ClassLoader.getSystemResourceAsStream(filepath))));	
 				
 			}
 			else {
-				in = new BufferedReader(new InputStreamReader(ClassLoader.getSystemResourceAsStream(filepath)));
+				//in = new BufferedReader(new InputStreamReader(ClassLoader.getSystemResourceAsStream(filepath)));
+				in = new BufferedReader(new InputStreamReader(new FileInputStream(filepath)));	
 			}
 			
 			String lineOfFile;	
 					
-			try {
 				int counter = 0;
 																
 				while((lineOfFile = in.readLine()) != null){  

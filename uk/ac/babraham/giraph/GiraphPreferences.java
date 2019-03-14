@@ -23,10 +23,10 @@ public class GiraphPreferences {
 	private File lastUsedSaveLocation = null;		
 	
 	/** The network address from where we can download new genomes */
-	private String gmtDownloadLocation = "http://download.baderlab.org/EM_Genesets/current_release/";
+	//private String gmtDownloadLocation = "http://download.baderlab.org/EM_Genesets/current_release/";
 
-	// http://download.baderlab.org/EM_Genesets/current_release/Human/symbol/Human_GO_AllPathways_no_GO_iea_September_01_2018_symbol.gmt
-	// http://download.baderlab.org/EM_Genesets/current_release/Mouse/symbol/Mouse_GO_AllPathways_no_GO_iea_September_01_2018_symbol.gmt
+	//private String gmtDownloadLocation = "http://download.baderlab.org/EM_Genesets/current_release/Human/symbol/Human_GO_AllPathways_no_GO_iea_September_01_2018_symbol.gmt
+	private String gmtDownloadLocation =  "http://download.baderlab.org/EM_Genesets/current_release/Mouse/symbol/http://download.baderlab.org/EM_Genesets/current_release/Mouse/symbol/Mouse_GO_AllPathways_no_GO_iea_March_01_2019_symbol.gmt";
 	
 	/**
 	 * Sets the save location to record in the preferences file
@@ -94,7 +94,7 @@ public class GiraphPreferences {
 	
 //	public String gmtDownloadLocationHuman = "http://download.baderlab.org/EM_Genesets/current_release/Human/symbol/GO/";
 	
-	private File GMTbase = new File("gmt_GO_files");
+	private File GMTbase = new File("gmt_files");
 	private File geneInfoBase = new File("gene_info_files");
 	
 	//private File geneInfoBase = new File("O:/Training/FAGL/Laura/gene_info_files");

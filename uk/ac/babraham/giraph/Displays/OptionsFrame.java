@@ -120,11 +120,11 @@ public class OptionsFrame extends JFrame implements ActionListener, OptionsListe
 						String  f; 
 						
 						if(optionsPanel.species().startsWith("Human")){
-
+							
 							f = "uk/ac/babraham/giraph/Utilities/Homo_sapiens.GRCh38.92_gene_info.txt.gz";
 						}
 						else if(optionsPanel.species().startsWith("Mouse")){							
-
+							
 							f = "uk/ac/babraham/giraph/Utilities/Mus_musculus.GRCm38.92_gene_info.txt.gz";							
 						}
 						
@@ -216,11 +216,13 @@ public class OptionsFrame extends JFrame implements ActionListener, OptionsListe
 			
 			if(optionsPanel.species().startsWith("Human")){
 				
-				f = "uk/ac/babraham/giraph/Utilities/Human_GO_AllPathways_no_GO_iea_February_01_2019_symbol.gmt.txt.gz";
+				f = optionsPanel.validGeneSetFilepath();
+				//f = "uk/ac/babraham/giraph/Utilities/Human_GO_AllPathways_no_GO_iea_February_01_2019_symbol.gmt.txt.gz";
 			}
 			else if(optionsPanel.species().startsWith("Mouse")){
 				
-				f = "uk/ac/babraham/giraph/Utilities/Mouse_GO_AllPathways_no_GO_iea_February_01_2019_symbol.gmt.txt.gz";
+				f = optionsPanel.validGeneSetFilepath();
+				//f = "uk/ac/babraham/giraph/Utilities/Mouse_GO_AllPathways_no_GO_iea_February_01_2019_symbol.gmt.txt.gz";
 			}
 			//else if(optionsPanel.species().startsWith("C Elegans")){
 				
@@ -243,6 +245,9 @@ public class OptionsFrame extends JFrame implements ActionListener, OptionsListe
 				gmtParser.setMaxGenesInCategory(optionsPanel.maxGenesInSet());
 				gmtParser.setMinGenesInCategory(optionsPanel.minGenesInSet());
 				gmtParser.addOptionsListener(this);
+			}
+			else{
+				System.err.println("Couldn't find gmt file");
 			}
 			
 		} catch (FileNotFoundException e) {

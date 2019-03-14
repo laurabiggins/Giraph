@@ -6,6 +6,7 @@ package uk.ac.babraham.giraph.Displays;
  */
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -20,18 +21,23 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.filechooser.FileFilter;
 
 import uk.ac.babraham.giraph.GiraphPreferences;
 import uk.ac.babraham.giraph.giraphApplication;
 import uk.ac.babraham.giraph.DataParser.GMTParser;
+import uk.ac.babraham.giraph.Network.GMTDownloader;
 import uk.ac.babraham.giraph.Utilities.NumberKeyListener;
 
 public class GeneUploadPanel extends JPanel implements ActionListener, KeyListener {
@@ -58,6 +64,24 @@ public class GeneUploadPanel extends JPanel implements ActionListener, KeyListen
 	
 	/* maximum number of genes in geneset for it to be imported */
 	private int maxGenesInSet = 500;
+	
+	// browse gene set file
+	private JButton browseButton;
+	
+	// download gene set file
+	private JButton downloadButton;
+	
+	// location of gene set file
+	private JTextField geneSetFileLocation;
+	
+	// panel for selecting gene set file
+	private JPanel fileSelectPanel;
+	
+	// button panel for browsing for or downloading the gmt file
+	private JPanel browseDownloadPanel;
+	
+	/* the filepath */
+	private static String validGeneSetFilepath;
 	
 	giraphApplication giraphApp;
 	LoadingMessage loadingMessage;
@@ -133,6 +157,47 @@ public class GeneUploadPanel extends JPanel implements ActionListener, KeyListen
 		sp2.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 		add(sp2, gbc);
 		
+		gbc.gridy++;
+		gbc.gridx=1;
+		
+		add(new JLabel("Gene set file"),gbc);
+		
+		gbc.gridx=2;
+		// panel for selecting gene set file
+		fileSelectPanel = new JPanel();
+		fileSelectPanel.setLayout(new BoxLayout(fileSelectPanel, BoxLayout.Y_AXIS));
+		
+		geneSetFileLocation = new JTextField("            ",20);
+		if(validGeneSetFilepath != null){
+			geneSetFileLocation.setText(validGeneSetFilepath);
+		}			
+		geneSetFileLocation.setEditable(false);
+		fileSelectPanel.add(geneSetFileLocation);						
+		
+		browseDownloadPanel = new JPanel();
+		browseDownloadPanel.setLayout(new BoxLayout(browseDownloadPanel, BoxLayout.X_AXIS));
+		
+		browseDownloadPanel.add(Box.createRigidArea(new Dimension(5,0)));
+		
+		browseButton = new JButton("browse");
+		browseButton.addActionListener(this);
+		browseButton.setActionCommand("browse");
+		
+		browseDownloadPanel.add(browseButton);	
+		
+		browseDownloadPanel.add(Box.createRigidArea(new Dimension(5,0)));
+		
+		downloadButton = new JButton("download");
+		downloadButton.addActionListener(this);
+		downloadButton.setActionCommand("downloadGMT");
+		
+		browseDownloadPanel.add(downloadButton);	
+		
+		fileSelectPanel.add(browseDownloadPanel);
+		
+		add(fileSelectPanel, gbc);
+		
+		
 		
 		gbc.gridy++;
 		gbc.gridx=1;
@@ -172,7 +237,7 @@ public class GeneUploadPanel extends JPanel implements ActionListener, KeyListen
 		minMaxPanel.add(maxGenesInCategory);	
 		
 		add(minMaxPanel, gbc);
-		
+				
 	}
 	
 	public void setTextAreaParameters(JTextArea ta, Font f){
@@ -221,8 +286,9 @@ public class GeneUploadPanel extends JPanel implements ActionListener, KeyListen
 
 	public void actionPerformed(ActionEvent ae) {
 		
+		String action = ae.getActionCommand();
 		
-		if (ae.getActionCommand().equals("selectBackgroundGenes")) {
+		if (action.equals("selectBackgroundGenes")) {
 												
 			if (getBackgroundGenesOption().equals(new String("Enter custom background genes"))){
 				
@@ -236,15 +302,83 @@ public class GeneUploadPanel extends JPanel implements ActionListener, KeyListen
 				backgroundGenesArea.setEditable(false);
 			}
 		}
+	
+		else if (action.equals("browse")) {
+				
+			JFileChooser fc = new JFileChooser(GiraphPreferences.getInstance().getDataLocation());				
+				
+			fc.setMultiSelectionEnabled(false);
+							
+			FileFilter ff = new FileFilter(){	
+				
+				public String getDescription() {
+					return "gmt or text files";
+				}
+			
+				public boolean accept(File f) {
+					if (f.isDirectory() || f.getName().toLowerCase().endsWith(".gmt")|| f.getName().toLowerCase().endsWith(".txt")) {
+						return true;
+					}
+					else {
+						return false;
+					}
+				}				
+			};
+							
+			fc.setFileFilter(ff);				
+			fc.setCurrentDirectory(GiraphPreferences.getInstance().getDataLocation());				
+			fc.showOpenDialog(this);	
+			
+			if(fc.getSelectedFile() == null){
+				validGeneSetFilepath = null;
+				return; // they cancelled
+			}
+			else{				
+				File selectedFile = fc.getSelectedFile();		
+				String filepath = selectedFile.toString();	
+				if ((filepath != null) && (fileValid(filepath))){
+
+					validGeneSetFilepath = filepath;
+					geneSetFileLocation.setText(validGeneSetFilepath);						
+				}
+				else{
+					validGeneSetFilepath = null;
+				}
+			}
+			//optionsChanged();
+		}
+		else if (action.equals("downloadGMT")) {
+			
+			//gmtDownloader GMTDownloader = new GMTDownloader();
+			String homeDir = new GMTDownloader().getHomeDirectory();
+			System.out.println("home directory = " + homeDir);
+		}
 		
 	}
 
+	private boolean fileValid(String filepath){
+		
+		File f = new File(filepath);
+		if(f.exists() && !f.isDirectory()) {
+			return true;
+		}
+		else{
+			JOptionPane.showMessageDialog(giraphApplication.getInstance(), "The gene set information file couldn't be found, please find a valid file to load.", "Couldn't load gene set file", JOptionPane.ERROR_MESSAGE);
+			return false;
+		}
+	}
+	
 	// use this method to show which genes are not found in the background set
 	public String[] identifyUnmatchedGenes(){
 		
 		return null;
 	}
+	
+	public String validGeneSetFilepath(){
 		
+		return validGeneSetFilepath;
+	}
+	
 	/**
 	 * if the file starts with Mouse or Human and ends with text, accept.
 	 * not bothering about the latest date for now
@@ -346,6 +480,44 @@ public class GeneUploadPanel extends JPanel implements ActionListener, KeyListen
 		else {
 			throw new IllegalStateException("Unexpected text field "+f+" sending data to keylistener in differences filter");
 		}
-	}			
+	}
+	
+/*	public boolean isReady() {
+		
+		if (fromStores.length == 1 && toStores.length == 1 && pValueLimit != null && fromStores[0]!=toStores[0]) {
+						
+			if(optionsPanel.geneSetsFileRadioButton.isSelected()){ 
+					
+				if(validGeneSetFilepath == null){
+					return false;
+				}
+				else{
+			
+					if(fileValid(validGeneSetFilepath)){
+						
+						if(minGenesInSet < maxGenesInSet){						
+							System.err.println("validGeneSetFilepath " + validGeneSetFilepath);
+							return true;
+						}
+						else{
+//							JOptionPane.showMessageDialog(SeqMonkApplication.getInstance(), "Minimum number of genes cannot be less than maximum.", "Adjust min/max genes", JOptionPane.ERROR_MESSAGE);
+							return false;
+						}						
+					}
+					else{
+//						JOptionPane.showMessageDialog(SeqMonkApplication.getInstance(), "A valid gene set file needs to be selected.", "Gene set file required", JOptionPane.ERROR_MESSAGE);
+						return false;
+					}
+				}	
+			}			
+			else{ 			
+				return true;
+			}			
+		}
+		else{
+			return false;
+		}	
+	}
+*/	
 }		
 
