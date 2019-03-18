@@ -19,7 +19,7 @@ public class GeneNameParser implements Runnable{
 	private GeneCollection genes;
 	
 	// The background genes to check the query/input genes against
-	private GeneCollection backgroundGenes; 
+	protected GeneCollection backgroundGenes; 
 	
 	// The query genes
 	private String listOfGeneNames;
@@ -35,6 +35,16 @@ public class GeneNameParser implements Runnable{
 		t.start();
 	}
 
+	// for parsing background genes
+	public GeneNameParser(String listOfGeneNames){
+
+		this.listOfGeneNames = listOfGeneNames;
+		this.backgroundGenes = new GeneCollection();
+		Thread t = new Thread(this);
+		t.start();
+	}
+
+	
 	public void run(){
 		
 		parseGenes();
@@ -91,11 +101,15 @@ public class GeneNameParser implements Runnable{
 		
 	}
 	
+	public GeneCollection backgroundGeneCollection(){
+		return backgroundGenes;
+	}
+	
 	public GeneCollection geneCollection(){
 		return genes;
 	}
 	
-	private static String [] splitList(String listOfGeneNames){
+	protected static String [] splitList(String listOfGeneNames){
 		
 		if(listOfGeneNames.contains("\n")){
 			System.err.println("splitting by \n");
@@ -120,7 +134,7 @@ public class GeneNameParser implements Runnable{
 		}		
 	}
 	
-	private String cleanGene(String str) {
+	protected String cleanGene(String str) {
 		
 		String str1 = str.replaceAll("\t", "");
 		String str2 = str1.replaceAll("\\s+", "");
