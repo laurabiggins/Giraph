@@ -351,7 +351,6 @@ public class GeneUploadPanel extends JPanel implements ActionListener, KeyListen
 			
 			//gmtDownloader GMTDownloader = new GMTDownloader();
 			String homeDir = new GMTDownloader().getHomeDirectory();
-			new GMTDownloader().downloadFile();
 			System.out.println("home directory = " + homeDir);
 		}
 		

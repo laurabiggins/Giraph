@@ -29,20 +29,6 @@ import uk.ac.babraham.giraph.DataTypes.PValue;
 import uk.ac.babraham.giraph.Maths.FishersExactTest;
 import uk.ac.babraham.giraph.Maths.MultipleTestingCorrection;
 
-
-/* TODO: GMT downloader, GeneUploadPanel, OptionsFrame
- * 
- * clean up so that we're not using the gene info files, then maybe restructure the gene upload panel/options frame
- * 
- * get rid of genomic background genes
- * parse background genes first, then provide info if genes are not found in background set
- * 
- * downloading GMT
- * 		search for gmt file in home directory - GMT_files -> Human/Mouse
- * 		in GMT downloader make these directories
- * 	at some point check for updates but not yet
- */
-
 public class OptionsFrame extends JFrame implements ActionListener, OptionsListener {
 	
 	JButton submitButton;
@@ -53,7 +39,7 @@ public class OptionsFrame extends JFrame implements ActionListener, OptionsListe
 	GMTParser gmtParser;
 	
 	GeneCollection queryGenes;
-	//GeneCollection genomicBackgroundGenes;
+	GeneCollection genomicBackgroundGenes;
 	GeneCollection customBackgroundGenes = null;
 	GeneListCollection geneListCollection;
 	private boolean usingCustomBackground = false;
@@ -125,19 +111,9 @@ public class OptionsFrame extends JFrame implements ActionListener, OptionsListe
 				// checking that the query and background genes look ok 
 				//if(optionsPanel.checkValidityOfGenes() == true){
 					
-				giraphApplication.getInstance().removeOldData();
-				
-				if(optionsPanel.getBackgroundGenesOption().equals("Enter custom background genes")){
+					giraphApplication.getInstance().removeOldData();
 					
-					//customBackgroundGeneParser = new CustomBackgroundGeneParser(optionsPanel.backgroundGenes(), genomicBackgroundGenes);
-					customBackgroundGeneParser = new CustomBackgroundGeneParser(optionsPanel.backgroundGenes());
-					customBackgroundGeneParser.addOptionsListener(this);
-					usingCustomBackground = true;
-				}
-				
-				
-				
-					/*try {
+					try {
 						File dir = GiraphPreferences.getInstance().getGeneInfobase();
 							
 						//File f = findFile(dir, optionsPanel.species());
@@ -174,7 +150,7 @@ public class OptionsFrame extends JFrame implements ActionListener, OptionsListe
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
-					*/
+					
 					// this has to be done before the query genes can be loaded
 					//optionsPanel.loadFunctionalInfo(gmtParser);
 					setVisible(false);

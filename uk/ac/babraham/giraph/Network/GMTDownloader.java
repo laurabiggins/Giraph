@@ -29,23 +29,18 @@ public class GMTDownloader {
 			
 			DataInputStream d = new DataInputStream(new BufferedInputStream(connection.getInputStream()));
 	
-			byte [] data = new byte[2000000000]; // This was used for a version number for SeqMonk - is it still appropriate to use for a large file? 
+			byte [] data = new byte[255]; // A version number should never be more than 255 bytes
 			int bytesRead = d.read(data);
 			
 			byte [] actualData = new byte[bytesRead];
-			System.err.println("bytesRead " + bytesRead);
 			for (int i=0;i<bytesRead;i++) {
 				actualData[i] = data[i];
 			}
 			
-			String filename = new String(getHomeDirectory() + "/downloadedGMT.gmt");
+			String filename = new String(getHomeDirectory() + "downloadedGMT.gmt");
 			FileOutputStream outputStream = new FileOutputStream(filename);
 		   // byte[] strToBytes = str.getBytes();
 		    //outputStream.write(strToBytes);
-			System.err.println("trying to write to " + filename);
-			String str = "hello";
-			
-			outputStream.write(str.getBytes());
 		    outputStream.write(actualData);
 		 
 		    outputStream.close();
