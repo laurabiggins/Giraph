@@ -1,9 +1,11 @@
 package uk.ac.babraham.giraph.Network;
 
 import java.io.BufferedInputStream;
+import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
 
@@ -27,10 +29,18 @@ public class GMTDownloader {
 			URLConnection connection = downloadURL.openConnection();
 			connection.setUseCaches(false);
 			
-			DataInputStream d = new DataInputStream(new BufferedInputStream(connection.getInputStream()));
+//			DataInputStream d = new DataInputStream(new BufferedInputStream(connection.getInputStream()));
 	
-			byte [] data = new byte[2000000000]; // This was used for a version number for SeqMonk - is it still appropriate to use for a large file? 
-			int bytesRead = d.read(data);
+			
+			
+			BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+			
+			String line;
+			
+			while ((line = br.readLine()) != null) {
+				
+			}
+			
 			
 			byte [] actualData = new byte[bytesRead];
 			System.err.println("bytesRead " + bytesRead);
