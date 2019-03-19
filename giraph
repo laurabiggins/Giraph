@@ -9,16 +9,16 @@ use IPC::Open3;
 # Check to see if they've mistakenly downloaded the source distribution
 # since several people have made this mistake
 
-if (-e "$RealBin/uk/ac/babraham/SeqMonk/SeqMonkApplication.java") {
-	die "This is the source distribution of SeqMonk.  You need to get the compiled version if you want to run the program\n";
+if (-e "$RealBin/uk/ac/babraham/giraph/giraphApplication.java") {
+	die "This is the source distribution of Giraph.  You need to get the compiled version if you want to run the program\n";
 }
 
 
 if ($ENV{CLASSPATH}) {
-	$ENV{CLASSPATH} .= ":$RealBin:$RealBin/sam-1.32.jar:$RealBin/Jama-1.0.2.jar:$RealBin/commons-math3-3.5.jar";
+	$ENV{CLASSPATH} .= ":$RealBin:$RealBin/commons-math3-3.5.jar";
 }
 else {
-	$ENV{CLASSPATH} = "$RealBin:$RealBin/sam-1.32.jar:$RealBin/Jama-1.0.2.jar:$RealBin/commons-math3-3.5.jar";
+	$ENV{CLASSPATH} = "$RealBin:$RealBin/commons-math3-3.5.jar";
 }
 
 # If we're on OSX and launched via an app bundle we get a -psn argument passed, which we don't
@@ -129,9 +129,9 @@ else {
 	delete $ENV{LANG};
 }
 
-warn "Command is: $java_exe @java_args uk.ac.babraham.SeqMonk.SeqMonkApplication $file\n";
+warn "Command is: $java_exe @java_args uk.ac.babraham.giraph.giraphApplication $file\n";
 
-exec $java_exe,@java_args, "uk.ac.babraham.SeqMonk.SeqMonkApplication", $file;
+exec $java_exe,@java_args, "uk.ac.babraham.giraph.giraphApplication", $file;
 
 sub print_error {
 	
@@ -151,7 +151,7 @@ sub correct_memory {
 	
 	my ($requested_memory,$java_exe) = @_;
 	
-	my $actual_memory = `"$java_exe" -Xmx${requested_memory}m uk.ac.babraham.SeqMonk.Utilities.ReportMemoryUsage`;
+	my $actual_memory = `"$java_exe" -Xmx${requested_memory}m uk.ac.babraham.giraph.Utilities.ReportMemoryUsage`;
 	
 	if ($actual_memory =~ /^(\d+)/) {
 		$actual_memory = $1;
@@ -182,16 +182,7 @@ sub determine_optimal_memory {
 	close IN;
 	while (<OUT>) {
 		if (/64-Bit/) {
-			$max_memory = 10240;
-			
-			# If they have a 64 bit OS then they might have overridden the max memory
-			# limit in their preferences and we'll honour this if they have.
-			
-			my $prefs_max = get_prefs_max();
-			if ($prefs_max and $prefs_max > $max_memory) {
-				$max_memory = $prefs_max;
-			}
-			
+			$max_memory = 4096;			
 		}
 	}
 	close OUT;
@@ -233,41 +224,9 @@ sub determine_optimal_memory {
 		return $max_memory;
 	}
 	
-	warn "Using $physical MB of RAM to launch seqmonk\n";
+	warn "Using $physical MB of RAM to launch giraph\n";
 	return $physical;
 	
-}
-
-sub get_prefs_max () {
-
-	# We need to get the location of the seqmonk prefs file and see if it contains
-	# a memory setting.
-	
-	my $prefs_file = `java uk.ac.babraham.SeqMonk.Utilities.PrefsPrinter`;
-	
-	$prefs_file =~ s/[\r\n]+//g;
-	$prefs_file =~ s/\\/\//g;
-	
-	warn "Prefs file is at: $prefs_file\n";
-	
-	unless (-e $prefs_file) {
-		return 0;
-	}
-	
-	open (IN,$prefs_file) or do {
-		warn "ERROR: Can't open prefs file $prefs_file: $!";
-		return(0);
-	};
-	
-	while (<IN>) {
-		if (/Memory\t(\d+)/) {
-			warn "Set memory to $1 from prefs file\n";
-			return ($1);
-		}	
-	}
-	
-	warn "WARNING: No memory setting found in prefs file\n";
-
 }
 
 
@@ -386,29 +345,28 @@ sub get_windows_memory {
 
 __DATA__
 
-            SeqMonk - A high throughput sequence visualisation tool
+       Giraph - A visualisation tool for gene set enrichment results
 
 SYNOPSIS
 
-	seqmonk [-m 4000]
+	giraph [-m 2000]
 
 
 DESCRIPTION
 
-	SeqMonk is a graphical application for the visualisation and analysis of
-	high throughput mapped read data.
+	Giraph is a program to graphically represent the results of a gene set enrichment
+	search.
     
     The options for the program as as follows:
     
     -h --help       Print this help file and exit
     
-    -m --memory     [Deprecated] Set the starting memory allocation in megabytes. 
-    				This should now be configured under Edit > Preferences > Memory
-    				within the program.
+    -m --memory     [optional] Set the starting memory allocation in megabytes. 
+    				
                         
 BUGS
 
-    Any bugs in SeqMonk should be reported either to simon.andrews@babraham.ac.uk
-    or in https://github.com/s-andrews/seqmonk/issues
+    Any bugs in Giraph should be reported either to laura.biggins@babraham.ac.uk
+    or in https://github.com/laurabiggins/giraph/issues
                    
     
