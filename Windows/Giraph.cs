@@ -96,10 +96,10 @@ namespace SeqMonkLauncher
 
             if (memoryToRequest == 0)
             {
-                MessageBox.Show("SeqMonk process failed to start.  Did you move giraph.exe out of the Giraph directory?", "Failed to launch Giraph", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                MessageBox.Show("Giraph process failed to start.  Did you move giraph.exe out of the Giraph directory?", "Failed to launch Giraph", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                 Environment.Exit(1);
             }
-
+            
             Console.Write("Accounting for VM oddities, amount of memory to request is ");
             Console.Write(memoryToRequest);
             Console.WriteLine("");
@@ -130,10 +130,10 @@ namespace SeqMonkLauncher
 					filename = args[0];
 				}
 
-                string finalCommand = "\""+javaPath+"\" -cp \"" + path + ";" + path + "\\commons-math3-3.5.jar\" -Xss4m -Xmx" + memoryToRequest + "m uk.ac.babraham.Giraph.GiraphApplication \""+filename+"\"";
+                string finalCommand = "\""+javaPath+"\" -cp \"" + path + ";" + path + "\\commons-math3-3.5.jar\" -Xss4m -Xmx" + memoryToRequest + "m uk.ac.babraham.giraph.giraphApplication \""+filename+"\"";
 
                 Console.WriteLine("Final command is " + finalCommand);
-                System.Diagnostics.ProcessStartInfo procStartInfo = new System.Diagnostics.ProcessStartInfo(javaPath, "-cp \"" + path + ";" + path + "\\commons-math3-3.5.jar\" -Xss4m -Xmx" + memoryToRequest + "m uk.ac.babraham.Giraph.GiraphApplication \"" + filename + "\"");
+                System.Diagnostics.ProcessStartInfo procStartInfo = new System.Diagnostics.ProcessStartInfo(javaPath, "-cp \"" + path + ";" + path + "\\commons-math3-3.5.jar\" -Xss4m -Xmx" + memoryToRequest + "m uk.ac.babraham.giraph.giraphApplication \"" + filename + "\"");
 
                 procStartInfo.RedirectStandardOutput = true;
                 procStartInfo.UseShellExecute = false;
@@ -194,7 +194,7 @@ namespace SeqMonkLauncher
                 string finalCommand = "\""+javaPath+"\" -cp \"" + path + "\" -Xmx" + currentRequestAmount + "m uk.ac.babraham.Giraph.Utilities.ReportMemoryUsage";
 
                 Console.WriteLine("Memcheck command is " + finalCommand);
-                string parms = "-cp \"" + path + "\" -Xmx" + currentRequestAmount + "m uk.ac.babraham.SeqMonk.Utilities.ReportMemoryUsage";
+                string parms = "-cp \"" + path + "\" -Xmx" + currentRequestAmount + "m uk.ac.babraham.giraph.Utilities.ReportMemoryUsage";
                 string output = "";
                 string error = string.Empty;
 
@@ -270,7 +270,7 @@ namespace SeqMonkLauncher
         {
             string javaPath = @"java.exe";
 
-            // Check for an embedded jre shipped with seqmonk
+            // Check for an embedded jre shipped with giraph
             string localPath = AppDomain.CurrentDomain.BaseDirectory + "jre\\bin\\java.exe";
             if (File.Exists(localPath))
             {
