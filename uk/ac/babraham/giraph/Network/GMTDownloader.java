@@ -29,11 +29,19 @@ public class GMTDownloader {
 			URLConnection connection = downloadURL.openConnection();
 			connection.setUseCaches(false);
 			
-//			DataInputStream d = new DataInputStream(new BufferedInputStream(connection.getInputStream()));
-	
+			DataInputStream d = new DataInputStream(new BufferedInputStream(connection.getInputStream()));
+			byte [] data = new byte[2000000000]; // This was used for a version number for SeqMonk - is it still appropriate to use for a large file? 
+			int bytesRead = d.read(data);
+
+			byte [] actualData = new byte[bytesRead];
+			System.err.println("bytesRead " + bytesRead);
+			for (int i=0;i<bytesRead;i++) {
+				actualData[i] = data[i];
+			}
 			
 			
-			BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+/*			Actual code that we want to use that Simon started writing
+ * 			BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
 			
 			String line;
 			
@@ -47,7 +55,7 @@ public class GMTDownloader {
 			for (int i=0;i<bytesRead;i++) {
 				actualData[i] = data[i];
 			}
-			
+*/			
 			String filename = new String(getHomeDirectory() + "/downloadedGMT.gmt");
 			FileOutputStream outputStream = new FileOutputStream(filename);
 		   // byte[] strToBytes = str.getBytes();

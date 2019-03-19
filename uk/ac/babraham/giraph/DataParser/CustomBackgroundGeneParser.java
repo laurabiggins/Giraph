@@ -13,21 +13,21 @@ import uk.ac.babraham.giraph.DataTypes.GeneCollection;
 
 public class CustomBackgroundGeneParser extends GeneNameParser{
 	
-	/*public CustomBackgroundGeneParser(String listOfGeneNames, GeneCollection genomicBackgroundGenes) {
+	public CustomBackgroundGeneParser(String listOfGeneNames, GeneCollection genomicBackgroundGenes) {
 		
 		super(listOfGeneNames, genomicBackgroundGenes);		
 	}
-	*/
 	
-	private String listOfGeneNames;
 	
-	public CustomBackgroundGeneParser(String listOfGeneNames) {
+	//private String listOfGeneNames;
+	
+	/*public CustomBackgroundGeneParser(String listOfGeneNames) {
 		
 		super(listOfGeneNames);
 
 	}
 	
-	public void parseGenes() {
+/*	public void parseGenes() {
 		
 		if(splitList(listOfGeneNames) == null){
 			String msg =  ("Something went wrong when trying to parse the genes.");
@@ -47,7 +47,7 @@ public class CustomBackgroundGeneParser extends GeneNameParser{
 			genesImported();
 		}	
 	}
-	
+*/	
 	protected void genesImported(){
 		ol.customBackgroundGenesImported();
 	}

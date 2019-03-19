@@ -28,6 +28,13 @@ public class GeneCollection {
 		else return false;
 	}
 	
+	public boolean doesNotContain(String geneSymbol){
+		if(genes.containsKey(geneSymbol)){
+			return false;
+		}
+		else return true;
+	}
+	
 	public Gene getGene(String geneSymbol){
 		
 		if (genes.containsKey(geneSymbol)){

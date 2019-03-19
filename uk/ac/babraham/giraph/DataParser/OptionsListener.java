@@ -6,13 +6,11 @@ public interface OptionsListener {
 	
 	
 	public void gmtFileParsed();
-
-	//public void queryGenesAnalysed(GeneList [] gl);
-	
-	public void geneInfoFileParsed();
 	
 	public void queryGenesImported();
 	
 	public void customBackgroundGenesImported();
+	
+	public void genomicBackgroundGenesImported();
 	
 }

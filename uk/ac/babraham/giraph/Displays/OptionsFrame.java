@@ -16,8 +16,8 @@ import javax.swing.JPanel;
 import uk.ac.babraham.giraph.GiraphPreferences;
 import uk.ac.babraham.giraph.giraphApplication;
 import uk.ac.babraham.giraph.DataParser.CustomBackgroundGeneParser;
+import uk.ac.babraham.giraph.DataParser.GMTGeneParser;
 import uk.ac.babraham.giraph.DataParser.GMTParser;
-import uk.ac.babraham.giraph.DataParser.GeneInfoParser;
 import uk.ac.babraham.giraph.DataParser.OptionsListener;
 import uk.ac.babraham.giraph.DataParser.GeneNameParser;
 import uk.ac.babraham.giraph.DataParser.ProgressListener;
@@ -47,12 +47,15 @@ public class OptionsFrame extends JFrame implements ActionListener, OptionsListe
 	
 	JButton submitButton;
 	GeneUploadPanel optionsPanel;
-	GeneInfoParser geneInfoParser;
 	GeneNameParser queryGeneParser;
 	GeneNameParser customBackgroundGeneParser = null;
 	GMTParser gmtParser;
+	// just for parsing the genes from the GMT file
+	GMTGeneParser gmtGeneParser;
 	
 	GeneCollection queryGenes;
+	
+	// the set of genes from the gmt file
 	//GeneCollection genomicBackgroundGenes;
 	GeneCollection customBackgroundGenes = null;
 	GeneListCollection geneListCollection;
@@ -127,16 +130,89 @@ public class OptionsFrame extends JFrame implements ActionListener, OptionsListe
 					
 				giraphApplication.getInstance().removeOldData();
 				
-				if(optionsPanel.getBackgroundGenesOption().equals("Enter custom background genes")){
+				if(optionsPanel.validGeneSetFilepath() != null) {
 					
-					//customBackgroundGeneParser = new CustomBackgroundGeneParser(optionsPanel.backgroundGenes(), genomicBackgroundGenes);
-					customBackgroundGeneParser = new CustomBackgroundGeneParser(optionsPanel.backgroundGenes());
-					customBackgroundGeneParser.addOptionsListener(this);
-					usingCustomBackground = true;
+				// parse the genes from the gmt file so that we've got a genomic background set to work from
+					gmtGeneParser = new GMTGeneParser(optionsPanel.validGeneSetFilepath());
+					gmtGeneParser.addOptionsListener(this);
+					
+					
 				}
+			}	
+			setVisible(false);
+			dispose();	
+		}
+	}	
+			
+	public void genomicBackgroundGenesImported() {
+		
+		if(gmtGeneParser.getAllGMTgenes() != null) {
+		
+			System.err.println("imported genes from gmt file: " + gmtGeneParser.getAllGMTgenes().getAllGenes().length);
+			
+			if(optionsPanel.getBackgroundGenesOption().equals("Enter custom background genes")){
 				
-				
-				
+				loadCustomBackgroundGenes();			
+			}
+			// use GMT genes as background
+			else {
+				loadQueryGenes(optionsPanel.queryGenes(), gmtGeneParser.getAllGMTgenes());
+			}
+		}
+		else {
+			JOptionPane.showMessageDialog(this, "couldn't parse genes from GMT file", "No genes to analyse", JOptionPane.ERROR_MESSAGE);
+		}
+			
+	}		
+	
+	public void loadCustomBackgroundGenes() {
+		
+		customBackgroundGeneParser = new CustomBackgroundGeneParser(optionsPanel.backgroundGenes(), gmtGeneParser.getAllGMTgenes());
+		customBackgroundGeneParser.addOptionsListener(this);
+		usingCustomBackground = true;
+	}
+	
+	// If customBackgroundGenes have been used then load the query genes using these as the background
+	public void customBackgroundGenesImported(){
+		
+		if(customBackgroundGeneParser.geneCollection() != null) {
+			
+			loadQueryGenes(optionsPanel.queryGenes(), customBackgroundGeneParser.geneCollection());
+		}
+		else {
+			
+			JOptionPane.showMessageDialog(this, "couldn't load custom background genes", "No genes to analyse", JOptionPane.ERROR_MESSAGE);
+		}
+	}
+	
+	public void loadQueryGenes(String queryGenes, GeneCollection backgroundGenes) {
+		
+		queryGeneParser = new QueryGeneParser(queryGenes, backgroundGenes);
+		queryGeneParser.addOptionsListener(this);
+		
+	}
+	
+	public void queryGenesImported(){
+		
+		if(queryGeneParser.geneCollection() != null) {
+			queryGenes = queryGeneParser.geneCollection();
+			
+			if(usingCustomBackground) {
+			
+				gmtParser = new GMTParser(optionsPanel.validGeneSetFilepath(), queryGenes, customBackgroundGenes);
+			}
+			else {
+				gmtParser = new GMTParser(optionsPanel.validGeneSetFilepath(), queryGenes, gmtGeneParser.getAllGMTgenes());
+			}
+			gmtParser.setMaxGenesInCategory(optionsPanel.maxGenesInSet());
+			gmtParser.setMinGenesInCategory(optionsPanel.minGenesInSet());
+			gmtParser.addOptionsListener(this);
+		}
+		else {
+			JOptionPane.showMessageDialog(this, "couldn't load query genes", "No genes to analyse", JOptionPane.ERROR_MESSAGE);
+		}
+	}
+	
 					/*try {
 						File dir = GiraphPreferences.getInstance().getGeneInfobase();
 							
@@ -177,14 +253,14 @@ public class OptionsFrame extends JFrame implements ActionListener, OptionsListe
 					*/
 					// this has to be done before the query genes can be loaded
 					//optionsPanel.loadFunctionalInfo(gmtParser);
-					setVisible(false);
-					dispose();					
+				//	setVisible(false);
+				//	dispose();					
 				//}	
-			}	
+	/*		}	
 		}		
 	}
 	
-	public void geneInfoFileParsed(){
+/*	public void geneInfoFileParsed(){
 		
 		if ((optionsPanel.loadingMessageThread() != null) && (optionsPanel.loadingMessageThread().isAlive())){
 			optionsPanel.loadingMessageThread().interrupt();
@@ -196,11 +272,12 @@ public class OptionsFrame extends JFrame implements ActionListener, OptionsListe
 		// next we want to parse the custom background genes if they're being used.
 		if(optionsPanel.getBackgroundGenesOption().equals("Enter custom background genes")){
 			
-			customBackgroundGeneParser = new CustomBackgroundGeneParser(optionsPanel.backgroundGenes(), genomicBackgroundGenes);
+			customBackgroundGeneParser = new CustomBackgroundGeneParser(optionsPanel.backgroundGenes());//, genomicBackgroundGenes);
 			customBackgroundGeneParser.addOptionsListener(this);
 			usingCustomBackground = true;
 		}
 		
+		// if not using custom background genes then go straight into loading the query genes, using the genomic background as the background 
 		// if not using custom background genes then go straight into loading the query genes, using the genomic background as the background 
 		else{
 			// set the background genes
@@ -210,24 +287,8 @@ public class OptionsFrame extends JFrame implements ActionListener, OptionsListe
 			queryGeneParser.addOptionsListener(this);
 		}	
 	}
-	
-	// If customBackgroundGenes have been used then load the query genes using these as the background
-	public void customBackgroundGenesImported(){
-		
-		customBackgroundGenes = customBackgroundGeneParser.geneCollection();
-		
-		queryGeneParser = new QueryGeneParser(optionsPanel.queryGenes(), customBackgroundGenes);
-		queryGeneParser.addOptionsListener(this);
-	}
-	
-	
-	public void queryGenesImported(){
-		
-		queryGenes = queryGeneParser.geneCollection();
-		parseGMTFile();
-	}
-	
-	private void parseGMTFile(){
+*/	
+/*	private void parseGMTFile(){
 		
 		System.out.println("now about to try and parse gmt file");
 				
@@ -279,7 +340,7 @@ public class OptionsFrame extends JFrame implements ActionListener, OptionsListe
 			e.printStackTrace();
 		}
 	}	
-	
+*/	
 /*	public static File findFile(File dir, String species) {
 		
 		if(species.startsWith("Human")){
@@ -311,8 +372,13 @@ public class OptionsFrame extends JFrame implements ActionListener, OptionsListe
 		
 	}
 */		
-		
+	
+	
+	
 	// When all the functional info has been loaded, the rest of the options can be parsed. 
+	/**
+	 * We're going to get this when we've just parsed the genes and when we've parsed the whole file which is icky
+	 */
 	public void gmtFileParsed(){
 		
 		if ((optionsPanel.loadingMessageThread() != null) && (optionsPanel.loadingMessageThread().isAlive())){
@@ -333,7 +399,7 @@ public class OptionsFrame extends JFrame implements ActionListener, OptionsListe
 	private void pValuesCalculated(){
 		
 		// let the progress listener know that the parsing is complete
-		pl.inputFileParsingComplete(geneListCollection, queryGenes, customBackgroundGenes, genomicBackgroundGenes);
+		pl.inputFileParsingComplete(geneListCollection, queryGenes, customBackgroundGenes, gmtGeneParser.getAllGMTgenes());
 		
 		setFilters();
 		
@@ -363,7 +429,7 @@ public class OptionsFrame extends JFrame implements ActionListener, OptionsListe
 			noOfBackgroundGenes = customBackgroundGenes.getAllGenes().length;
 		}
 		else{
-			noOfBackgroundGenes = genomicBackgroundGenes.getAllGenes().length;
+			noOfBackgroundGenes = gmtGeneParser.getAllGMTgenes().getAllGenes().length;
 		}
 		
 		System.err.println("Performing Fisher's Exact tests (from options frame)....");
