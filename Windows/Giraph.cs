@@ -7,7 +7,7 @@ using System.Threading;
 using System.Windows.Forms;
 using System.IO;
 
-// Compile command is csc /reference:Microsoft.VisualBasic.dll /win32icon:seqmonk.ico SeqMonk.cs
+// Compile command is csc /reference:Microsoft.VisualBasic.dll /win32icon:giraph.ico Giraph.cs
 
 namespace SeqMonkLauncher
 {
@@ -22,7 +22,7 @@ namespace SeqMonkLauncher
 
             if (!(javaPath.Contains("java")))
             {
-                MessageBox.Show("Couldn't find java on your system", "Failed to launch SeqMonk", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                MessageBox.Show("Couldn't find java on your system", "Failed to launch Giraph", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                 Environment.Exit(1);
             }
 
@@ -40,7 +40,7 @@ namespace SeqMonkLauncher
 
             if (!(javaVersion.Contains("Java") || javaVersion.Contains("OpenJDK")))
             {
-                MessageBox.Show("Got an unexpected output from running java -version. Going for it anyway...", "Failed to launch SeqMonk", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                MessageBox.Show("Got an unexpected output from running java -version. Going for it anyway...", "Problem launching Giraph", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
             }
 
             int memoryCeiling = 1300;
@@ -50,15 +50,9 @@ namespace SeqMonkLauncher
 
             if (javaVersion.Contains("64-Bit"))
             {
-                memoryCeiling = 10240;
-                int manualMemoryCeiling = getManualMemoryCeiling(javaPath);
+                memoryCeiling = 4096;
 
-                if (manualMemoryCeiling > memoryCeiling)
-                {
-                    memoryCeiling = manualMemoryCeiling;
-                }
-
-                Console.WriteLine("Found 64-bit JVM, setting memory ceiling to 8192m");
+                Console.WriteLine("Found 64-bit JVM, setting memory ceiling to 4096m");
             }
             else
             {
@@ -81,9 +75,9 @@ namespace SeqMonkLauncher
 
             Console.WriteLine("Physical memory installed is " + physicalMemory);
 
-            if (physicalMemory < 1000)
+            if (physicalMemory < 1024)
             {
-                MessageBox.Show("Not enough memory to run SeqMonk (you need at least 1GB)", "Failed to launch SeqMonk", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                MessageBox.Show("Not enough memory to run Giraph (you need at least 1GB)", "Failed to launch Giraph", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                 Environment.Exit(1);
             }
 
@@ -102,7 +96,7 @@ namespace SeqMonkLauncher
 
             if (memoryToRequest == 0)
             {
-                MessageBox.Show("SeqMonk process failed to start.  Did you move seqmonk.exe out of the SeqMonk directory?", "Failed to launch SeqMonk", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                MessageBox.Show("SeqMonk process failed to start.  Did you move giraph.exe out of the Giraph directory?", "Failed to launch Giraph", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                 Environment.Exit(1);
             }
 
@@ -136,10 +130,10 @@ namespace SeqMonkLauncher
 					filename = args[0];
 				}
 
-                string finalCommand = "\""+javaPath+"\" -cp \"" + path + ";" + path + "\\Jama-1.0.2.jar" + ";" + path + "\\commons-math3-3.5.jar" + ";" + path + "\\sam-1.32.jar\" -Xss4m -Xmx" + memoryToRequest + "m uk.ac.babraham.SeqMonk.SeqMonkApplication \""+filename+"\"";
+                string finalCommand = "\""+javaPath+"\" -cp \"" + path + ";" + path + "\\commons-math3-3.5.jar\" -Xss4m -Xmx" + memoryToRequest + "m uk.ac.babraham.Giraph.GiraphApplication \""+filename+"\"";
 
                 Console.WriteLine("Final command is " + finalCommand);
-                System.Diagnostics.ProcessStartInfo procStartInfo = new System.Diagnostics.ProcessStartInfo("java", "-cp \"" + path + ";" + path + "\\Jama-1.0.2.jar" + ";" + path + "\\commons-math3-3.5.jar" + ";" + path + "\\sam-1.32.jar\" -Xmx" + memoryToRequest + "m uk.ac.babraham.SeqMonk.SeqMonkApplication \""+filename+"\"");
+                System.Diagnostics.ProcessStartInfo procStartInfo = new System.Diagnostics.ProcessStartInfo(javaPath, "-cp \"" + path + ";" + path + "\\commons-math3-3.5.jar\" -Xss4m -Xmx" + memoryToRequest + "m uk.ac.babraham.Giraph.GiraphApplication \"" + filename + "\"");
 
                 procStartInfo.RedirectStandardOutput = true;
                 procStartInfo.UseShellExecute = false;
@@ -197,14 +191,14 @@ namespace SeqMonkLauncher
             {
 
 
-                string finalCommand = "\""+javaPath+"\" -cp \"" + path + "\" -Xmx" + currentRequestAmount + "m uk.ac.babraham.SeqMonk.Utilities.ReportMemoryUsage";
+                string finalCommand = "\""+javaPath+"\" -cp \"" + path + "\" -Xmx" + currentRequestAmount + "m uk.ac.babraham.Giraph.Utilities.ReportMemoryUsage";
 
                 Console.WriteLine("Memcheck command is " + finalCommand);
                 string parms = "-cp \"" + path + "\" -Xmx" + currentRequestAmount + "m uk.ac.babraham.SeqMonk.Utilities.ReportMemoryUsage";
                 string output = "";
                 string error = string.Empty;
 
-                ProcessStartInfo psi = new ProcessStartInfo("java.exe", parms);
+                ProcessStartInfo psi = new ProcessStartInfo(javaPath, parms);
 
                 psi.RedirectStandardOutput = true;
                 psi.RedirectStandardError = true;
@@ -271,106 +265,6 @@ namespace SeqMonkLauncher
             return 0;
         }
 
-
-        static int getManualMemoryCeiling(String javaPath)
-        {
-            // We need to start by getting the location of the seqmonk preferences file.  We do this
-            // with a call to a specical class in seqmonk which prints this.
-            try
-            {
-                string path = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().GetName().CodeBase);
-
-                if (path.StartsWith("file:\\"))
-                {
-                    path = path.Substring(6);
-                }
-
-                // UNC paths won't have a drive letter so we need to prepend these with
-                // a pair of slashes
-
-                if (!path.Substring(1, 1).Equals(":"))
-                {
-                    path = "\\\\" + path;
-                }
-
-
-                string finalCommand = "\""+javaPath+"\" -cp \"" + path + "\" uk.ac.babraham.Utilities.PrefsPrinter";
-
-                Console.WriteLine("Prefs check command is " + finalCommand);
-                string parms = "-cp \"" + path + "\" uk.ac.babraham.SeqMonk.Utilities.PrefsPrinter";
-                string prefsFile = "";
-                string error = string.Empty;
-
-                ProcessStartInfo psi = new ProcessStartInfo("java.exe", parms);
-
-                psi.RedirectStandardOutput = true;
-                psi.RedirectStandardError = true;
-                psi.WindowStyle = System.Diagnostics.ProcessWindowStyle.Normal;
-                psi.UseShellExecute = false;
-                System.Diagnostics.Process reg;
-                reg = System.Diagnostics.Process.Start(psi);
-                using (System.IO.StreamReader myOutput = reg.StandardOutput)
-                {
-                    prefsFile = myOutput.ReadToEnd();
-                }
-                using (System.IO.StreamReader myError = reg.StandardError)
-                {
-                    error = myError.ReadToEnd();
-                }
-
-                // We used to give up if we saw anything on stderr, but sometimes java
-                // puts out diagnostic stuff there so this is too harsh.
-                if (error.Length > 0)
-                {
-                    Console.WriteLine("Saw error:" + error);
-                }
-
-                // We can check the exit code to see if it died or not.
-                if (reg.ExitCode != 0)
-                {
-                    Console.WriteLine("Prefs file check failed :" + error);
-                    return (0);
-                }
-
-                prefsFile = prefsFile.Replace("\n", "");
-                prefsFile = prefsFile.Replace("\r", "");
-
-                Console.WriteLine("Prefs file location was '" + prefsFile + "'");
-
-                // Now we need to check whether this path exists
-                if (! File.Exists(prefsFile))
-                {
-                    Console.WriteLine("WARNING: Couldn't find prefs file at '" + prefsFile + "'");
-                    return (0);
-                }
-
-                // As it exists we now need to read it
-                string[] lines = System.IO.File.ReadAllLines(prefsFile);
-
-                foreach (string line in lines)
-                {
-                    string [] values = line.Split('\t');
-                    if (values[0].Equals("Memory"))
-                    {
-                        int memoryFromFile = Int32.Parse(values[1]);
-                        Console.WriteLine("Memory value from prefs was '" + values[1] + "'");
-                        return (memoryFromFile);
-                    }
-                }
-
-                Console.WriteLine("WARNING: No memory value found in prefs file");
-                return (0);
-
-
-            }
-            catch (Exception objException)
-            {
-                Console.WriteLine(objException.ToString());
-                return 0;
-            }
-
-
-         }
 
         static string getJavaPath ()
         {
