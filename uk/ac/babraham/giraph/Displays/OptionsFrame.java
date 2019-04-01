@@ -29,20 +29,6 @@ import uk.ac.babraham.giraph.DataTypes.PValue;
 import uk.ac.babraham.giraph.Maths.FishersExactTest;
 import uk.ac.babraham.giraph.Maths.MultipleTestingCorrection;
 
-
-/* TODO: GMT downloader, GeneUploadPanel, OptionsFrame
- * 
- * clean up so that we're not using the gene info files, then maybe restructure the gene upload panel/options frame
- * 
- * get rid of genomic background genes
- * parse background genes first, then provide info if genes are not found in background set
- * 
- * downloading GMT
- * 		search for gmt file in home directory - GMT_files -> Human/Mouse
- * 		in GMT downloader make these directories
- * 	at some point check for updates but not yet
- */
-
 public class OptionsFrame extends JFrame implements ActionListener, OptionsListener {
 	
 	JButton submitButton;
@@ -54,9 +40,13 @@ public class OptionsFrame extends JFrame implements ActionListener, OptionsListe
 	GMTGeneParser gmtGeneParser;
 	
 	GeneCollection queryGenes;
+//<<<<<<< download_gmt
 	
 	// the set of genes from the gmt file
 	//GeneCollection genomicBackgroundGenes;
+//=======
+	//GeneCollection genomicBackgroundGenes;
+//>>>>>>> master
 	GeneCollection customBackgroundGenes = null;
 	GeneListCollection geneListCollection;
 	private boolean usingCustomBackground = false;
@@ -130,6 +120,7 @@ public class OptionsFrame extends JFrame implements ActionListener, OptionsListe
 			
 			else{
 					
+//<<<<<<< download_gmt
 				giraphApplication.getInstance().removeOldData();
 								
 				// parse the genes from the gmt file so that we've got a genomic background set to work from
@@ -188,7 +179,56 @@ public class OptionsFrame extends JFrame implements ActionListener, OptionsListe
 		queryGeneParser = new QueryGeneParser(queryGenes, backgroundGenes);
 		queryGeneParser.addOptionsListener(this);
 		
-	}
+//=======
+/*					giraphApplication.getInstance().removeOldData();
+					
+					try {
+						File dir = GiraphPreferences.getInstance().getGeneInfobase();
+							
+						//File f = findFile(dir, optionsPanel.species());
+						String  f; 
+						
+						if(optionsPanel.species().startsWith("Human")){
+							
+							f = "uk/ac/babraham/giraph/Utilities/Homo_sapiens.GRCh38.92_gene_info.txt.gz";
+						}
+						else if(optionsPanel.species().startsWith("Mouse")){							
+							
+							f = "uk/ac/babraham/giraph/Utilities/Mus_musculus.GRCm38.92_gene_info.txt.gz";							
+						}
+						
+						else{
+							f = null;
+						}
+						
+						
+						if (f != null){
+						
+							//geneInfoParser = new GeneInfoParser(f.getAbsolutePath(), giraphApplication.getInstance().genomicBackgroundGenes);
+							geneInfoParser = new GeneInfoParser(f, giraphApplication.getInstance().genomicBackgroundGenes);
+							
+							geneInfoParser.addOptionsListener(this);
+																											
+						}
+						else{
+							System.err.println("Couldn't find gene info file");
+						}
+						
+						
+					} catch (FileNotFoundException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					
+					// this has to be done before the query genes can be loaded
+					//optionsPanel.loadFunctionalInfo(gmtParser);
+					setVisible(false);
+					dispose();					
+				//}	
+			}	
+		}		
+//>>>>>>> master
+*/	}
 	
 	public void queryGenesImported(){
 		

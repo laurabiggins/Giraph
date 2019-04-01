@@ -1,10 +1,5 @@
 package uk.ac.babraham.giraph.DataParser;
 
-import javax.swing.JOptionPane;
-
-import uk.ac.babraham.giraph.giraphApplication;
-import uk.ac.babraham.giraph.DataTypes.Gene;
-
 /** 
  * For parsing custom background genes that have been pasted in.
  */
@@ -18,6 +13,7 @@ public class CustomBackgroundGeneParser extends GeneNameParser{
 		super(listOfGeneNames, genomicBackgroundGenes);		
 	}
 	
+
 	
 	//private String listOfGeneNames;
 	
@@ -28,12 +24,19 @@ public class CustomBackgroundGeneParser extends GeneNameParser{
 	}
 	
 /*	public void parseGenes() {
+
+	protected void genesImported(){
+		ol.customBackgroundGenesImported();
+	}
+	
+	protected String unmatchedCountMessage(int unmatchedCount){
+
 		
-		if(splitList(listOfGeneNames) == null){
-			String msg =  ("Something went wrong when trying to parse the genes.");
-			System.err.println(msg);
-			JOptionPane.showMessageDialog(giraphApplication.getInstance(), msg, "couldn't parse genes", JOptionPane.ERROR_MESSAGE);
+		if(unmatchedCount > 0){
+		
+			return (unmatchedCount + " custom background genes were not found in the genomic background list, ");
 		}
+
 		else {
 			String [] geneNames = splitList(listOfGeneNames);
 			System.err.println("number of genes parsed = " + geneNames.length);
@@ -50,6 +53,7 @@ public class CustomBackgroundGeneParser extends GeneNameParser{
 */	
 	protected void genesImported(){
 		ol.customBackgroundGenesImported();
+
+	//	else return (" ");
 	}
-	
 }

@@ -387,6 +387,7 @@ public class GeneUploadPanel extends JPanel implements ActionListener, KeyListen
 			
 			new GMTDownloader().downloadFile(species());
 			findGMTFile(species());
+
 		}
 		
 	}
