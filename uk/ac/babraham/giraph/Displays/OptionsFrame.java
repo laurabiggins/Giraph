@@ -119,28 +119,26 @@ public class OptionsFrame extends JFrame implements ActionListener, OptionsListe
 			}
 			
 			else if(optionsPanel.minGenesInSet() > optionsPanel.maxGenesInSet()){
-				JOptionPane.showMessageDialog(giraphApplication.getInstance(), "Minimum number of genes in set cannot be greater than maximum.", "Number of genes needs adjusting", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(this, "Minimum number of genes in set cannot be greater than maximum.", "Number of genes needs adjusting", JOptionPane.ERROR_MESSAGE);
 				return;
 			}
 			
+			else if(optionsPanel.validGeneSetFilepath() == null) {
+				String msg = ("A GMT file containing functional categories is required.");
+				JOptionPane.showMessageDialog(this, msg, "No valid GMT file", JOptionPane.ERROR_MESSAGE);
+			}
+			
 			else{
-				
-				// checking that the query and background genes look ok 
-				//if(optionsPanel.checkValidityOfGenes() == true){
 					
 				giraphApplication.getInstance().removeOldData();
-				
-				if(optionsPanel.validGeneSetFilepath() != null) {
-					
+								
 				// parse the genes from the gmt file so that we've got a genomic background set to work from
-					gmtGeneParser = new GMTGeneParser(optionsPanel.validGeneSetFilepath());
-					gmtGeneParser.addOptionsListener(this);
-					
-					
-				}
-			}	
-			setVisible(false);
-			dispose();	
+				gmtGeneParser = new GMTGeneParser(optionsPanel.validGeneSetFilepath());
+				gmtGeneParser.addOptionsListener(this);
+						
+				setVisible(false);
+				dispose();
+			}		
 		}
 	}	
 			
@@ -213,53 +211,7 @@ public class OptionsFrame extends JFrame implements ActionListener, OptionsListe
 		}
 	}
 	
-					/*try {
-						File dir = GiraphPreferences.getInstance().getGeneInfobase();
-							
-						//File f = findFile(dir, optionsPanel.species());
-						String  f; 
-						
-						if(optionsPanel.species().startsWith("Human")){
-							
-							f = "uk/ac/babraham/giraph/Utilities/Homo_sapiens.GRCh38.92_gene_info.txt.gz";
-						}
-						else if(optionsPanel.species().startsWith("Mouse")){							
-							
-							f = "uk/ac/babraham/giraph/Utilities/Mus_musculus.GRCm38.92_gene_info.txt.gz";							
-						}
-						
-						else{
-							f = null;
-						}
-						
-						
-						if (f != null){
-						
-							//geneInfoParser = new GeneInfoParser(f.getAbsolutePath(), giraphApplication.getInstance().genomicBackgroundGenes);
-							geneInfoParser = new GeneInfoParser(f, giraphApplication.getInstance().genomicBackgroundGenes);
-							
-							geneInfoParser.addOptionsListener(this);
-																											
-						}
-						else{
-							System.err.println("Couldn't find gene info file");
-						}
-						
-						
-					} catch (FileNotFoundException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-					*/
-					// this has to be done before the query genes can be loaded
-					//optionsPanel.loadFunctionalInfo(gmtParser);
-				//	setVisible(false);
-				//	dispose();					
-				//}	
-	/*		}	
-		}		
-	}
-	
+					
 /*	public void geneInfoFileParsed(){
 		
 		if ((optionsPanel.loadingMessageThread() != null) && (optionsPanel.loadingMessageThread().isAlive())){
@@ -377,7 +329,7 @@ public class OptionsFrame extends JFrame implements ActionListener, OptionsListe
 	
 	// When all the functional info has been loaded, the rest of the options can be parsed. 
 	/**
-	 * We're going to get this when we've just parsed the genes and when we've parsed the whole file which is icky
+	 * This is only called when all the categories have been loaded.
 	 */
 	public void gmtFileParsed(){
 		
@@ -389,11 +341,7 @@ public class OptionsFrame extends JFrame implements ActionListener, OptionsListe
 		
 		System.out.println(geneListCollection.getAllGeneLists().length + " genelists have been created (from options frame)");
 		
-		// let the app know we've finished parsing and have got the geneListcollection
-		//pl.inputFileParsingComplete(gmtParser.getGeneListCollection());
-		
 		calculatePValues();
-		//setFilters();
 	}
 	
 	private void pValuesCalculated(){
