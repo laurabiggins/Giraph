@@ -86,7 +86,7 @@ public class GMTParser implements Runnable{
 	}
 	
 	public GMTParser(String file) {
-		
+
 		this.filepath = file;
 		Thread t = new Thread(this);
 		t.start();
@@ -207,6 +207,7 @@ public class GMTParser implements Runnable{
 	public void notifyGMTFileParsed() {
 		ol.gmtFileParsed();
 	}
+	
 	// parses the line of a file
 	//private void parseLine(String [] result, int maxGenesInCategory) throws giraphException {
 	protected void parseLine(String [] result) throws giraphException {	
@@ -237,13 +238,6 @@ public class GMTParser implements Runnable{
 						
 						String geneSym = cleanGene(result[i].toUpperCase());
 						
-						/*if(allGMTgenes.doesNotContain(geneSym)){
-							
-							Gene g = new Gene(cleanGene(geneSym));
-							
-							allGMTgenes.addGene(g);							
-						}
-						*/
 						// only create a gene list if a query gene is in the category 
 						if(backgroundGenes.contains(geneSym)){
 							
@@ -258,8 +252,6 @@ public class GMTParser implements Runnable{
 									functionalSetInfo = new FunctionalSetInfo();
 									
 									functionalSetInfo.setName(nameInfo[0]);
-									//functionalSetInfo.setSource(nameInfo[1]);
-									//functionalSetInfo.setSourceIdentifier(nameInfo[2]);
 									
 									// this is required for the stats
 									functionalSetInfo.setTotalNoOfGenesInCategory(result.length - 2);

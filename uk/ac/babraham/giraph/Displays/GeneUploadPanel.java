@@ -38,7 +38,6 @@ import javax.swing.filechooser.FileFilter;
 
 import uk.ac.babraham.giraph.GiraphPreferences;
 import uk.ac.babraham.giraph.giraphApplication;
-import uk.ac.babraham.giraph.DataParser.GMTParser;
 import uk.ac.babraham.giraph.Network.GMTDownloader;
 import uk.ac.babraham.giraph.Utilities.NumberKeyListener;
 
@@ -425,19 +424,27 @@ public class GeneUploadPanel extends JPanel implements ActionListener, KeyListen
 		File dir = GiraphPreferences.getInstance().getGMTFilepath();		
 		File [] files = dir.listFiles();
 		
+		if(files == null){
+			validGeneSetFilepath = null;
+			updateGMTFileText();
+			System.err.println("No reference file found in " + dir.getAbsolutePath());		
+			return null;
+		}
+		
 		for (int i = 0; i < files.length; i++){
 			
 			if (files[i].getName().startsWith(species)){
 				
 				// take the first file we come across
 				File [] gmtFiles = files[i].listFiles();
-				
-				if(fileValid(gmtFiles[0].toString()) && gmtFiles[0].getName().endsWith(".txt") || gmtFiles[0].getName().endsWith(".gmt")){
-					validGeneSetFilepath = gmtFiles[0].toString();
-					updateGMTFileText();
-					System.out.println("setting gmt file path to " + gmtFiles[0].toString());
-					return gmtFiles[0];
-				}							
+				if(gmtFiles != null && gmtFiles.length >= 1){
+					if(fileValid(gmtFiles[0].toString()) && gmtFiles[0].getName().endsWith(".txt") || gmtFiles[0].getName().endsWith(".gmt")){
+						validGeneSetFilepath = gmtFiles[0].toString();
+						updateGMTFileText();
+						System.out.println("setting gmt file path to " + gmtFiles[0].toString());
+						return gmtFiles[0];
+					}
+				}	
 			}
 		}
 		validGeneSetFilepath = null;

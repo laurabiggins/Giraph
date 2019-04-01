@@ -63,19 +63,10 @@ public class GMTDownloader {
 						urlPart = matcher.group(1);
 						 break WHILE_LOOP;
 					}	
-				}	
-//=======
-		/*	DataInputStream d = new DataInputStream(new BufferedInputStream(connection.getInputStream()));
-	
-			byte [] data = new byte[255]; // A version number should never be more than 255 bytes
-			int bytesRead = d.read(data);
-			
-			byte [] actualData = new byte[bytesRead];
-			for (int i=0;i<bytesRead;i++) {
-				actualData[i] = data[i];
-//>>>>>>> master
-			}
-	*/		String urlString = downloadURL + urlPart;
+				}
+			}	
+
+			String urlString = downloadURL + urlPart;
 			URL fullDownloadURL = new URL(urlString);
 			String msg = "will try and download " + urlString;
 			
@@ -95,16 +86,6 @@ public class GMTDownloader {
 			
 			FileUtils.copyURLToFile(fullDownloadURL, f);
 			
-//<<<<<<< download_gmt
-//=======
-			String filename = new String(getHomeDirectory() + "downloadedGMT.gmt");
-			FileOutputStream outputStream = new FileOutputStream(filename);
-		   // byte[] strToBytes = str.getBytes();
-		    //outputStream.write(strToBytes);
-		    outputStream.write(actualData);
-		 
-		    outputStream.close();
-//>>>>>>> master
 		}
 		catch (IOException e) {
 			e.printStackTrace();

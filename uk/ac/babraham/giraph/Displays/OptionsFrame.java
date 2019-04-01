@@ -40,13 +40,7 @@ public class OptionsFrame extends JFrame implements ActionListener, OptionsListe
 	GMTGeneParser gmtGeneParser;
 	
 	GeneCollection queryGenes;
-//<<<<<<< download_gmt
-	
-	// the set of genes from the gmt file
-	//GeneCollection genomicBackgroundGenes;
-//=======
-	//GeneCollection genomicBackgroundGenes;
-//>>>>>>> master
+
 	GeneCollection customBackgroundGenes = null;
 	GeneListCollection geneListCollection;
 	private boolean usingCustomBackground = false;
@@ -140,7 +134,7 @@ public class OptionsFrame extends JFrame implements ActionListener, OptionsListe
 			System.err.println("imported genes from gmt file: " + gmtGeneParser.getAllGMTgenes().getAllGenes().length);
 			
 			if(optionsPanel.getBackgroundGenesOption().equals("Enter custom background genes")){
-				
+				System.err.println("loading custom background genes");
 				loadCustomBackgroundGenes();			
 			}
 			// use GMT genes as background
@@ -165,8 +159,9 @@ public class OptionsFrame extends JFrame implements ActionListener, OptionsListe
 	public void customBackgroundGenesImported(){
 		
 		if(customBackgroundGeneParser.geneCollection() != null) {
-			
-			loadQueryGenes(optionsPanel.queryGenes(), customBackgroundGeneParser.geneCollection());
+			System.err.println("custom background genes imported");
+			customBackgroundGenes = customBackgroundGeneParser.geneCollection();
+			loadQueryGenes(optionsPanel.queryGenes(), customBackgroundGenes);
 		}
 		else {
 			
@@ -178,7 +173,7 @@ public class OptionsFrame extends JFrame implements ActionListener, OptionsListe
 		
 		queryGeneParser = new QueryGeneParser(queryGenes, backgroundGenes);
 		queryGeneParser.addOptionsListener(this);
-		
+	}	
 //=======
 /*					giraphApplication.getInstance().removeOldData();
 					
@@ -228,19 +223,19 @@ public class OptionsFrame extends JFrame implements ActionListener, OptionsListe
 			}	
 		}		
 //>>>>>>> master
-*/	}
-	
+	}
+*/	
 	public void queryGenesImported(){
 		
 		if(queryGeneParser.geneCollection() != null) {
 			queryGenes = queryGeneParser.geneCollection();
 			
 			if(usingCustomBackground) {
-			
-				gmtParser = new GMTParser(optionsPanel.validGeneSetFilepath(), queryGenes, customBackgroundGenes);
+
+				gmtParser = new GMTParser(optionsPanel.validGeneSetFilepath(), customBackgroundGenes, queryGenes);
 			}
 			else {
-				gmtParser = new GMTParser(optionsPanel.validGeneSetFilepath(), queryGenes, gmtGeneParser.getAllGMTgenes());
+				gmtParser = new GMTParser(optionsPanel.validGeneSetFilepath(), gmtGeneParser.getAllGMTgenes(), queryGenes);
 			}
 			gmtParser.setMaxGenesInCategory(optionsPanel.maxGenesInSet());
 			gmtParser.setMinGenesInCategory(optionsPanel.minGenesInSet());
