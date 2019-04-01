@@ -2,7 +2,11 @@ package uk.ac.babraham.giraph;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.Files;
 
 
 public class GiraphPreferences {
@@ -22,11 +26,21 @@ public class GiraphPreferences {
 	/** The last used save location. */
 	private File lastUsedSaveLocation = null;		
 	
+	//private String gmtFileLocation = null;
+	
+	//private File GMTFileLocation = new File(System.getProperty("user.home") + "/gmt_files");
+	//private Files GMTFileLocation = new Files(Files.createDirectories(Paths.get(System.getProperty("user.home") + "/gmt_files")));
+	
+	private Path GMTPath = Paths.get(System.getProperty("user.home") + "/Giraph_gmt_files");
+	
+	
+	//private File GMTFileLocation = 
+	
 	/** The network address from where we can download new genomes */
 	//private String gmtDownloadLocation = "http://download.baderlab.org/EM_Genesets/current_release/";
 
 	//private String gmtDownloadLocation = "http://download.baderlab.org/EM_Genesets/current_release/Human/symbol/Human_GO_AllPathways_no_GO_iea_September_01_2018_symbol.gmt
-	private String gmtDownloadLocation =  "http://download.baderlab.org/EM_Genesets/current_release/Mouse/symbol/http://download.baderlab.org/EM_Genesets/current_release/Mouse/symbol/Mouse_GO_AllPathways_no_GO_iea_March_01_2019_symbol.gmt";
+	//private String gmtDownloadLocation =  "http://download.baderlab.org/EM_Genesets/current_release/Mouse/symbol/http://download.baderlab.org/EM_Genesets/current_release/Mouse/symbol/Mouse_GO_AllPathways_no_GO_iea_March_01_2019_symbol.gmt";
 	
 	/**
 	 * Sets the save location to record in the preferences file
@@ -36,6 +50,39 @@ public class GiraphPreferences {
 	public void setSaveLocation (File f) {
 		saveLocation = f;
 	}
+	
+	public void createGMTFilepath () {
+		
+		try {
+			Files.createDirectories(GMTPath);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	public void setGMTFilepath (Path p) {
+		
+		GMTPath = p;
+	}
+	
+	public File getGMTFilepath () {
+		
+		System.out.println("gmt filepath = " + GMTPath);
+		
+		if(GMTPath == null){
+			createGMTFilepath();
+		}
+		return GMTPath.toFile();
+	}
+	
+	
+/*	public File getGMTFileLocation () throws FileNotFoundException {
+		if (GMTFileLocation == null){
+			throw new FileNotFoundException("Couldn't find GMT file folder");
+		}	
+		return GMTFileLocation;
+	}	
 	
 	/**
 	 * Sets the last used save location.  This is a temporary setting and will
@@ -51,7 +98,11 @@ public class GiraphPreferences {
 			lastUsedSaveLocation = f.getParentFile();
 		}
 	}
-		
+	
+	public static GiraphPreferences getInstance () {		
+		return p;
+	}
+	
 	/**
 	 * Sets the default data location which will be saved in the preferences
 	 * file.
@@ -88,19 +139,10 @@ public class GiraphPreferences {
 	}
 	
 	
-	
-	/** The network address from where we can download new genomes */
-//	public String gmtDownloadLocationMouse = "http://download.baderlab.org/EM_Genesets/current_release/Mouse/symbol/GO/";
-	
-//	public String gmtDownloadLocationHuman = "http://download.baderlab.org/EM_Genesets/current_release/Human/symbol/GO/";
-	
-	private File GMTbase = new File("gmt_files");
-	private File geneInfoBase = new File("gene_info_files");
-	
-	//private File geneInfoBase = new File("O:/Training/FAGL/Laura/gene_info_files");
+	//private File geneInfoBase = new File("gene_info_files");
 	
 	// This isn't right.....
-	public File getGMTbase () throws FileNotFoundException {
+/*	public File getGMTbase () throws FileNotFoundException {
 		
 		/*
 		 * This method returns a file which represents the directory
@@ -113,11 +155,12 @@ public class GiraphPreferences {
 		 * regardless of it it exists or can be used.
 		 */
 		
-		File f;
+/*		File f;
 		
-		if (GMTbase == null) {
+		if (GMTFileLocation == null) {
 
 			try {
+				//f = new File(ClassLoader.getSystemResource("Functional_category_reference_files").getFile().replaceAll("%20"," "));
 				f = new File(ClassLoader.getSystemResource("Functional_category_reference_files").getFile().replaceAll("%20"," "));
 			}
 			catch (NullPointerException npe) {
@@ -125,13 +168,13 @@ public class GiraphPreferences {
 			}
 		}
 		else {
-			f = GMTbase;
+			f = GMTFileLocation;
 		}
 				
 		return f;
 	}
 	
-	public File getGeneInfobase () throws FileNotFoundException {
+/*	public File getGeneInfobase () throws FileNotFoundException {
 		
 		/*
 		 * This method returns a file which represents the directory
@@ -144,7 +187,7 @@ public class GiraphPreferences {
 		 * regardless of it it exists or can be used.
 		 */
 		
-		File f;
+/*		File f;
 		
 		if (GMTbase == null) {
 			// Check for the default genomes folder.  This should always be present, but
@@ -162,11 +205,10 @@ public class GiraphPreferences {
 				
 		return f;
 	}
+*/	
+	/** The network address from where we can download new genomes */
+//	public String gmtDownloadLocationMouse = "http://download.baderlab.org/EM_Genesets/current_release/Mouse/symbol/GO/";
 	
-	public static GiraphPreferences getInstance () {		
-		return p;
-	}
-	
-	
+//	public String gmtDownloadLocationHuman = "http://download.baderlab.org/EM_Genesets/current_release/Human/symbol/GO/";
 	
 }

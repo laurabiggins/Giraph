@@ -1,14 +1,14 @@
 package uk.ac.babraham.giraph.Network;
 
-import java.io.BufferedInputStream;
 import java.io.BufferedReader;
-import java.io.DataInputStream;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -16,9 +16,8 @@ import javax.swing.JOptionPane;
 
 import org.apache.commons.io.FileUtils;
 
+import uk.ac.babraham.giraph.GiraphPreferences;
 import uk.ac.babraham.giraph.giraphApplication;
-
-// TODO: mouse or human option - check the options panel
 
 public class GMTDownloader {
 	
@@ -35,7 +34,6 @@ public class GMTDownloader {
 	
 		try {
 			
-			//URL downloadURL = new URL("http://download.baderlab.org/EM_Genesets/current_release/Mouse/symbol/");
 			URL downloadURL = new URL("http://download.baderlab.org/EM_Genesets/current_release/" + species + "/symbol/");
 			
 			System.err.println("url = " + downloadURL.toString());
@@ -50,8 +48,6 @@ public class GMTDownloader {
 			String firstPartOfPattern = species + "_GO_AllPathways_no_GO_iea";
 			Pattern pattern = Pattern.compile("("+firstPartOfPattern+"[a-zA-Z0-9_]*.gmt)");
 			
-			//Pattern pattern = Pattern.compile("(Mouse_GO_AllPathways_no_GO_iea[a-zA-Z0-9_]*.gmt)");
-			
 			Matcher matcher;
 			
 			String urlPart = "";
@@ -65,7 +61,6 @@ public class GMTDownloader {
 					if(matcher.find()) {  
 						urlPart = matcher.group(1);
 						 break WHILE_LOOP;
-						//System.out.println(line);
 					}	
 				}	
 			}
@@ -80,35 +75,15 @@ public class GMTDownloader {
 			connection = fullDownloadURL.openConnection();
 			connection.setUseCaches(false);
 			
-			//String filename = new String(getHomeDirectory() + "/downloadedGMT.gmt");
-			String filename = new String(getHomeDirectory() + "/" + urlPart);
-			//String filename = new String(getHomeDirectory() + "/" + species + "/" + urlPart);
+			Path basePath = Paths.get(GiraphPreferences.getInstance().getGMTFilepath() + "/" + species);		
+			Files.createDirectories(basePath);
+			
+			String filename = new String(basePath + "/" + urlPart);
+			
 			File f = new File(filename);
 			
 			FileUtils.copyURLToFile(fullDownloadURL, f);
 			
-			/*DataInputStream d = new DataInputStream(new BufferedInputStream(connection.getInputStream()));
-			//byte [] data = new byte[2000000000]; // This was used for a version number for SeqMonk - is it still appropriate to use for a large file? 
-			byte [] data = new byte[255]; 
-			int bytesRead = d.read(data);
-
-			byte [] actualData = new byte[bytesRead];
-			System.err.println("bytesRead " + bytesRead);
-			for (int i=0;i<bytesRead;i++) {
-				actualData[i] = data[i];
-			}
-			
-			String filename = new String(getHomeDirectory() + "/downloadedGMT.gmt");
-			FileOutputStream outputStream = new FileOutputStream(filename);
-		   // byte[] strToBytes = str.getBytes();
-		    //outputStream.write(strToBytes);
-			System.err.println("trying to write to " + filename);
-			String str = "hello";
-			
-		    outputStream.write(actualData);
-		 
-		    outputStream.close();
-		    */
 		}
 		catch (IOException e) {
 			e.printStackTrace();

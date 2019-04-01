@@ -3,7 +3,6 @@
 	<classpathentry kind="src" path=""/>
 	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry exported="true" kind="lib" path="commons-math3-3.2.jar"/>
-	<classpathentry exported="true" kind="lib" path="/SeqMonk/Jama-1.0.2.jar"/>
-	<classpathentry kind="lib" path="C:/Users/bigginsl/Desktop/commons-io-2.6/commons-io-2.6.jar"/>
+	<classpathentry kind="lib" path="commons-io-2.6.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

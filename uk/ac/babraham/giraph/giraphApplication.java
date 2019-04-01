@@ -132,6 +132,8 @@ public class giraphApplication extends JFrame implements ProgressListener, Filte
 		getContentPane().add(BorderLayout.CENTER, infoPane);
 		
 		genomicBackgroundGenes = new GeneCollection();
+		
+		GiraphPreferences.getInstance().createGMTFilepath();
 	}
 
 	/** Returns the main app */
