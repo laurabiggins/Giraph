@@ -1,11 +1,23 @@
 package uk.ac.babraham.giraph.Network;
 
-import java.io.BufferedInputStream;
-import java.io.DataInputStream;
-import java.io.FileOutputStream;
+import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import javax.swing.JOptionPane;
+
+import org.apache.commons.io.FileUtils;
+
+import uk.ac.babraham.giraph.GiraphPreferences;
+import uk.ac.babraham.giraph.giraphApplication;
 
 public class GMTDownloader {
 	
@@ -18,16 +30,42 @@ public class GMTDownloader {
 		return System.getProperty("user.home");
 	}
 	
-	public void downloadFile(){
+	public void downloadFile(String species){
 	
 		try {
 			
-			URL downloadURL = new URL("http://download.baderlab.org/EM_Genesets/current_release/Mouse/symbol/Mouse_GO_AllPathways_no_GO_iea_March_01_2019_symbol.gmt");
+			URL downloadURL = new URL("http://download.baderlab.org/EM_Genesets/current_release/" + species + "/symbol/");
+			
+			System.err.println("url = " + downloadURL.toString());
 			
 			URLConnection connection = downloadURL.openConnection();
 			connection.setUseCaches(false);
 			
-			DataInputStream d = new DataInputStream(new BufferedInputStream(connection.getInputStream()));
+//<<<<<<< download_gmt
+			BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+			
+			String line;
+		
+			String firstPartOfPattern = species + "_GO_AllPathways_no_GO_iea";
+			Pattern pattern = Pattern.compile("("+firstPartOfPattern+"[a-zA-Z0-9_]*.gmt)");
+			
+			Matcher matcher;
+			
+			String urlPart = "";
+			
+			WHILE_LOOP: while ((line = br.readLine()) != null) {
+				
+				if(line.contains(firstPartOfPattern)) {
+				
+					System.out.println(line);
+					matcher = pattern.matcher(line);
+					if(matcher.find()) {  
+						urlPart = matcher.group(1);
+						 break WHILE_LOOP;
+					}	
+				}	
+//=======
+		/*	DataInputStream d = new DataInputStream(new BufferedInputStream(connection.getInputStream()));
 	
 			byte [] data = new byte[255]; // A version number should never be more than 255 bytes
 			int bytesRead = d.read(data);
@@ -35,8 +73,30 @@ public class GMTDownloader {
 			byte [] actualData = new byte[bytesRead];
 			for (int i=0;i<bytesRead;i++) {
 				actualData[i] = data[i];
+//>>>>>>> master
 			}
+	*/		String urlString = downloadURL + urlPart;
+			URL fullDownloadURL = new URL(urlString);
+			String msg = "will try and download " + urlString;
 			
+			JOptionPane.showMessageDialog(giraphApplication.getInstance(), msg, "Downloading...", JOptionPane.INFORMATION_MESSAGE);
+			
+			/** ok or cancel option **/
+			
+			connection = fullDownloadURL.openConnection();
+			connection.setUseCaches(false);
+			
+			Path basePath = Paths.get(GiraphPreferences.getInstance().getGMTFilepath() + "/" + species);		
+			Files.createDirectories(basePath);
+			
+			String filename = new String(basePath + "/" + urlPart);
+			
+			File f = new File(filename);
+			
+			FileUtils.copyURLToFile(fullDownloadURL, f);
+			
+//<<<<<<< download_gmt
+//=======
 			String filename = new String(getHomeDirectory() + "downloadedGMT.gmt");
 			FileOutputStream outputStream = new FileOutputStream(filename);
 		   // byte[] strToBytes = str.getBytes();
@@ -44,33 +104,12 @@ public class GMTDownloader {
 		    outputStream.write(actualData);
 		 
 		    outputStream.close();
+//>>>>>>> master
 		}
 		catch (IOException e) {
 			e.printStackTrace();
 			//throw new giraphException("Couldn't contact the update server to check for updates");
 		}	
-		
-		/*URL updateURL = new URL("http","www.bioinformatics.babraham.ac.uk","/projects/seqmonk/current_version.txt");
-		
-		URLConnection connection = updateURL.openConnection();
-		connection.setUseCaches(false);
-		
-		DataInputStream d = new DataInputStream(new BufferedInputStream(connection.getInputStream()));
-
-		byte [] data = new byte[255]; // A version number should never be more than 255 bytes
-		int bytesRead = d.read(data);
-		
-		byte [] actualData = new byte[bytesRead];
-		for (int i=0;i<bytesRead;i++) {
-			actualData[i] = data[i];
-		}
-		
-		/*latestVersion = new String(actualData);
-		latestVersion.replaceAll("[\\r\\n]", "");
-		latestVersion = latestVersion.trim();
-		
-		return latestVersion;
-		*/
 	}
 	
 }
