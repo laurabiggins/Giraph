@@ -13,6 +13,8 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.File;
@@ -36,11 +38,10 @@ import javax.swing.filechooser.FileFilter;
 
 import uk.ac.babraham.giraph.GiraphPreferences;
 import uk.ac.babraham.giraph.giraphApplication;
-import uk.ac.babraham.giraph.DataParser.GMTParser;
 import uk.ac.babraham.giraph.Network.GMTDownloader;
 import uk.ac.babraham.giraph.Utilities.NumberKeyListener;
 
-public class GeneUploadPanel extends JPanel implements ActionListener, KeyListener {
+public class GeneUploadPanel extends JPanel implements ActionListener, KeyListener, ItemListener {
 	
 	JComboBox featureTypeBox;
 	JComboBox speciesBox;
@@ -111,7 +112,8 @@ public class GeneUploadPanel extends JPanel implements ActionListener, KeyListen
 		gbc.gridx=2;
 
 		speciesBox = new JComboBox(new String [] {"Mouse","Human"});
-
+		speciesBox.addItemListener(this);
+				
 		add(speciesBox,gbc);
 				
 		gbc.gridy++;
@@ -168,10 +170,17 @@ public class GeneUploadPanel extends JPanel implements ActionListener, KeyListen
 		fileSelectPanel.setLayout(new BoxLayout(fileSelectPanel, BoxLayout.Y_AXIS));
 		
 		geneSetFileLocation = new JTextField("            ",20);
+		
+		//File f = new File (System.getProperty("user.home"));
+		//File f = GiraphPreferences.getInstance().getGMTFilepath();		
+		findGMTFile(species());
+		//File speciesFolder = findSpeciesFolder(species());
+		
 		if(validGeneSetFilepath != null){
 			geneSetFileLocation.setText(validGeneSetFilepath);
 		}			
-		geneSetFileLocation.setEditable(false);
+		geneSetFileLocation.setEditable(true);
+		geneSetFileLocation.setCaretPosition(0);
 		fileSelectPanel.add(geneSetFileLocation);						
 		
 		browseDownloadPanel = new JPanel();
@@ -283,6 +292,32 @@ public class GeneUploadPanel extends JPanel implements ActionListener, KeyListen
 		return (String)backgroundGenesBox.getSelectedItem();
 	}
 
+	
+	public void itemStateChanged(ItemEvent ie){
+	    Object source = ie.getSource();      
+		    // Check if a new item is SELECTED      
+	    if (source.equals(speciesBox)){
+		  
+	    	findGMTFile(species());
+	    	
+		}
+	}
+	
+	public void updateGMTFileText() {
+				
+		if(validGeneSetFilepath != null){
+			geneSetFileLocation.setText(validGeneSetFilepath);
+			geneSetFileLocation.setCaretPosition(0);
+		}
+		else {
+			geneSetFileLocation.setText(null);
+		}
+	}
+	
+	public File getHomeDirectory(){
+		File f = new File(System.getProperty("user.home"));
+		return f;
+	}
 
 	public void actionPerformed(ActionEvent ae) {
 		
@@ -349,21 +384,22 @@ public class GeneUploadPanel extends JPanel implements ActionListener, KeyListen
 		}
 		else if (action.equals("downloadGMT")) {
 			
-			//gmtDownloader GMTDownloader = new GMTDownloader();
-			String homeDir = new GMTDownloader().getHomeDirectory();
-			System.out.println("home directory = " + homeDir);
+			new GMTDownloader().downloadFile(species());
+			findGMTFile(species());
+
 		}
 		
 	}
 
-	private boolean fileValid(String filepath){
+	private static boolean fileValid(String filepath){
 		
 		File f = new File(filepath);
 		if(f.exists() && !f.isDirectory()) {
 			return true;
 		}
 		else{
-			JOptionPane.showMessageDialog(giraphApplication.getInstance(), "The gene set information file couldn't be found, please find a valid file to load.", "Couldn't load gene set file", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(giraphApplication.getInstance(), "The gene set information file couldn't be found, please find a valid file to load.", 
+					"Couldn't load gene set file", JOptionPane.ERROR_MESSAGE);
 			return false;
 		}
 	}
@@ -382,24 +418,41 @@ public class GeneUploadPanel extends JPanel implements ActionListener, KeyListen
 	/**
 	 * if the file starts with Mouse or Human and ends with text, accept.
 	 * not bothering about the latest date for now
-	 */
-		
-	public static File findGMTFile(File dir, String species) {
+	 */	
+	public File findGMTFile(String species) {
 	    			
+		File dir = GiraphPreferences.getInstance().getGMTFilepath();		
 		File [] files = dir.listFiles();
 		
+		if(files == null){
+			validGeneSetFilepath = null;
+			updateGMTFileText();
+			System.err.println("No reference file found in " + dir.getAbsolutePath());		
+			return null;
+		}
+		
 		for (int i = 0; i < files.length; i++){
-		
-			if (files[i].getName().startsWith(species) && (files[i].getName().endsWith(".txt") || files[i].getName().endsWith(".gmt"))){
-
-				System.out.println("file is " + files[i].getName());
-				return files[i];				
+			
+			if (files[i].getName().startsWith(species)){
+				
+				// take the first file we come across
+				File [] gmtFiles = files[i].listFiles();
+				if(gmtFiles != null && gmtFiles.length >= 1){
+					if(fileValid(gmtFiles[0].toString()) && gmtFiles[0].getName().endsWith(".txt") || gmtFiles[0].getName().endsWith(".gmt")){
+						validGeneSetFilepath = gmtFiles[0].toString();
+						updateGMTFileText();
+						System.out.println("setting gmt file path to " + gmtFiles[0].toString());
+						return gmtFiles[0];
+					}
+				}	
 			}
-	    }
-		
+		}
+		validGeneSetFilepath = null;
+		updateGMTFileText();
 		System.err.println("No reference file found in " + dir.getAbsolutePath());		
 		return null;
 	}
+	
 	
 	public Thread loadingMessageThread(){
 		

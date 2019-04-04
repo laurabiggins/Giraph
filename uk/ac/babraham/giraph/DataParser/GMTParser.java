@@ -47,13 +47,16 @@ public class GMTParser implements Runnable{
 	private int minGenesInCategory = 10;
 	
 	// the options listener
-	private OptionsListener ol;
+	protected OptionsListener ol;
 	
 	// the background genes
 	private GeneCollection backgroundGenes; 
 	
-	// the background genes
+	// the query genes
 	private GeneCollection queryGenes; 
+	
+	// all the genes in the gmt file
+	protected GeneCollection allGMTgenes;
 	
 //	private ArrayList<GeneList> geneListArrayList;
 	
@@ -81,6 +84,14 @@ public class GMTParser implements Runnable{
 		Thread t = new Thread(this);
 		t.start();
 	}
+	
+	public GMTParser(String file) {
+
+		this.filepath = file;
+		Thread t = new Thread(this);
+		t.start();
+	}
+
 	
 	public void run(){
 		
@@ -129,36 +140,35 @@ public class GMTParser implements Runnable{
 			
 			String lineOfFile;	
 					
-				int counter = 0;
-																
-				while((lineOfFile = in.readLine()) != null){  
-				
-					if(counter%1000 ==0) {
-						System.out.println(counter + " lines parsed");
-					}
-					//lineOfFile = in.readLine();
-					String[] result = lineOfFile.split("\t");								
-	
-					try{
-						parseLine(result);//, maxGenesInCategory);
-						counter++;
-					}
-					catch(giraphException ex){
-						new CrashReporter(ex);
-					}
+			int counter = 0;
+															
+			while((lineOfFile = in.readLine()) != null){  
+			
+				if(counter%1000 ==0) {
+					System.out.println(counter + " lines parsed");
 				}
-				
-				//JOptionPane.showMessageDialog(giraphApplication.getInstance(),"gmt file loaded", "", JOptionPane.INFORMATION_MESSAGE);
-				
-				System.out.println("GMTParser: File loaded and parsed, " + counter + " lines were parsed.");
-				//System.out.println("Number of background genes = " + giraphApplication.getInstance().getFunctionalSetInfoCollection().noOfGenes());
-				// let the optionFrame know that the file has been parsed so the rest of the options can be parsed
-				ol.gmtFileParsed();
-				
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				//lineOfFile = in.readLine();
+				String[] result = lineOfFile.split("\t");								
+
+				try{
+					parseLine(result);//, maxGenesInCategory);
+					counter++;
+				}
+				catch(giraphException ex){
+					new CrashReporter(ex);
+				}
 			}
+			System.out.println("GMTParser: File loaded and parsed, " + counter + " lines were parsed.");
+			//System.out.println("Number of background genes = " + giraphApplication.getInstance().getFunctionalSetInfoCollection().noOfGenes());
+			// let the optionFrame know that the file has been parsed so the rest of the options can be parsed
+			notifyGMTFileParsed();
+			
+			
+			
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 	//	} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
@@ -166,9 +176,41 @@ public class GMTParser implements Runnable{
 		//}		
 	}	
 	
+	/**
+	 * Function to just parse the genes, this can be used to get all the background genes.
+	 **/
+	public void parseGenes(String [] result) {
+		
+		String[] nameInfo = result[0].split("%"); 
+		
+		if(nameInfo.length < 3){
+			System.err.println("name info was not in the expected format: " + result[0]);
+		}
+		
+		else{
+				
+			/** cycle through all the genes, this is going to assume that there are no duplicated genes within the gene set category */ 
+			for (int i = 2; i < result.length; i++){
+				
+				String geneSym = cleanGene(result[i].toUpperCase());
+				
+				if(allGMTgenes.doesNotContain(geneSym)){
+					
+					Gene g = new Gene(cleanGene(geneSym));
+					
+					allGMTgenes.addGene(g);							
+				}
+			}
+		}	
+	}
+	
+	public void notifyGMTFileParsed() {
+		ol.gmtFileParsed();
+	}
+	
 	// parses the line of a file
 	//private void parseLine(String [] result, int maxGenesInCategory) throws giraphException {
-	private void parseLine(String [] result) throws giraphException {	
+	protected void parseLine(String [] result) throws giraphException {	
 		
 		// We don't want the categories that have a ridiculous number of genes 
 		// TODO: we should probably have a menu option to set this
@@ -210,8 +252,6 @@ public class GMTParser implements Runnable{
 									functionalSetInfo = new FunctionalSetInfo();
 									
 									functionalSetInfo.setName(nameInfo[0]);
-									//functionalSetInfo.setSource(nameInfo[1]);
-									//functionalSetInfo.setSourceIdentifier(nameInfo[2]);
 									
 									// this is required for the stats
 									functionalSetInfo.setTotalNoOfGenesInCategory(result.length - 2);
@@ -255,6 +295,9 @@ public class GMTParser implements Runnable{
 		return geneListArrayList.toArray(new GeneList[0]);
 	}
 */	
+	public GeneCollection getAllGMTgenes(){
+		return allGMTgenes;
+	}
 	
 	public GeneListCollection getGeneListCollection(){
 		return geneListCollection;

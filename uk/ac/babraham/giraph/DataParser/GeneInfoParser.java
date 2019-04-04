@@ -33,7 +33,7 @@ import uk.ac.babraham.giraph.DataTypes.GeneCollection;
  *
  */
 
-public class GeneInfoParser implements Runnable{
+/*public class GeneInfoParser implements Runnable{
 	
 	// The file containing the info for all the genes
 	private String filepath;
@@ -120,7 +120,7 @@ public class GeneInfoParser implements Runnable{
 		
 		    //BufferedReader in = new BufferedReader(new InputStreamReader(ClassLoader.getSystemResourceAsStream(filepath)));
 			
-			String lineOfFile;						
+/*			String lineOfFile;						
 					
 			try {
 				int counter = 0;
@@ -224,3 +224,4 @@ public class GeneInfoParser implements Runnable{
 	}
 
 }
+*/
