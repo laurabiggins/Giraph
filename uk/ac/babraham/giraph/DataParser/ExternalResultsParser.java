@@ -41,7 +41,10 @@ import uk.ac.babraham.giraph.DataTypes.GeneListCollection;
 import uk.ac.babraham.giraph.DataTypes.PValue;
 import uk.ac.babraham.giraph.Dialogs.Cancellable;
 
-/** This class is for parsing an external results file so that we can display it without having to rerun the analysis within Giraph.
+/** 
+ * This should be the generic class and then we should have specific DAVID, GOrilla and text parsers.
+ *  
+ * This class is for parsing an external results file so that we can display it without having to rerun the analysis within Giraph.
  * 
  * Error checking - skip a line if we don't have the right info
  * 
