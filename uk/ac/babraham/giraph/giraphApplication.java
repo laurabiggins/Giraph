@@ -32,13 +32,7 @@ import uk.ac.babraham.giraph.Utilities.StopPauseListener;
  *  TODO: stopCalculating is similar in getting passed around 
  *  TODO: remove splitPane, this is no longer needed
  *  
- *  TODO: The gtf files are used to get the genomic background genes. I don't think the QC is required here,
- *  so we don't really need the large gtf files. Maybe we just take any gene that is in the gmt file as the background. 
- *  
  *  TODO: The DataFilter class and the setFilters method here do half the job of producing messages each - put in one or the other. 
- *  
- *  TODO: allow download of gmt file
- *  
  *   
  *  TODO: OptionsFrame has lots of references to the main app using getInstance - it should probably be passed to it properly.
  *  

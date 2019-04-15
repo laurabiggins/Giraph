@@ -130,10 +130,16 @@ namespace SeqMonkLauncher
 					filename = args[0];
 				}
 
-                string finalCommand = "\""+javaPath+"\" -cp \"" + path + ";" + path + "\\commons-math3-3.5.jar\" -Xss4m -Xmx" + memoryToRequest + "m uk.ac.babraham.giraph.giraphApplication \""+filename+"\"";
-
+                //string finalCommand = "\""+javaPath+"\" -cp \"" + path + ";" + path + "\\commons-math3-3.5.jar\" -Xss4m -Xmx" + memoryToRequest + "m uk.ac.babraham.giraph.giraphApplication \""+filename+"\"";
+				
+				string finalCommand = "\""+javaPath+"\" -cp \"" + path + ";" + path + "\\commons-math3-3.2.jar\" + ";" + path + "\\commons-io-2.6.jar\" -Xss4m -Xmx" + memoryToRequest + "m uk.ac.babraham.giraph.giraphApplication \""+filename+"\"";
+				
+				
                 Console.WriteLine("Final command is " + finalCommand);
-                System.Diagnostics.ProcessStartInfo procStartInfo = new System.Diagnostics.ProcessStartInfo(javaPath, "-cp \"" + path + ";" + path + "\\commons-math3-3.5.jar\" -Xss4m -Xmx" + memoryToRequest + "m uk.ac.babraham.giraph.giraphApplication \"" + filename + "\"");
+                //System.Diagnostics.ProcessStartInfo procStartInfo = new System.Diagnostics.ProcessStartInfo(javaPath, "-cp \"" + path + ";" + path + "\\commons-math3-3.5.jar\" -Xss4m -Xmx" + memoryToRequest + "m uk.ac.babraham.giraph.giraphApplication \"" + filename + "\"");
+				System.Diagnostics.ProcessStartInfo procStartInfo = new System.Diagnostics.ProcessStartInfo(javaPath, "-cp \"" + path + ";" + path + "\\commons-math3-3.2.jar\" + ";" + path + "\\commons-io-2.6.jar\" -Xss4m -Xmx" + memoryToRequest + "m uk.ac.babraham.giraph.giraphApplication \"" + filename + "\"");
+				
+
 
                 procStartInfo.RedirectStandardOutput = true;
                 procStartInfo.UseShellExecute = false;

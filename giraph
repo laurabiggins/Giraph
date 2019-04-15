@@ -15,10 +15,12 @@ if (-e "$RealBin/uk/ac/babraham/giraph/giraphApplication.java") {
 
 
 if ($ENV{CLASSPATH}) {
-	$ENV{CLASSPATH} .= ":$RealBin:$RealBin/commons-math3-3.5.jar";
+#$ENV{CLASSPATH} .= ":$RealBin:$RealBin/commons-math3-3.5.jar";
+	$ENV{CLASSPATH} .= ":$RealBin:$RealBin/commons-math3-3.2.jar:$RealBin/commons-io-2.6.jar";
 }
 else {
-	$ENV{CLASSPATH} = "$RealBin:$RealBin/commons-math3-3.5.jar";
+#$ENV{CLASSPATH} = "$RealBin:$RealBin/commons-math3-3.5.jar";
+	$ENV{CLASSPATH} = "$RealBin:$RealBin/commons-math3-3.2.jar:$RealBin/commons-io-2.6.jar";
 }
 
 # If we're on OSX and launched via an app bundle we get a -psn argument passed, which we don't
