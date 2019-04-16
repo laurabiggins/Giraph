@@ -12,7 +12,10 @@ import javax.swing.JSplitPane;
 import javax.swing.UIManager;
 
 import uk.ac.babraham.giraph.Application.giraphMenuBar;
+import uk.ac.babraham.giraph.DataParser.DavidParser;
 import uk.ac.babraham.giraph.DataParser.ExternalResultsParser;
+import uk.ac.babraham.giraph.DataParser.GOrillaParser;
+import uk.ac.babraham.giraph.DataParser.GenericResultsFileParser;
 import uk.ac.babraham.giraph.DataParser.ProgressListener;
 import uk.ac.babraham.giraph.DataTypes.GeneCollection; 
 import uk.ac.babraham.giraph.DataTypes.GeneList;
@@ -421,7 +424,8 @@ public class giraphApplication extends JFrame implements ProgressListener, Filte
 		thr.start();
 	}
 	
-	public void loadExternalResultsFile(boolean gorilla, boolean david){
+	//public void loadExternalResultsFile(boolean gorilla, boolean david){
+	public void loadExternalResultsFile(String fileType){
 		
 
 		JFileChooser chooser = new JFileChooser(GiraphPreferences.getInstance().getDataLocation());
@@ -432,11 +436,22 @@ public class giraphApplication extends JFrame implements ProgressListener, Filte
 		File file = chooser.getSelectedFile();
 		
 		GiraphPreferences.getInstance().setLastUsedDataLocation(file);
-				
-		ExternalResultsParser erp = new ExternalResultsParser(file, gorilla, david);
-		erp.addProgressListener(this);
-		erp.run();
 		
+		if(fileType == "david"){
+			DavidParser dp = new DavidParser(file);
+			dp.addProgressListener(this);
+			dp.run();
+		}
+		else if(fileType == "gorilla"){
+			GOrillaParser gp = new GOrillaParser(file);
+			gp.addProgressListener(this);
+			gp.run();
+		}
+		else if(fileType == "generic"){
+			GenericResultsFileParser grfp = new GenericResultsFileParser(file);
+			grfp.addProgressListener(this);
+			grfp.run();
+		}
 	}
 	
 	public void externalResultsParsed(GeneListCollection geneListCollection) {

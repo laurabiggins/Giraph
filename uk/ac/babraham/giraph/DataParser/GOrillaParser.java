@@ -1,5 +1,6 @@
 package uk.ac.babraham.giraph.DataParser;
 
+import java.io.File;
 import java.util.ArrayList;
 
 /** This is specific to the output produced from the GOrilla ontology tool.
@@ -8,19 +9,32 @@ import java.util.ArrayList;
  *
  */
 
-public class GOrillaParser {
+public class GOrillaParser extends ExternalResultsParser{
 
 	private String allGenesString;
 	
 	private String delimiter;
 	
-	public GOrillaParser(String allGenes, String delimiter){
+	public GOrillaParser(File file){
 		
-		this.allGenesString = allGenes;
-		this.delimiter = delimiter;
+		super(file);
 	}
 	
-	public String [] parseGenes(){
+	public void setColumnInfoForFile(){
+		System.err.println("setting fields for david file");
+		delimitersValue = "\t";
+		geneDelimitersValue = ",";
+		
+		startRowValue = 1;
+		queryGeneColValue = 9;
+		categoryNameColValue = 0;
+		categoryDescriptionColValue = 1;
+		pValueColValue = 3;		
+	}
+	
+	
+
+	public String [] parseGenes(String allGenesString, String delimiter){
 		
 		String trimmedString = allGenesString.trim();
 		System.err.println("trimmedString = " + trimmedString);

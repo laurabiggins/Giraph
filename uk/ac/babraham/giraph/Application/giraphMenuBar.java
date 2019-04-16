@@ -30,6 +30,7 @@ import uk.ac.babraham.giraph.Displays.GeneUploadPanel;
 import uk.ac.babraham.giraph.Displays.OptionsFrame;
 import uk.ac.babraham.giraph.Displays.Help.HelpDialog;
 import uk.ac.babraham.giraph.giraphApplication;
+import uk.ac.babraham.giraph.DataParser.DavidParser;
 import uk.ac.babraham.giraph.Dialogs.ClusterRValueSelector;
 import uk.ac.babraham.giraph.Utilities.StopPauseListener;
 
@@ -71,6 +72,11 @@ public class giraphMenuBar extends JMenuBar implements ActionListener{
 		loadDavidFile.setActionCommand("load_david_file");
 		loadDavidFile.addActionListener(this);
 	
+		JMenuItem loadGenericFile = new JMenuItem("Generic text results file...");
+		externalResults.add(loadGenericFile);
+		loadGenericFile.setActionCommand("load_generic_file");
+		loadGenericFile.addActionListener(this);
+		
 		fileMenu.addSeparator();
 		
 
@@ -162,7 +168,7 @@ public class giraphMenuBar extends JMenuBar implements ActionListener{
 			int answer = clearApplication();
 			
 			if(answer == 0 || answer == 3){				
-				application.loadExternalResultsFile(false, true);				
+				application.loadExternalResultsFile("david");
 			}						
 		}	
 		
@@ -171,7 +177,16 @@ public class giraphMenuBar extends JMenuBar implements ActionListener{
 			int answer = clearApplication();
 			
 			if(answer == 0 || answer == 3){	
-				application.loadExternalResultsFile(true, false);
+				application.loadExternalResultsFile("gorilla");
+			}	
+		}
+		
+		else if (command.equals("load_generic_file")) {
+			
+			int answer = clearApplication();
+			
+			if(answer == 0 || answer == 3){	
+				application.loadExternalResultsFile("generic");
 			}	
 		}
 		
