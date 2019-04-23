@@ -95,7 +95,7 @@ public class GenericResultsFileParser extends ExternalResultsParser implements A
 		private ProbeTableModel model;
 		private JTable table;
 		private JScrollPane tablePane = null;
-		private JDialog dialog;
+		private JDialog dialog;  
 
 		
 		/**

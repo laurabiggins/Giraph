@@ -26,7 +26,7 @@ public class DavidParser extends ExternalResultsParser{
 	
 
 	public String [] parseGenes(String genes, String delimiter){
-		System.err.println("parsing genes from david file");
+		//System.err.println("parsing genes from david file");
 		return genes.trim().split(delimiter);
 		
 	}

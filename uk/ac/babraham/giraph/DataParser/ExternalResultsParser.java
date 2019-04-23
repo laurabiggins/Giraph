@@ -114,37 +114,6 @@ public class ExternalResultsParser implements Cancellable{
 		setColumnInfoForFile();
 				
 		System.err.println("queryGeneColValue = " + queryGeneColValue);
-		/*GenericResultsFileParser grfp = null;
-		
-		if (options == null) {
-			options = new JDialog(giraphApplication.getInstance());
-			options.setModal(true);
-			grfp = new GenericResultsFileParser(file);
-			options.setContentPane(grfp.createGenericAnnotationParserOptions(options));
-			//options.setContentPane(new GenericAnnotationParserOptions(options));
-			options.setSize(700,400);
-			options.setLocationRelativeTo(null);
-		}
-
-		// We have to set cancel to true as a default so we don't try to 
-		// proceed with processing if the user closes the options using
-		// the X on the window.
-
-		options.setTitle("Format for "+file.getName()+"...");
-		
-		cancel = true;
-		options.setVisible(true);
-				
-		//if (cancel) {
-		if (grfp.cancel) {
-			System.err.println("cancel from externalResultsParser");
-			progressCancelled();
-			return null;
-		}
-		
-		*/
-		// When continue is pressed, cancel is set to false.
-		// check we've got the required info
 		
 		BufferedReader br;
 
@@ -187,7 +156,7 @@ public class ExternalResultsParser implements Cancellable{
 				progressCancelled();
 				return null;
 			}
-
+			
 			if (lineCount%1000 == 0) {
 				progressUpdated("Read "+lineCount+" lines from "+file.getName(),0,1);
 			}
@@ -202,22 +171,15 @@ public class ExternalResultsParser implements Cancellable{
 
 			String [] genesInCategory = null;
 			
-			System.err.println("queryGeneColValue = " + queryGeneColValue);
+			if (lineCount == 1){
+
+				System.err.println("queryGeneColValue = " + queryGeneColValue);
 			
-			System.err.println("sections[queryGeneColValue] = " + sections[queryGeneColValue]);
-			
+				System.err.println("sections[queryGeneColValue] = " + sections[queryGeneColValue]);
+			}
 			genesInCategory = parseGenes(sections[queryGeneColValue], geneDelimitersValue);
 			
 			
-/*			if(gorilla){
-				GOrillaParser gorillaParser = new GOrillaParser(sections[queryGeneColValue], geneDelimitersValue);
-				genesInCategory = gorillaParser.parseGenes();
-			}
-			else if(david){
-				DavidParser davidParser = new DavidParser(sections[queryGeneColValue], geneDelimitersValue);
-				genesInCategory = davidParser.parseGenes(); 
-			}
-*/			
 			if(genesInCategory == null){
 				String msg = "Could not find any genes in category on line " + lineCount + ", skipping this line";
 				System.err.println(msg + "line = " + line);
@@ -245,9 +207,13 @@ public class ExternalResultsParser implements Cancellable{
 			functionalSetInfo.setName(sections[categoryNameColValue]);
 						
 			// description isn't required
-			if(categoryDescriptionColValue >=0) functionalSetInfo.setDescription(sections[categoryDescriptionColValue]);
-			else functionalSetInfo.setDescription(sections[categoryNameColValue]);
-			System.err.println("adding description " + functionalSetInfo.description());			
+			if(categoryDescriptionColValue >=0) {
+				functionalSetInfo.setDescription(sections[categoryDescriptionColValue]);
+			}
+			else {
+				functionalSetInfo.setDescription(sections[categoryNameColValue]);
+			}
+			//System.err.println("adding description " + functionalSetInfo.description());			
 			
 			/** This will be changed into a gene list once all the genes have been processed */ 
 			ArrayList<Gene> geneArrayList = new ArrayList<Gene>();
@@ -285,7 +251,7 @@ public class ExternalResultsParser implements Cancellable{
 				// add the gene list to the collection
 				glc.addGeneList(gl);
 				
-				System.err.println("adding gene list " + functionalSetInfo.description());
+				//System.err.println("adding gene list " + functionalSetInfo.description());
 			}				
 		}
 		// We're finished with the file.
