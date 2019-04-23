@@ -1,20 +1,33 @@
 package uk.ac.babraham.giraph.DataParser;
 
-public class DavidParser {
+import java.io.File;
+
+public class DavidParser extends ExternalResultsParser{
 	
-	private String allGenesString;
 	
-	private String delimiter;
-	
-public DavidParser(String allGenes, String delimiter){
+	public DavidParser(File file){
 		
-		this.allGenesString = allGenes;
-		this.delimiter = delimiter;
+		super(file);
 	}
 	
-	public String [] parseGenes(){
+	public void setColumnInfoForFile(){
 		
-		return allGenesString.trim().split(delimiter);
+		System.err.println("setting fields for david file");
+		
+		delimitersValue = "\t";
+		geneDelimitersValue = ",";
+		
+		startRowValue = 1;
+		queryGeneColValue = 5;
+		categoryNameColValue = 1;
+		categoryDescriptionColValue = 1;
+		pValueColValue = 12;		
+	}
+	
+
+	public String [] parseGenes(String genes, String delimiter){
+		//System.err.println("parsing genes from david file");
+		return genes.trim().split(delimiter);
 		
 	}
 

@@ -126,7 +126,7 @@ public class DataFilter implements ActionListener{
 	// set the validity of the genelist to be true or false according to whether it fits in with the parameters specified by the user (	
 	private void setValidities(){	
 		
-		System.out.println("At start of setValidities in dataFilter");
+		//System.out.println("At start of setValidities in dataFilter");
 		
 		GeneList [] allGeneLists = geneListCollection.getAllGeneLists();
 		
@@ -139,7 +139,7 @@ public class DataFilter implements ActionListener{
 				allGeneLists[i].setValidity(true);
 			}
 		}
-		System.out.println("At end of setValidities in dataFilter");
+		//System.out.println("At end of setValidities in dataFilter");
 		updateListeners();
 	}	
 }
