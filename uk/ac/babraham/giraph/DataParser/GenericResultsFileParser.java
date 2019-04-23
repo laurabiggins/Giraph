@@ -551,10 +551,13 @@ public class GenericResultsFileParser extends ExternalResultsParser implements A
 	
 	}
 
-	public void parseGenes(){
-		write a method here
+	public String [] parseGenes(String genes, String delimiter){
+		System.err.println("parsing genes from generic file parser");
+		return genes.trim().split(delimiter);
+		
 	}
-
+	
+	
 	@Override
 	public void keyTyped(KeyEvent e) {
 		// TODO Auto-generated method stub
