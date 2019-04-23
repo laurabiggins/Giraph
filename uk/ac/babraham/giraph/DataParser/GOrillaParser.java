@@ -79,10 +79,10 @@ public class GOrillaParser extends ExternalResultsParser{
 			
 			String tempGene = splitGenes[i].trim();
 			
-			System.err.println("tempGene = " + tempGene);
+			//System.err.println("tempGene = " + tempGene);
 			
 			if(tempGene.contains(" - ")){
-				System.err.println("tempGene cleaned = " + tempGene.substring(0,  tempGene.indexOf(" - ")));
+				//System.err.println("tempGene cleaned = " + tempGene.substring(0,  tempGene.indexOf(" - ")));
 				cleanedGenesTemp.add(tempGene.substring(0,  tempGene.indexOf(" - ")));
 			}	
 			else continue;

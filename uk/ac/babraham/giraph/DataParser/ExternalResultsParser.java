@@ -220,9 +220,9 @@ public class ExternalResultsParser implements Cancellable{
 */			
 			if(genesInCategory == null){
 				String msg = "Could not find any genes in category on line " + lineCount + ", skipping this line";
-				System.err.println("line = " + line);
+				System.err.println(msg + "line = " + line);
 				progressWarningReceived(new giraphException(msg)); // this doesn't seem to do anything
-				JOptionPane.showMessageDialog(null, msg, "No genes to analyse", JOptionPane.ERROR_MESSAGE);
+				//JOptionPane.showMessageDialog(null, msg, "No genes to analyse", JOptionPane.ERROR_MESSAGE);
 				continue;
 				//return null;
 			}
@@ -231,8 +231,8 @@ public class ExternalResultsParser implements Cancellable{
 				
 				String msg = ("Only 1 gene found for category on line " + lineCount + ", skipping this line");
 				progressWarningReceived(new giraphException(msg));
-				JOptionPane.showMessageDialog(null, msg, "No genes to analyse", JOptionPane.ERROR_MESSAGE);
-				System.err.println("fewer than 2 genes found in gene list, line skipped");
+				//JOptionPane.showMessageDialog(null, msg, "No genes to analyse", JOptionPane.ERROR_MESSAGE);
+				System.err.println(msg);
 				continue; // Skip this line...	
 				//return null;
 			}
