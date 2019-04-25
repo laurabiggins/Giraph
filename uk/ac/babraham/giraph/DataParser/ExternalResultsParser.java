@@ -132,6 +132,7 @@ public class ExternalResultsParser implements Cancellable{
 			if (line == null) {
 				throw new Exception ("Ran out of file before skipping all of the header lines");
 			}
+			checkHeader(line);
 		}
 
 		int maxIndexValue = 0;
@@ -182,7 +183,7 @@ public class ExternalResultsParser implements Cancellable{
 			
 			if(genesInCategory == null){
 				String msg = "Could not find any genes in category on line " + lineCount + ", skipping this line";
-				System.err.println(msg + "line = " + line);
+				//System.err.println(msg + "line = " + line);
 				progressWarningReceived(new giraphException(msg)); // this doesn't seem to do anything
 				//JOptionPane.showMessageDialog(null, msg, "No genes to analyse", JOptionPane.ERROR_MESSAGE);
 				continue;
@@ -194,8 +195,8 @@ public class ExternalResultsParser implements Cancellable{
 				String msg = ("Only 1 gene found for category on line " + lineCount + ", skipping this line");
 				progressWarningReceived(new giraphException(msg));
 				//JOptionPane.showMessageDialog(null, msg, "No genes to analyse", JOptionPane.ERROR_MESSAGE);
-				System.err.println(msg);
-				continue; // Skip this line...	
+				//System.err.println(msg);
+				continue; // Skip this line...	  
 				//return null;
 			}
 						  
@@ -327,6 +328,14 @@ public class ExternalResultsParser implements Cancellable{
 		categoryNameColValue = -1;
 		categoryDescriptionColValue = -1;
 		pValueColValue = -1;
+	}
+	
+	public void checkFile(String line){
+		
+	}
+	
+	public void checkHeader(String line){
+		
 	}
 	
 }	
