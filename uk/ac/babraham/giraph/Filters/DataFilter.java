@@ -46,8 +46,6 @@ public class DataFilter implements ActionListener{
 		}
 		
 		if (noRemaining <= 1){
-			//JOptionPane.showMessageDialog(giraphApplication.getInstance(), "This filter (adjusted p value " + stringency + ", min no of genes in category " + geneListSizeCutoff + 
-			//		" would leave 0 or 1 significant gene ontology categories, try entering a different list of genes or adjust the filters to be more lenient", "Filter too strict", JOptionPane.ERROR_MESSAGE);
 			JOptionPane.showMessageDialog(giraphApplication.getInstance(), "This filter (adjusted p value " + stringency + ") would leave 0 or 1 significant gene ontology categories, "
 					+ "try entering a different list of genes or adjust the filters to be more lenient", "Filter too strict", JOptionPane.ERROR_MESSAGE);
 
@@ -92,12 +90,12 @@ public class DataFilter implements ActionListener{
 			//if((allGeneLists[i].getGenes().length >= geneListSizeCutoff) && (allGeneLists[i].getPvalue().q() <= stringency)){				
 			//	count++;
 			//}
+			
 			if(allGeneLists[i].getPvalue().q() <= stringency){
 				
 				count++;
 			}
-			
-			
+						
 		}
 		System.err.println("count of no of gene lists = " + count);
 		return count;

@@ -25,10 +25,10 @@ public interface ProgressListener {
 	
 	public void calculatingCoordinatesStopped();
 	
-	public void inputFileParsingComplete(GeneListCollection geneListCollection, GeneCollection queryGenes, GeneCollection customBackgroundGenes, GeneCollection genomicBackgroundGenes);
+	//public void inputFileParsingComplete(GeneListCollection geneListCollection, GeneCollection queryGenes, GeneCollection customBackgroundGenes, GeneCollection genomicBackgroundGenes);
 	
 	//public void setFilters(int geneListSize, float pvalue);
-	public void setFilters(float pvalue);
+	public boolean setFilters(float pvalue);
 	
 	public void externalResultsParsed(GeneListCollection geneListCollection);
 

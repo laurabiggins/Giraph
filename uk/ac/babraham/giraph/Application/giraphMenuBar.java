@@ -322,10 +322,13 @@ public class giraphMenuBar extends JMenuBar implements ActionListener{
 		}
 		
 		else if (command.equals("play")) {
+			
+			moveCircles();
+			
 			/** make sure it has been stopped before it's started again - really the button should not be usable if it's playing */
 			
 			// stop any already running calculation threads
-			if (spl != null){
+		/*	if (spl != null){
 				spl.stopCalculating();
 				pause(10);
 			}	
@@ -341,10 +344,14 @@ public class giraphMenuBar extends JMenuBar implements ActionListener{
 			toolbar.playButton.setEnabled(false);
 			//enableStopButton();
 			toolbar.stopButton.setEnabled(true);
-			
+		*/	
 		}
 		else if (command.equals("goAnnotation")) {			
 			application.getGraphPanel().updateGOAnnotation();
+			application.getGraphPanel().repaint();
+		}
+		else if (command.equals("separateCircles")) {			
+			application.getGraphPanel().separateCircles();
 			application.getGraphPanel().repaint();
 		}
 		else if(command.equals("adjust_cluster_r_val")){
@@ -366,6 +373,30 @@ public class giraphMenuBar extends JMenuBar implements ActionListener{
 		else {
 			JOptionPane.showMessageDialog(application, "Unknown menu command "+command, "Unknown command", JOptionPane.ERROR_MESSAGE);
 		}
+	}
+	
+	private void moveCircles(){
+		
+		/** make sure it has been stopped before it's started again - really the button should not be usable if it's playing */
+		
+		// stop any already running calculation threads
+		if (spl != null){
+			spl.stopCalculating();
+			pause(10);
+		}	
+	
+		application.calculate();
+					
+		if (application.getGraphPanel() != null){
+			
+			application.getGraphPanel().updateCalculatingStatus(true);
+		}	
+		
+		//disablePlayButton();
+		toolbar.playButton.setEnabled(false);
+		//enableStopButton();
+		toolbar.stopButton.setEnabled(true);
+		
 	}
 	
 	private void loadGenes(){
@@ -407,6 +438,7 @@ public class giraphMenuBar extends JMenuBar implements ActionListener{
 		private JButton adjustPValue;
 
 		//private JButton checkGC;
+		private JButton separateCirclesButton;
 		
 		private JToggleButton goAnnotationButton;
 		
@@ -480,6 +512,17 @@ public class giraphMenuBar extends JMenuBar implements ActionListener{
 		    goAnnotationButton.setToolTipText("display functional information for all the circles");
 		    goAnnotationButton.addActionListener(menu);
 		    this.add(goAnnotationButton);
+		    
+		    addSeparator();
+		    
+		    ImageIcon separateCirclesIcon = new ImageIcon(ClassLoader.getSystemResource("uk/ac/babraham/giraph/Icons/functional_annotations.png"));
+		    
+		    separateCirclesButton = new JButton(separateCirclesIcon);	
+		    	    
+		    separateCirclesButton.setActionCommand("separateCircles");
+		    separateCirclesButton.setToolTipText("move close circles away from each other");
+		    separateCirclesButton.addActionListener(menu);
+		    this.add(separateCirclesButton);
 		    
 		    addSeparator();
 		    
@@ -617,7 +660,10 @@ public class giraphMenuBar extends JMenuBar implements ActionListener{
 		//toolbar.checkGC.setEnabled(true);
 	}
 	public void circlesReady(){
-		toolbar.playButton.setEnabled(true);
+		System.err.println("circles ready!!");
+		moveCircles();
+		//toolbar.playButton.setEnabled(true);
+		//enablePlayButton();
 		//toolbar.infoButton.setEnabled(true);
 		toolbar.adjustPValue.setEnabled(true);
 		//toolbar.checkGC.setEnabled(true);

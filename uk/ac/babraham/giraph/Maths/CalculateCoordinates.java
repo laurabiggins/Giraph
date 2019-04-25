@@ -300,7 +300,6 @@ public class CalculateCoordinates implements Runnable, StopPauseListener {
 							}
 							*/
 							
-							
 							if((difference < -diffThreshold) || (correlation > 0.95 && difference < -0.01)){
 							/** move closer */
 								
@@ -343,8 +342,9 @@ public class CalculateCoordinates implements Runnable, StopPauseListener {
 			/** If it's the first iteration, notify the app that the first coordinates are ready. */
 			if (x == 1){				
 				
+				System.err.println("first iteration through calculate coordinates");
 				/** notify app to create graph panel */
-				appPL.firstCoordinatesReady();
+				//appPL.firstCoordinatesReady();
 			}
 						
 			appPL.updateGraphPanel();

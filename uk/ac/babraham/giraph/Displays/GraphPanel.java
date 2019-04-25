@@ -37,9 +37,6 @@ public class GraphPanel extends JPanel implements FilterListener{
 	private float maxValueX;
 	private float minValueY;
 	private float maxValueY;
-		
-	/** The main result object */ 
-	//Result dr;
 	
 	private GeneListCollection geneListCollection;
 	
@@ -84,7 +81,7 @@ public class GraphPanel extends JPanel implements FilterListener{
 	boolean goAnnotation = false;
 	
 	/** whether to display the lines connecting the circles */
-	boolean lines = true;//false;
+	boolean lines = true;
 	
 	/** whether the program is currently calculating i.e. whether calculateCoordinates is running - this is controlled by the stop or play buttons on the menu */
 	boolean calculating = false;
@@ -93,7 +90,7 @@ public class GraphPanel extends JPanel implements FilterListener{
 	
 	//private int minGenesInCategory;
 	
-	private static int BORDER = 20; 
+	private static int BORDER = 40; 
 	
 	
 	public GraphPanel(GeneListCollection geneListCollection, giraphApplication app){	
@@ -134,10 +131,10 @@ public class GraphPanel extends JPanel implements FilterListener{
 	 */
 	public void coordinatesUpdated(){
 		
-		minValueX = getMinXCoordinate(validGeneLists); //getMinValue(dr.getUnscaledCoordinates()[0]);
-		maxValueX = getMaxXCoordinate(validGeneLists);//getMaxValue(dr.getUnscaledCoordinates()[0]);
-		minValueY = getMinYCoordinate(validGeneLists);//getMinValue(dr.getUnscaledCoordinates()[1]);
-		maxValueY = getMaxYCoordinate(validGeneLists);//getMaxValue(dr.getUnscaledCoordinates()[1]);		
+		minValueX = getMinXCoordinate(validGeneLists);
+		maxValueX = getMaxXCoordinate(validGeneLists);
+		minValueY = getMinYCoordinate(validGeneLists);
+		maxValueY = getMaxYCoordinate(validGeneLists);		
 		
 		refreshDisplay();						
 	}
@@ -145,27 +142,6 @@ public class GraphPanel extends JPanel implements FilterListener{
 	
 	/** Returns an array of n colours */	
 	
-/*	private Color[] createColours(int n){
-		
-		float increment;
-		
-		if(n > 1) {
-			increment = 255/(n-1);
-		}
-		else{
-			increment = 255; 
-		}
-		
-		Color[] colours = new Color[n]; 
-		
-		for (int i = 0; i < n; i++){
-
-			colours[i] = new Color((int)(255-(increment*i)), 0, (int)(increment*i));
-
-		}		
-		return colours;
-	}
-*/	
 	private Color[] createColours(int n){
 		
 		Color[] colours = new Color[n]; 
@@ -178,7 +154,7 @@ public class GraphPanel extends JPanel implements FilterListener{
 			
 				colours[i] = colours4[i];
 			}
-			else{ 
+			else{
 				
 				if(i < 100){
 					colours[i] = hex2Rgb(indexcolors[i]);
@@ -194,66 +170,6 @@ public class GraphPanel extends JPanel implements FilterListener{
 		
 		return colours;
 	}	
-	
-		
-		
-		/*int noOfColours = n;
-		if(n%2 == 1){
-			noOfColours = n+1;
-		}
-		
-		Color[] colours = new Color[noOfColours]; 
-		
-		Color[] colours4 = {new Color(102, 102, 255), new Color(153, 0, 51), new Color(0, 153, 153), new Color(0, 0, 102)};
-		
-		if(n <= 4){
-			
-			for (int i = 0; i < n; i++){
-			
-				colours[i] = colours4[i];
-			}	
-		}
-		else{
-			
-			ArrayList<Color> colourArrayList = new ArrayList<Color>();
-			
-			float increment = 255/(n-1);
-			
-			for (int i = 0; i < n; i++){
-				
-				if(i < 4){
-					colourArrayList.add(colours4[i]);
-				}
-				else{
-					colourArrayList.add(new Color((int)(255-(increment*i)), 0, (int)(increment*i)));
-				}
-				//colours[i] = new Color((int)(255-(increment*i)), 0, (int)(increment*i));
-			}
-			colours = colourArrayList.toArray(new Color[0]);
-		}
-		
-		
-	/*	switch(n){
-			case 1: colours[0] = new Color(102, 102, 255);
-			case 2: {
-				colours[0] = new Color(102, 102, 255);
-				colours[1] = new Color(153, 0, 51);
-			}
-			case 3: {
-				colours[0] = new Color(102, 102, 255);
-				colours[1] = new Color(153, 0, 51);
-				colours[2] = new Color(0, 153, 153);
-			}
-			case 4: {
-				colours[0] = new Color(102, 102, 255);
-				colours[1] = new Color(153, 0, 51);
-				colours[2] = new Color(0, 153, 153);
-				colours[4] = new Color(0, 0, 102);
-			}
-		}
-		*/
-
-	//}
 	
 	
 	public void filtersUpdated(float pvalue){
@@ -586,7 +502,7 @@ public class GraphPanel extends JPanel implements FilterListener{
 	}
 	
 	/* The x axis position in the window. We want it centred. */
-	private int [] getXLimits(){
+/*	private int [] getXLimits(){
 		
 		int[] xlimits = new int[2];
 		if(getWidth() > getHeight()){
@@ -598,10 +514,10 @@ public class GraphPanel extends JPanel implements FilterListener{
 			xlimits[1] = getWidth() - BORDER;			
 		}
 		return xlimits;
-	}	
+	}
 	
-	/* The x axis position in the window. We want it centred. */
-	private int [] getYLimits(){
+		/* The x axis position in the window. We want it centred. */
+/*	private int [] getYLimits(){
 		
 		int[] ylimits = new int[2];
 		if(getHeight() > getWidth()){
@@ -612,6 +528,32 @@ public class GraphPanel extends JPanel implements FilterListener{
 			ylimits[0] = BORDER;
 			ylimits[1] = getHeight() - BORDER;			
 		}
+		return ylimits;
+	}	
+		
+		
+*/	
+	// see if we can make it rectangular
+	private int [] getXLimits(){
+		
+		int[] xlimits = new int[2];
+
+		xlimits[0] = BORDER;
+		xlimits[1] = getWidth() - BORDER;			
+
+		return xlimits;
+	}
+	
+	
+	
+	/* The x axis position in the window. We want it centred. */
+	private int [] getYLimits(){
+		
+		int[] ylimits = new int[2];
+
+		ylimits[0] = BORDER;
+		ylimits[1] = getHeight() - BORDER;			
+
 		return ylimits;
 	}
 	
@@ -728,7 +670,7 @@ public class GraphPanel extends JPanel implements FilterListener{
 		
 		FontMetrics fm = g.getFontMetrics();
 		
-		g.drawString("FILTERS", 15, (getHeight() - 45));
+		//g.drawString("FILTERS", 15, (getHeight() - 45));
 		//g.drawString("=======", 15, (getHeight() - 45));
 		g.drawString(new String("p value < " + pvalueCutoff), 15, (getHeight() - 15));		
 		
@@ -889,6 +831,67 @@ public class GraphPanel extends JPanel implements FilterListener{
 			}
 		}
 	}
+	
+	public void separateCircles(){
+	
+		if (calculating == false){
+
+			for (int i = 0; i < validGeneLists.length; i++){
+			
+				for (int j = 0; j < validGeneLists.length; j++){
+				
+					if(j != i){	
+						
+						if(validGeneLists[i].getCorrelation(validGeneLists[j]) > 0.9){
+							// move them apart if they're too close
+							
+							float distanceXOnScreen = getXCentre(validGeneLists[i].coordinates().unscaledX, getDiameterOfCircle(validGeneLists[i])) - 
+									getXCentre(validGeneLists[j].coordinates().unscaledX, getDiameterOfCircle(validGeneLists[j])); 
+							
+							float distanceYOnScreen = getYCentre(validGeneLists[i].coordinates().unscaledY, getDiameterOfCircle(validGeneLists[i])) - 
+									getYCentre(validGeneLists[j].coordinates().unscaledY, getDiameterOfCircle(validGeneLists[j])); 
+							
+
+							if(Math.abs(distanceXOnScreen) < 50 && Math.abs(distanceYOnScreen) < 50){
+							
+							
+								/** The difference in the x coordinates between gene list i and j */ 
+								float distanceX = validGeneLists[i].coordinates().unscaledX -  validGeneLists[j].coordinates().unscaledX;
+																
+								validGeneLists[i].coordinates().unscaledX += distanceX/10;  
+								validGeneLists[j].coordinates().unscaledX -= distanceX/10;  
+								
+								/** The difference in the y coordinates between gene list i and j */
+								float distanceY =  validGeneLists[i].coordinates().unscaledY -  validGeneLists[j].coordinates().unscaledY;
+								
+								/*System.out.println("description i =  " + validGeneLists[i].getFunctionalSetInfo().description());
+								System.out.println("description j =  " + validGeneLists[j].getFunctionalSetInfo().description());
+								
+								System.out.println("distanceX = " + distanceX);
+								System.out.println("distanceY = " + distanceY);
+								
+								System.out.println("distanceXOnScreen = " + distanceXOnScreen);
+								System.out.println("distanceYOnScreen = " + distanceYOnScreen);
+								
+								System.out.println("validGeneLists[i].coordinates().unscaledX = " + validGeneLists[i].coordinates().unscaledX);
+								System.out.println("validGeneLists[i].coordinates().unscaledY = " + validGeneLists[i].coordinates().unscaledY); 
+								 */
+								
+								validGeneLists[i].coordinates().unscaledY += distanceY/10;  
+								validGeneLists[j].coordinates().unscaledY -= distanceY/10;  
+							}	
+						}
+					}	
+				}
+			}
+			refreshDisplay();
+		}
+		
+		else{
+			JOptionPane.showMessageDialog(application,"You need to press stop before you can separate the circles", "cannot separate while calculating", JOptionPane.ERROR_MESSAGE);
+		}
+		
+	}	
 	
 	/**
 	 *  Used in giraphMenuBar to display current info

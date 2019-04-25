@@ -382,7 +382,9 @@ public class OptionsFrame extends JFrame implements ActionListener, OptionsListe
 	private void pValuesCalculated(){
 		
 		// let the progress listener know that the parsing is complete
-		pl.inputFileParsingComplete(geneListCollection, queryGenes, customBackgroundGenes, gmtGeneParser.getAllGMTgenes());
+		//pl.inputFileParsingComplete(geneListCollection, queryGenes, customBackgroundGenes, gmtGeneParser.getAllGMTgenes());
+		giraphApplication.getInstance().inputFileParsingComplete(geneListCollection, queryGenes, customBackgroundGenes, gmtGeneParser.getAllGMTgenes());
+		
 		
 		setFilters();
 		

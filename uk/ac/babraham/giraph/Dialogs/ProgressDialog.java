@@ -297,7 +297,7 @@ public class ProgressDialog extends JDialog implements Runnable, ProgressListene
 		
 	}
 
-	@Override
+//	@Override
 	public void updateGraphPanel() {
 		// TODO Auto-generated method stub
 		
@@ -315,16 +315,17 @@ public class ProgressDialog extends JDialog implements Runnable, ProgressListene
 		
 	}
 
-	@Override
-	public void inputFileParsingComplete(GeneListCollection geneListCollection,
-			GeneCollection queryGenes, GeneCollection customBackgroundGenes,
-			GeneCollection genomicBackgroundGenes) {
-		// TODO Auto-generated method stub
+//	@Override
+//	public void inputFileParsingComplete(GeneListCollection geneListCollection,
+//			GeneCollection queryGenes, GeneCollection customBackgroundGenes,
+//			GeneCollection genomicBackgroundGenes) {
+//		// TODO Auto-generated method stub
 		
-	}
+//	}
 
 	@Override
-	public void setFilters(float pvalue) {
+	public boolean setFilters(float pvalue) {
+		return false;
 		// TODO Auto-generated method stub
 		
 	}

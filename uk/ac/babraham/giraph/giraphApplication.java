@@ -232,14 +232,11 @@ public class giraphApplication extends JFrame implements ProgressListener, Filte
 	 */
 	public void firstCoordinatesReady(){		
 		
+		System.out.println("first coordinates ready");
+		
 		if (gp == null){   
 			
-			gp = new GraphPanel(geneListCollection, this);
-			gp.setMinimumSize(new Dimension(100,100));
-			mainPane.setLeftComponent(gp);
-			gp.setPreferredSize(new Dimension(600,500));
-			gp.setMinimumSize(new Dimension(200, 100));	
-			gp.filtersUpdated(df.getPvalueCutoff());//, df.getMinNoGenes());
+			setUpGraphPanel();
 		}
 		
 		gp.updateCalculatingStatus(true);
@@ -252,6 +249,20 @@ public class giraphApplication extends JFrame implements ProgressListener, Filte
 		
 		/** Activate the buttons on the toolbar */
 		menuBar.enableStopButton();
+		
+		// test this
+		menuBar.circlesReady();
+	}
+	
+	public void setUpGraphPanel(){
+		
+		gp = new GraphPanel(geneListCollection, this);
+		gp.setMinimumSize(new Dimension(100,100));
+		mainPane.setLeftComponent(gp);
+		gp.setPreferredSize(new Dimension(600,500));
+		gp.setMinimumSize(new Dimension(200, 100));	
+		//gp.filtersUpdated(df.getPvalueCutoff());
+		
 	}
 	
 	/**
@@ -261,19 +272,26 @@ public class giraphApplication extends JFrame implements ProgressListener, Filte
 		
 		this.clusterPair = cp;
 		
-		if(gp != null){
-
-			gp.setColoursForGeneLists(clusterPair.getValidClusters(rValueCutoff));
-			gp.revalidate();
-			gp.repaint();
-		}	
-		menuBar.circlesReady();
+		// sometimes the clustering completes very quickly 
+		if(gp == null){
+			setUpGraphPanel();
+		}
+		
+		gp.setColoursForGeneLists(clusterPair.getValidClusters(rValueCutoff));
+		gp.revalidate();
+		gp.repaint();
+		
+		//menuBar.circlesReady();
 	}
 	
 	/**
 	 *  This method is called from calculate coordinates via the app being a progress listener
 	 */	
 	public void updateGraphPanel(){
+		
+		if(gp == null){
+			setUpGraphPanel();
+		}
 		
 		gp.coordinatesUpdated();
 
@@ -299,12 +317,28 @@ public class giraphApplication extends JFrame implements ProgressListener, Filte
 	 */
 	public void adjustClusterStringency(float rValueCutoff){
 		
+		System.err.println("rValueCutoff = " + rValueCutoff);
+		System.err.println("number of clusters = " + clusterPair.getValidClusters(rValueCutoff).length);
+		
 		this.rValueCutoff = rValueCutoff;
 		gp.setColoursForGeneLists(clusterPair.getValidClusters(rValueCutoff));
 		gp.repaint();
 
 	}
 	
+	
+	public void externalResultsParsed(GeneListCollection geneListCollection) {
+		
+		this.geneListCollection = geneListCollection;
+		
+		boolean filtersOK = setFilters((float)0.05);
+		// set default filters
+		if(filtersOK){	
+			System.err.println("parsed from giraph app");
+			setStartingGridCoordinates();
+		}	
+		
+	}
 	
 	public void inputFileParsingComplete(GeneListCollection geneListCollection, GeneCollection queryGenes, GeneCollection customBackgroundGenes, GeneCollection genomicBackgroundGenes) {
 		
@@ -320,14 +354,12 @@ public class giraphApplication extends JFrame implements ProgressListener, Filte
 	}
 	
 	
-	
-	
-	
+		
 	/**
 	 * Used when filters are altered on the menubar or set up initially
 	 */
 	
-	public void setFilters(float stringency){
+	public boolean setFilters(float stringency){
 		
 		DataFilter potentialDataFilter = new DataFilter(geneListCollection, stringency);
 		// we don't want to set the data filter if the parameters are rejected.
@@ -353,8 +385,12 @@ public class giraphApplication extends JFrame implements ProgressListener, Filte
 				JOptionPane.showMessageDialog(giraphApplication.getInstance(), "Setting p value threshold to " + stringency +
 					" leaves "+ noGeneLists + " circles", "filter results", JOptionPane.INFORMATION_MESSAGE);
 			}
-						
-		}	
+			return true;	
+		}
+		else{
+			System.err.println("filters rejected!!");
+			return false;
+		}
 	}	
 
 	public void filtersUpdated(float pvalue) {
@@ -382,6 +418,7 @@ public class giraphApplication extends JFrame implements ProgressListener, Filte
 		gp.exportImage = false;
 	}	
 	
+	// set initial coordinates - this feels like it should be a method in a different class
 	public void setStartingGridCoordinates(){
 		
 		GeneList [] geneLists = geneListCollection.getAllGeneLists();
@@ -390,8 +427,18 @@ public class giraphApplication extends JFrame implements ProgressListener, Filte
 			
 		// TODO: This might not be great if n is small 
 		int dim = (int)(Math.ceil(Math.sqrt(n)));
-		//System.out.println("dim: " + dim);
+		System.out.println("dim: " + dim);
 		
+		System.out.println("width: " + this.mainPane.getWidth());
+		System.out.println("height: " + this.mainPane.getHeight());
+		
+		/*if(this.mainPane.getWidth() < this.mainPane.getHeight()){
+			dim = this.mainPane.getWidth();
+		}
+		else{
+			dim = this.mainPane.getHeight();
+		}
+		*/
 		float increment = (float)(1/(Math.ceil(Math.sqrt(n))));
 		//System.out.println("increment: " + increment);
 		int i = 0;
@@ -412,6 +459,7 @@ public class giraphApplication extends JFrame implements ProgressListener, Filte
 			}
 			y++;	
 		}
+		firstCoordinatesReady();
 	}
 	
 	
@@ -454,17 +502,7 @@ public class giraphApplication extends JFrame implements ProgressListener, Filte
 		}
 	}
 	
-	public void externalResultsParsed(GeneListCollection geneListCollection) {
-		
-		this.geneListCollection = geneListCollection;
-		
-		// set default filters
-		setFilters((float)0.05);
-		
-		System.err.println("parsed from giraph app");
-		setStartingGridCoordinates();
-		
-	}
+
 
 	
 	
