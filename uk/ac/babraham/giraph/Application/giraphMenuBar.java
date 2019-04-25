@@ -251,6 +251,8 @@ public class giraphMenuBar extends JMenuBar implements ActionListener{
 		
 		else if (command.equals("filter_by_pval")) {
 		
+			stopCirclesMoving();
+			
 			String msg = "Enter a p value threshold to filter the dataset, this is currently set at " + application.dataFilter().getPvalueCutoff();
 			
 			String s = (String)JOptionPane.showInputDialog(application, msg, "p value filter",  JOptionPane.PLAIN_MESSAGE);
@@ -305,9 +307,10 @@ public class giraphMenuBar extends JMenuBar implements ActionListener{
 		}
 		
 		else if (command.equals("delete_circle")) {		
-			if (spl != null){
-				spl.stopCalculating();
-			}	
+			//if (s  pl != null){
+			//	spl.stopCalculating();
+			//}
+			//stopCirclesMoving();
 			application.getGraphPanel().deleteCircle();						
 		}
 		else if (command.equals("increase_lines")) {			
@@ -392,10 +395,10 @@ public class giraphMenuBar extends JMenuBar implements ActionListener{
 			application.getGraphPanel().updateCalculatingStatus(true);
 		}	
 		
-		//disablePlayButton();
-		toolbar.playButton.setEnabled(false);
-		//enableStopButton();
-		toolbar.stopButton.setEnabled(true);
+		disablePlayButton();
+		//toolbar.playButton.setEnabled(false);
+		enableStopButton();
+		//toolbar.stopButton.setEnabled(true);
 		
 	}
 	
@@ -515,12 +518,12 @@ public class giraphMenuBar extends JMenuBar implements ActionListener{
 		    
 		    addSeparator();
 		    
-		    ImageIcon separateCirclesIcon = new ImageIcon(ClassLoader.getSystemResource("uk/ac/babraham/giraph/Icons/functional_annotations.png"));
+		    ImageIcon separateCirclesIcon = new ImageIcon(ClassLoader.getSystemResource("uk/ac/babraham/giraph/Icons/separate_circles.png"));
 		    
 		    separateCirclesButton = new JButton(separateCirclesIcon);	
 		    	    
 		    separateCirclesButton.setActionCommand("separateCircles");
-		    separateCirclesButton.setToolTipText("move close circles away from each other");
+		    separateCirclesButton.setToolTipText("move highly correlated gene sets away from each other");
 		    separateCirclesButton.addActionListener(menu);
 		    this.add(separateCirclesButton);
 		    

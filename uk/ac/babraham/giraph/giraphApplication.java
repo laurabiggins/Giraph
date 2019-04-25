@@ -8,6 +8,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 import javax.swing.UIManager;
 
@@ -64,12 +65,6 @@ public class giraphApplication extends JFrame implements ProgressListener, Filte
 	/** The menubar */
 	giraphMenuBar menuBar; 
 	
-	/** filepath for file to be loaded from */
-//	String filepath;
-	
-	/** The result object */
-//	Result dr;
-	
 	/** The clustered genelists */
 	ClusterPair clusterPair;
 	
@@ -78,9 +73,10 @@ public class giraphApplication extends JFrame implements ProgressListener, Filte
 	
 	/** The main display panel */
 	GraphPanel gp; 
-		
+	
+	//JPanel mainPane;
+	
 	JSplitPane mainPane;
-	JSplitPane infoPane;
 	
 	StopPauseListener spl;
 	
@@ -115,18 +111,10 @@ public class giraphApplication extends JFrame implements ProgressListener, Filte
 		getContentPane().add(menuBar.toolbar(),BorderLayout.NORTH);
 		setVisible(true);
 	
+		//mainPane = new JPanel();
 		mainPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
-		mainPane.setOneTouchExpandable(true);
-		mainPane.setResizeWeight(0.9);
-		mainPane.setDividerLocation(600);
 		
-		infoPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
-		infoPane.setOneTouchExpandable(true);
-		infoPane.setResizeWeight(0.9);
-		infoPane.setDividerLocation(600);		
-		infoPane.setTopComponent(mainPane);
-	
-		getContentPane().add(BorderLayout.CENTER, infoPane);
+		getContentPane().add(mainPane);
 		
 		genomicBackgroundGenes = new GeneCollection();
 		
@@ -259,6 +247,7 @@ public class giraphApplication extends JFrame implements ProgressListener, Filte
 		gp = new GraphPanel(geneListCollection, this);
 		gp.setMinimumSize(new Dimension(100,100));
 		mainPane.setLeftComponent(gp);
+		//mainPane.add(gp);
 		gp.setPreferredSize(new Dimension(600,500));
 		gp.setMinimumSize(new Dimension(200, 100));	
 		//gp.filtersUpdated(df.getPvalueCutoff());
@@ -395,7 +384,7 @@ public class giraphApplication extends JFrame implements ProgressListener, Filte
 
 	public void filtersUpdated(float pvalue) {
 		
-		menuBar.dataLoaded();
+		//menuBar.dataLoaded();
 		
 		// kill the current thread if one is running
 		if(clusters != null){
