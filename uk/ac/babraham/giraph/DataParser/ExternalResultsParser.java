@@ -245,7 +245,15 @@ public class ExternalResultsParser implements Cancellable{
 				
 				PValue pvalue = new PValue();
 				//pvalue.setQ(Double.parseDouble(sections[pValueColValue]));
-				pvalue.setQ(Double.valueOf(sections[pValueColValue]));
+				
+				if(isNumeric(sections[pValueColValue])) {
+					pvalue.setQ(Double.valueOf(sections[pValueColValue]));
+				}
+				else {
+					JOptionPane.showMessageDialog(giraphApplication.getInstance(),"unexpected values found in p-value column", "incompatible value entered", JOptionPane.ERROR_MESSAGE);
+					giraphApplication.getInstance().menuBar.clearApplicationNoChoice();
+					return null;
+				}
 				
 				gl.setPvalue(pvalue);
 				
@@ -328,6 +336,15 @@ public class ExternalResultsParser implements Cancellable{
 		categoryNameColValue = -1;
 		categoryDescriptionColValue = -1;
 		pValueColValue = -1;
+	}
+	
+	public static boolean isNumeric(String strNum) {
+	    try {
+	        Double.parseDouble(strNum);
+	    } catch (NumberFormatException | NullPointerException nfe) {
+	        return false;
+	    }
+	    return true;
 	}
 	
 	public void checkFile(String line){

@@ -63,7 +63,7 @@ public class giraphApplication extends JFrame implements ProgressListener, Filte
 	private static giraphApplication app;
 	
 	/** The menubar */
-	giraphMenuBar menuBar; 
+	public giraphMenuBar menuBar; 
 	
 	/** The clustered genelists */
 	ClusterPair clusterPair;
