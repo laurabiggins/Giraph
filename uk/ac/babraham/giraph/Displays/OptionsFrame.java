@@ -114,7 +114,6 @@ public class OptionsFrame extends JFrame implements ActionListener, OptionsListe
 			
 			else{
 					
-//<<<<<<< download_gmt
 				giraphApplication.getInstance().removeOldData();
 								
 				// parse the genes from the gmt file so that we've got a genomic background set to work from
@@ -174,57 +173,7 @@ public class OptionsFrame extends JFrame implements ActionListener, OptionsListe
 		queryGeneParser = new QueryGeneParser(queryGenes, backgroundGenes);
 		queryGeneParser.addOptionsListener(this);
 	}	
-//=======
-/*					giraphApplication.getInstance().removeOldData();
-					
-					try {
-						File dir = GiraphPreferences.getInstance().getGeneInfobase();
-							
-						//File f = findFile(dir, optionsPanel.species());
-						String  f; 
-						
-						if(optionsPanel.species().startsWith("Human")){
-							
-							f = "uk/ac/babraham/giraph/Utilities/Homo_sapiens.GRCh38.92_gene_info.txt.gz";
-						}
-						else if(optionsPanel.species().startsWith("Mouse")){							
-							
-							f = "uk/ac/babraham/giraph/Utilities/Mus_musculus.GRCm38.92_gene_info.txt.gz";							
-						}
-						
-						else{
-							f = null;
-						}
-						
-						
-						if (f != null){
-						
-							//geneInfoParser = new GeneInfoParser(f.getAbsolutePath(), giraphApplication.getInstance().genomicBackgroundGenes);
-							geneInfoParser = new GeneInfoParser(f, giraphApplication.getInstance().genomicBackgroundGenes);
-							
-							geneInfoParser.addOptionsListener(this);
-																											
-						}
-						else{
-							System.err.println("Couldn't find gene info file");
-						}
-						
-						
-					} catch (FileNotFoundException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-					
-					// this has to be done before the query genes can be loaded
-					//optionsPanel.loadFunctionalInfo(gmtParser);
-					setVisible(false);
-					dispose();					
-				//}	
-			}	
-		}		
-//>>>>>>> master
-	}
-*/	
+	
 	public void queryGenesImported(){
 		
 		if(queryGeneParser.geneCollection() != null) {
@@ -245,121 +194,6 @@ public class OptionsFrame extends JFrame implements ActionListener, OptionsListe
 			JOptionPane.showMessageDialog(this, "couldn't load query genes", "No genes to analyse", JOptionPane.ERROR_MESSAGE);
 		}
 	}
-	
-					
-/*	public void geneInfoFileParsed(){
-		
-		if ((optionsPanel.loadingMessageThread() != null) && (optionsPanel.loadingMessageThread().isAlive())){
-			optionsPanel.loadingMessageThread().interrupt();
-		}
-		
-		genomicBackgroundGenes = geneInfoParser.getGeneCollection();
-		
-		
-		// next we want to parse the custom background genes if they're being used.
-		if(optionsPanel.getBackgroundGenesOption().equals("Enter custom background genes")){
-			
-			customBackgroundGeneParser = new CustomBackgroundGeneParser(optionsPanel.backgroundGenes());//, genomicBackgroundGenes);
-			customBackgroundGeneParser.addOptionsListener(this);
-			usingCustomBackground = true;
-		}
-		
-		// if not using custom background genes then go straight into loading the query genes, using the genomic background as the background 
-		// if not using custom background genes then go straight into loading the query genes, using the genomic background as the background 
-		else{
-			// set the background genes
-			//backgroundGenes = geneInfoParser.getGeneCollection();
-			
-			queryGeneParser = new QueryGeneParser(optionsPanel.queryGenes(), genomicBackgroundGenes);
-			queryGeneParser.addOptionsListener(this);
-		}	
-	}
-*/	
-/*	private void parseGMTFile(){
-		
-		System.out.println("now about to try and parse gmt file");
-				
-		try {
-			File dir = GiraphPreferences.getInstance().getGMTbase();
-				
-			//File f = findFile(dir, optionsPanel.species());
-			
-			String f = new String("");
-			
-			if(optionsPanel.species().startsWith("Human")){
-				
-				f = optionsPanel.validGeneSetFilepath();
-				//f = "uk/ac/babraham/giraph/Utilities/Human_GO_AllPathways_no_GO_iea_February_01_2019_symbol.gmt.txt.gz";
-			}
-			else if(optionsPanel.species().startsWith("Mouse")){
-				
-				f = optionsPanel.validGeneSetFilepath();
-				//f = "uk/ac/babraham/giraph/Utilities/Mouse_GO_AllPathways_no_GO_iea_February_01_2019_symbol.gmt.txt.gz";
-			}
-			//else if(optionsPanel.species().startsWith("C Elegans")){
-				
-			//	f = "uk/ac/babraham/giraph/Utilities/C_elegans.go_terms.including_parents.gmt.gz";			
-			//}
-			else{
-				f = null;
-			}
-									
-			if (f != null){
-				if(usingCustomBackground){	
-					gmtParser = new GMTParser(f, customBackgroundGenes, queryGenes);
-					//gmtParser = new GMTParser(f.getAbsolutePath(), customBackgroundGenes, queryGenes);
-				}
-				else{
-					gmtParser = new GMTParser(f, genomicBackgroundGenes, queryGenes);
-					//gmtParser = new GMTParser(f.getAbsolutePath(), genomicBackgroundGenes, queryGenes);
-					
-				}
-				gmtParser.setMaxGenesInCategory(optionsPanel.maxGenesInSet());
-				gmtParser.setMinGenesInCategory(optionsPanel.minGenesInSet());
-				gmtParser.addOptionsListener(this);
-			}
-			else{
-				System.err.println("Couldn't find gmt file");
-			}
-			
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}	
-*/	
-/*	public static File findFile(File dir, String species) {
-		
-		if(species.startsWith("Human")){
-		
-			//return new File(ClassLoader.getSystemResource("uk/ac/babraham/giraph/Utilities/Human_Homo_sapiens.GRCh38.80_gene_info.txt"));
-			return new File("uk/ac/babraham/giraph/Utilities/Human_Homo_sapiens.GRCh38.80_gene_info.txt");
-		}
-		else if(species.startsWith("Mouse")){
-			
-			return new File("uk/ac/babraham/giraph/Utilities/Mouse_Mus_musculus.GRCm38.80_gene_info.txt");			
-		}
-		
-		
-		/*File [] files = dir.listFiles();
-		if(files == null){
-			
-		}
-		
-		for (int i = 0; i < files.length; i++){
-		
-			if (files[i].getName().startsWith(species) && (files[i].getName().endsWith(".txt") || files[i].getName().endsWith(".gmt"))){
-
-				System.out.println("file is " + files[i].getName());
-				return files[i];				
-			}
-	    }		
-		System.err.println("No reference file found in " + dir.getAbsolutePath());		
-		return null;
-		
-	}
-*/		
-	
 	
 	
 	// When all the functional info has been loaded, the rest of the options can be parsed. 
@@ -384,24 +218,8 @@ public class OptionsFrame extends JFrame implements ActionListener, OptionsListe
 		// let the progress listener know that the parsing is complete
 		//pl.inputFileParsingComplete(geneListCollection, queryGenes, customBackgroundGenes, gmtGeneParser.getAllGMTgenes());
 		giraphApplication.getInstance().inputFileParsingComplete(geneListCollection, queryGenes, customBackgroundGenes, gmtGeneParser.getAllGMTgenes(), optionsPanel.pValue());
-		
-		
-		//setFilters();
-		
+				
 	}
-	
-	
-/*	private void setFilters(){
-		
-		// This needs to be passed on to the main app so the graph panel knows what the filters are
-		//giraphApplication.getInstance().setFilter(new DataFilter(r, optionsPanel.minGenesInCategory(), optionsPanel.pValue()));
-		
-		//giraphApplication.getInstance().setFilter(new DataFilter(geneListCollection, optionsPanel.minGenesInCategory(), optionsPanel.pValue()));
-		pl.setFilters(optionsPanel.pValue());
-		
-		//pl.setFilters(optionsPanel.minGenesInCategory(), optionsPanel.pValue());		
-	}
-*/	
 	
 	/**check whether the multiple testing correction is working properly and gets applied to the p values in the gl collection */
 	private void calculatePValues(){
@@ -475,15 +293,5 @@ public class OptionsFrame extends JFrame implements ActionListener, OptionsListe
 		
 		this.pl = pl;		
 	}		
-}
-
-	
-	
-	
-	
-	
-	
-	
-	
-	
+}	
 	
