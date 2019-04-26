@@ -383,15 +383,15 @@ public class OptionsFrame extends JFrame implements ActionListener, OptionsListe
 		
 		// let the progress listener know that the parsing is complete
 		//pl.inputFileParsingComplete(geneListCollection, queryGenes, customBackgroundGenes, gmtGeneParser.getAllGMTgenes());
-		giraphApplication.getInstance().inputFileParsingComplete(geneListCollection, queryGenes, customBackgroundGenes, gmtGeneParser.getAllGMTgenes());
+		giraphApplication.getInstance().inputFileParsingComplete(geneListCollection, queryGenes, customBackgroundGenes, gmtGeneParser.getAllGMTgenes(), optionsPanel.pValue());
 		
 		
-		setFilters();
+		//setFilters();
 		
 	}
 	
 	
-	private void setFilters(){
+/*	private void setFilters(){
 		
 		// This needs to be passed on to the main app so the graph panel knows what the filters are
 		//giraphApplication.getInstance().setFilter(new DataFilter(r, optionsPanel.minGenesInCategory(), optionsPanel.pValue()));
@@ -401,7 +401,7 @@ public class OptionsFrame extends JFrame implements ActionListener, OptionsListe
 		
 		//pl.setFilters(optionsPanel.minGenesInCategory(), optionsPanel.pValue());		
 	}
-	
+*/	
 	
 	/**check whether the multiple testing correction is working properly and gets applied to the p values in the gl collection */
 	private void calculatePValues(){

@@ -329,16 +329,24 @@ public class giraphApplication extends JFrame implements ProgressListener, Filte
 		
 	}
 	
-	public void inputFileParsingComplete(GeneListCollection geneListCollection, GeneCollection queryGenes, GeneCollection customBackgroundGenes, GeneCollection genomicBackgroundGenes) {
+	public void inputFileParsingComplete(GeneListCollection geneListCollection, GeneCollection queryGenes, 
+			GeneCollection customBackgroundGenes, GeneCollection genomicBackgroundGenes, float pValueThreshold) {
 		
 		this.geneListCollection = geneListCollection;
 		this.queryGenes = queryGenes;
 		this.customBackgroundGenes = customBackgroundGenes;
 		this.genomicBackgroundGenes = genomicBackgroundGenes;
 		
+		boolean filtersOK = setFilters(pValueThreshold);
+		// set default filters
+		if(filtersOK){	
+			System.err.println("parsed from giraph app");
+			setStartingGridCoordinates();
+		}	
+		
 		// we can set the coordinates before filtering as we want starting coordinates for each gene list
-		// so that if the filter thresholds are lowered they have somewhere to go
-		setStartingGridCoordinates();
+		// so that if the filter thresholds are lowered they have somewhere to go - no, or they all start showing
+		//setStartingGridCoordinates();
 		
 	}
 	
@@ -378,6 +386,7 @@ public class giraphApplication extends JFrame implements ProgressListener, Filte
 		}
 		else{
 			System.err.println("filters rejected!!");
+			menuBar.clearApplicationNoChoice();
 			return false;
 		}
 	}	

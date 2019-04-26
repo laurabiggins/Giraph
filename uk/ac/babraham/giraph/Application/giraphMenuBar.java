@@ -124,8 +124,9 @@ public class giraphMenuBar extends JMenuBar implements ActionListener{
 		if(application.getGeneListCollection() != null){
 			
 			// stop the circles
+			stopCircles();
 			
-			if(spl != null){
+			/*if(spl != null){
 				spl.stopCalculating();
 				//application.calculatingCoordinatesStopped();
 				
@@ -136,24 +137,48 @@ public class giraphMenuBar extends JMenuBar implements ActionListener{
 					application.getGraphPanel().repaint();	
 				}	
 			}	
-							
+			*/				
 			String msg = "This will wipe out your existing data, would you still like to continue?";  
 			int answer = JOptionPane.showConfirmDialog(application, msg);
 			System.err.println("answer is: " + answer);
 			
 			if(answer == 0){
-				application.removeOldData();
-				toolbar.resetButtons();
-				disableButtons();				
+				reset();
+				//application.removeOldData();
+				//toolbar.resetButtons();
+				//disableButtons();				
 			}
 			return answer;
 		}
-
-		return 3;
-		
+		return 3;		
 	}
 	
+	public void stopCircles() {
+		
+		if(spl != null){
+			spl.stopCalculating();
+			//application.calculatingCoordinatesStopped();
+			
+			if(application.getGraphPanel() != null){
+			
+				application.getGraphPanel().updateCalculatingStatus(false);
+				application.getGraphPanel().revalidate();
+				application.getGraphPanel().repaint();	
+			}	
+		}	
+	}
 	
+	public void clearApplicationNoChoice() {
+		
+		stopCircles();
+		reset();		
+	}
+	
+	public void reset() {
+		application.removeOldData();
+		toolbar.resetButtons();
+		disableButtons();
+	}
 	
 	public void actionPerformed(ActionEvent e) {
 

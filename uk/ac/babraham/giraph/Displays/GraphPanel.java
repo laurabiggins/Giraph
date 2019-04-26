@@ -174,21 +174,24 @@ public class GraphPanel extends JPanel implements FilterListener{
 	
 	public void filtersUpdated(float pvalue){
 		
-		updateValidGeneLists();
-		if((geneListClicked == true)  &&  (currentClickedGeneList.getValidity() == false)){
-			geneListClicked = false;
-		}
-		updateFilterText(pvalue);
+		if(geneListCollection != null) {
+		
+			updateValidGeneLists();
+			if((geneListClicked == true)  &&  (currentClickedGeneList.getValidity() == false)){
+				geneListClicked = false;
+			}
+			updateFilterText(pvalue);
+		}	
 	}
 	
 	/** 
 	 * Used when filters have been adjusted 
 	 */		
 	public void updateValidGeneLists(){
-		
+			
 		validGeneLists = geneListCollection.getValidGeneLists();			
-		refreshDisplay();
-		
+		refreshDisplay();	
+	
 	}
 	
 	private void updateFilterText(float pvalue){
@@ -672,7 +675,7 @@ public class GraphPanel extends JPanel implements FilterListener{
 		
 		//g.drawString("FILTERS", 15, (getHeight() - 45));
 		//g.drawString("=======", 15, (getHeight() - 45));
-		g.drawString(new String("p value < " + pvalueCutoff), 15, (getHeight() - 15));		
+		//g.drawString(new String("p value < " + pvalueCutoff), 15, (getHeight() - 15));		
 		
 		int adjust = 5; // this was diameter*0.1 but it seems to be ok with a fixed value  		
 		
