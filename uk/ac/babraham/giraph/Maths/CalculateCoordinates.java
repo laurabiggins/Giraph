@@ -17,7 +17,6 @@ import uk.ac.babraham.giraph.Utilities.StopPauseListener;
 public class CalculateCoordinates implements Runnable, StopPauseListener {
 
 	boolean continueCalculating;
-	private giraphApplication app = null;
 	private Vector<ProgressListener> listeners = new Vector<ProgressListener>();
 	
 	private GeneListCollection geneListCollection;
@@ -351,9 +350,7 @@ public class CalculateCoordinates implements Runnable, StopPauseListener {
 				//appPL.firstCoordinatesReady();
 			}
 						
-			if (app != null) {
-				app.updateGraphPanel();
-			}
+			giraphApplication.getInstance().updateGraphPanel();
 			
 			/** We want to check whether we're still moving in the right direction, if not, stop if we're getting too few improving positions.
 			 * or stop if the percentage difference is so small that it's not worth carrying on. */
@@ -414,11 +411,6 @@ public class CalculateCoordinates implements Runnable, StopPauseListener {
 		}
 	}
 	
-	public void setApplication (giraphApplication app) {
-		this.app = app;
-		
-	}
-
 	/** Method inherited from stopPauseListener */
 	public void updateValidGeneLists(){
 		validGeneLists = geneListCollection.getValidGeneLists();

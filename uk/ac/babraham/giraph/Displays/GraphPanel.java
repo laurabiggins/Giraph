@@ -15,7 +15,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
-import java.util.ArrayList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
@@ -100,7 +99,7 @@ public class GraphPanel extends JPanel implements FilterListener{
 		this.addComponentListener(compAdapter);
 	    this.application = app;
 	    this.geneListCollection = geneListCollection;
-
+	    
 		updateValidGeneLists();
 	}
 	
@@ -467,6 +466,7 @@ public class GraphPanel extends JPanel implements FilterListener{
 		if(x0+diameter > xLimits[1]){
 			x0 = (int)(xLimits[1] - diameter);
 		}
+		
 		return x0;
 	}
 
