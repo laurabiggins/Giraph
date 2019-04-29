@@ -326,9 +326,12 @@ public class giraphMenuBar extends JMenuBar implements ActionListener{
 			// create a optionDialog 
 		}
 		else if (command.equals("display_info")) {	
+					
+			if(application.getGraphPanel().gip != null) {
+				application.getGraphPanel().gip.closePanel();
+			}
 			
-			GeneInfoPanel gip2 = new GeneInfoPanel(application);
-			application.getGraphPanel().gip = gip2;	
+			application.getGraphPanel().gip = new GeneInfoPanel(application);
 		}
 		
 		else if (command.equals("delete_circle")) {		

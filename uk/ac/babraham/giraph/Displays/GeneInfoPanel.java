@@ -157,7 +157,11 @@ public class GeneInfoPanel  extends JFrame implements ActionListener{
 			}	
 		}		
 	}	
-		
+	
+	public void closePanel() {
+		dispose();
+	}
+	
 	public void setTextAreaParameters(JTextArea ta, Font f){
 		ta.setEditable(false);
 		ta.setLineWrap(true);

@@ -41,7 +41,7 @@ public class GraphPanel extends JPanel implements FilterListener{
 	private GeneListCollection geneListCollection;
 	
 	/** Panel on the right that can display which genes are in a genelist */
-	public GeneInfoPanel gip;
+	public GeneInfoPanel gip = null;
 	
 	/** All the genelists that are left after filtering */
 	private GeneList [] validGeneLists;
@@ -394,7 +394,10 @@ public class GraphPanel extends JPanel implements FilterListener{
 			
 			if ((e.getClickCount() == 2) && (geneListClicked == true)) {
 				
-				gip = new GeneInfoPanel(application);
+				if(gip == null){
+					gip = new GeneInfoPanel(application);
+				}
+				
 				gip.setGeneListInfo(currentClickedGeneList, 0, currentClickedGeneList.colour);
 	    
 			}			
