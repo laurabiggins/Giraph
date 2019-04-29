@@ -531,7 +531,10 @@ public class giraphApplication extends JFrame implements ProgressListener, Filte
 			if(filtersOK){	
 				System.err.println("parsed from giraph app");
 				setStartingGridCoordinates();
-			}	
+			}
+			else {
+				System.err.println("Filters not OK - not setting starting coordinates");
+			}
 
 		}
 		else if (process.equals("clustering")) {

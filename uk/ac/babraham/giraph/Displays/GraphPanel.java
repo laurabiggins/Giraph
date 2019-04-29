@@ -188,7 +188,7 @@ public class GraphPanel extends JPanel implements FilterListener{
 	 */		
 	public void updateValidGeneLists(){
 			
-		validGeneLists = geneListCollection.getValidGeneLists();			
+		validGeneLists = geneListCollection.getValidGeneLists();
 		refreshDisplay();	
 	
 	}
