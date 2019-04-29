@@ -9,12 +9,10 @@ import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JSplitPane;
 import javax.swing.UIManager;
 
 import uk.ac.babraham.giraph.Application.giraphMenuBar;
 import uk.ac.babraham.giraph.DataParser.DavidParser;
-import uk.ac.babraham.giraph.DataParser.ExternalResultsParser;
 import uk.ac.babraham.giraph.DataParser.GOrillaParser;
 import uk.ac.babraham.giraph.DataParser.GenericResultsFileParser;
 import uk.ac.babraham.giraph.DataParser.ProgressListener;
@@ -76,7 +74,7 @@ public class giraphApplication extends JFrame implements ProgressListener, Filte
 	
 	//JPanel mainPane;
 	
-	JSplitPane mainPane;
+	JPanel mainPane;
 	
 	StopPauseListener spl;
 	
@@ -112,7 +110,7 @@ public class giraphApplication extends JFrame implements ProgressListener, Filte
 		setVisible(true);
 	
 		//mainPane = new JPanel();
-		mainPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
+		mainPane = new JPanel();
 		
 		getContentPane().add(mainPane);
 		
@@ -246,7 +244,8 @@ public class giraphApplication extends JFrame implements ProgressListener, Filte
 		
 		gp = new GraphPanel(geneListCollection, this);
 		gp.setMinimumSize(new Dimension(100,100));
-		mainPane.setLeftComponent(gp);
+		mainPane.setLayout(new BorderLayout());
+		mainPane.add(gp,BorderLayout.CENTER);
 		//mainPane.add(gp);
 		gp.setPreferredSize(new Dimension(600,500));
 		gp.setMinimumSize(new Dimension(200, 100));	
