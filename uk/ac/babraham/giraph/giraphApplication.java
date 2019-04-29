@@ -21,6 +21,7 @@ import uk.ac.babraham.giraph.DataParser.ProgressListener;
 import uk.ac.babraham.giraph.DataTypes.GeneCollection; 
 import uk.ac.babraham.giraph.DataTypes.GeneList;
 import uk.ac.babraham.giraph.DataTypes.GeneListCollection;
+import uk.ac.babraham.giraph.Dialogs.ProgressDialog;
 import uk.ac.babraham.giraph.Displays.GraphPanel;
 import uk.ac.babraham.giraph.Filters.DataFilter;
 import uk.ac.babraham.giraph.Filters.FilterListener;
@@ -98,7 +99,7 @@ public class giraphApplication extends JFrame implements ProgressListener, Filte
 	
 	public giraphApplication () {		
 		setTitle("giraph");
-		
+				
 		setIconImage(new ImageIcon(ClassLoader.getSystemResource("uk/ac/babraham/giraph/Icons/giraph2.png")).getImage());
 		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -214,10 +215,6 @@ public class giraphApplication extends JFrame implements ProgressListener, Filte
 	}
 	
 
-	/** 
-	 * This is called from CalculateCoordinates (via the app being a progress listener)
-	 * Set up the graph panel
-	 */
 	public void firstCoordinatesReady(){		
 		
 		System.out.println("first coordinates ready");
@@ -254,24 +251,6 @@ public class giraphApplication extends JFrame implements ProgressListener, Filte
 		
 	}
 	
-	/**
-	 * This is called from the Cluster class via the app being a progress listener 
-	 */
-	public void clusteringComplete(ClusterPair cp){
-		
-		this.clusterPair = cp;
-		
-		// sometimes the clustering completes very quickly 
-		if(gp == null){
-			setUpGraphPanel();
-		}
-		
-		gp.setColoursForGeneLists(clusterPair.getValidClusters(rValueCutoff));
-		gp.revalidate();
-		gp.repaint();
-		
-		//menuBar.circlesReady();
-	}
 	
 	/**
 	 *  This method is called from calculate coordinates via the app being a progress listener
@@ -288,9 +267,6 @@ public class giraphApplication extends JFrame implements ProgressListener, Filte
 	
 	public void calculatingCoordinatesStopped(){
 		
-		calculateClusters();
-		
-		menuBar.stopCirclesMoving();
 		
 		/*getGraphPanel().updateCalculatingStatus(false);
 		getGraphPanel().revalidate();
@@ -315,19 +291,6 @@ public class giraphApplication extends JFrame implements ProgressListener, Filte
 
 	}
 	
-	
-	public void externalResultsParsed(GeneListCollection geneListCollection) {
-		
-		this.geneListCollection = geneListCollection;
-		
-		boolean filtersOK = setFilters((float)0.05);
-		// set default filters
-		if(filtersOK){	
-			System.err.println("parsed from giraph app");
-			setStartingGridCoordinates();
-		}	
-		
-	}
 	
 	public void inputFileParsingComplete(GeneListCollection geneListCollection, GeneCollection queryGenes, 
 			GeneCollection customBackgroundGenes, GeneCollection genomicBackgroundGenes, float pValueThreshold) {
@@ -465,9 +428,7 @@ public class giraphApplication extends JFrame implements ProgressListener, Filte
 		
 		clusters = new Cluster(getGeneListCollection().getValidGeneLists(), colouredByProximity);
 		clusters.addProgressListener(this);
-		Runnable r = clusters;
-		Thread thr = new Thread(r);
-		thr.start();
+		clusters.startClustering();
 	}
 	
 	//public void loadExternalResultsFile(boolean gorilla, boolean david){
@@ -486,17 +447,20 @@ public class giraphApplication extends JFrame implements ProgressListener, Filte
 		if(fileType == "david"){
 			DavidParser dp = new DavidParser(file);
 			dp.addProgressListener(this);
-			dp.run();
+			dp.addProgressListener(new ProgressDialog("Parsing DAVID file", dp));
+			dp.startParsing();
 		}
 		else if(fileType == "gorilla"){
 			GOrillaParser gp = new GOrillaParser(file);
 			gp.addProgressListener(this);
-			gp.run();
+			gp.addProgressListener(new ProgressDialog("Parsing GOrilla file", gp));
+			gp.startParsing();
 		}
 		else if(fileType == "generic"){
 			GenericResultsFileParser grfp = new GenericResultsFileParser(file);
 			grfp.addProgressListener(this);
-			grfp.run();
+			grfp.addProgressListener(new ProgressDialog("Parsing text file", grfp));
+			grfp.startParsing();
 		}
 	}
 	
@@ -545,20 +509,53 @@ public class giraphApplication extends JFrame implements ProgressListener, Filte
 	}
 
 	@Override
-	public void progressCancelled() {
-		// TODO Auto-generated method stub
-		
-	}
+	public void progressCancelled() {}
 
 	@Override
-	public void progressUpdated(String s, int x1, int x2) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void progressUpdated(String s, int x1, int x2) {}
 
 	@Override
-	public void progressWarningReceived(Exception e) {
-		// TODO Auto-generated method stub
+	public void progressWarningReceived(Exception e) {}
+
+	@Override
+	public void progressExceptionReceived(Exception e) {}
+
+	@Override
+	public void progressComplete(String process, Object result) {
+		
+		if (process.equals("results_parser")) {
+			this.geneListCollection = (GeneListCollection)result;
+			
+			boolean filtersOK = setFilters((float)0.05);
+			// set default filters
+			if(filtersOK){	
+				System.err.println("parsed from giraph app");
+				setStartingGridCoordinates();
+			}	
+
+		}
+		else if (process.equals("clustering")) {
+			this.clusterPair = (ClusterPair)result;
+			
+			// sometimes the clustering completes very quickly 
+			if(gp == null){
+				setUpGraphPanel();
+			}
+			
+			gp.setColoursForGeneLists(clusterPair.getValidClusters(rValueCutoff));
+			gp.revalidate();
+			gp.repaint();
+
+		}
+		
+		else if (process.equals("calculate_coordinates")) {
+			calculateClusters();			
+			menuBar.stopCirclesMoving();
+		}
+		
+		else {
+			System.err.println("Unknown progress type "+process);
+		}
 		
 	}
 

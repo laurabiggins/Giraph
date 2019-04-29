@@ -44,11 +44,7 @@ public class OptionsFrame extends JFrame implements ActionListener, OptionsListe
 	GeneCollection customBackgroundGenes = null;
 	GeneListCollection geneListCollection;
 	private boolean usingCustomBackground = false;
-	
-	
-	private ProgressListener pl;
-	
-	
+		
 	public OptionsFrame(){
 	
 		setTitle("info");
@@ -68,9 +64,7 @@ public class OptionsFrame extends JFrame implements ActionListener, OptionsListe
 		setLocationRelativeTo(giraphApplication.getInstance());
 		setVisible(true);
 			
-		//this.setAlwaysOnTop(true);
-		
-		addProgressListener(giraphApplication.getInstance());
+		//this.setAlwaysOnTop(true);		
 	}
 	
 
@@ -281,7 +275,7 @@ public class OptionsFrame extends JFrame implements ActionListener, OptionsListe
 			a = a-1;
 		}
 		
-		double[] fishersExactResult = new FishersExactTest().fishersExactTest(a, b, c, d);
+		double[] fishersExactResult = FishersExactTest.fishersExactTest(a, b, c, d);
 		
 		/** select the right tail */
 		PValue pval = new PValue(fishersExactResult[2]);				
@@ -289,9 +283,5 @@ public class OptionsFrame extends JFrame implements ActionListener, OptionsListe
 		return(pval);						
 	}
 				
-	public void addProgressListener(ProgressListener pl){
-		
-		this.pl = pl;		
-	}		
 }	
 	

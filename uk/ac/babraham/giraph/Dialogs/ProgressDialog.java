@@ -285,53 +285,8 @@ public class ProgressDialog extends JDialog implements Runnable, ProgressListene
 		
 	}
 
-	@Override
-	public void firstCoordinatesReady() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void calculate() {
-		// TODO Auto-generated method stub
-		
-	}
-
 //	@Override
 	public void updateGraphPanel() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void clusteringComplete(ClusterPair cp) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void calculatingCoordinatesStopped() {
-		// TODO Auto-generated method stub
-		
-	}
-
-//	@Override
-//	public void inputFileParsingComplete(GeneListCollection geneListCollection,
-//			GeneCollection queryGenes, GeneCollection customBackgroundGenes,
-//			GeneCollection genomicBackgroundGenes) {
-//		// TODO Auto-generated method stub
-		
-//	}
-
-	@Override
-	public boolean setFilters(float pvalue) {
-		return false;
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void externalResultsParsed(GeneListCollection geneListCollection) {
 		// TODO Auto-generated method stub
 		
 	}

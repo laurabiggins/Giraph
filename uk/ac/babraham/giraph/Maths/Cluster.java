@@ -18,14 +18,14 @@ package uk.ac.babraham.giraph.Maths;
 import uk.ac.babraham.giraph.DataParser.ProgressListener;
 import uk.ac.babraham.giraph.DataTypes.GeneList;
 
-import java.sql.Timestamp;
+import java.util.Enumeration;
 import java.util.Vector;
 
 public class Cluster implements Runnable{ 
 	
 	private Vector<ClusterPair> clusterPairs;
 	private GeneList [] gl;
-	public ProgressListener appPL;
+	public Vector<ProgressListener> listeners = new Vector<ProgressListener>();
 	private boolean colouredByProximity;
 	private boolean running;
 	
@@ -45,6 +45,11 @@ public class Cluster implements Runnable{
 		running=true;
 	}
 	
+	public void startClustering () {
+		Thread t = new Thread(this);
+		t.start();
+	}
+	
 	public void run(){
 		
 		startRunning();
@@ -55,7 +60,7 @@ public class Cluster implements Runnable{
 		findNextHighestCorrelation();
 		
 		if(clusterPairs.size() == 1){
-			notifyClusteringComplete(appPL, clusterPairs.get(0));
+			progressComplete(clusterPairs.get(0));
 		}
 		else{
 			// throw an error
@@ -345,11 +350,42 @@ public class Cluster implements Runnable{
 */	
 	public void addProgressListener(ProgressListener pl){
 		//System.out.println("adding app listener in cc");
-		this.appPL = pl;
+		if (!listeners.contains(pl)) listeners.add(pl);
 	}
 	
-	public void notifyClusteringComplete(ProgressListener appPL, ClusterPair cp){
-		
-		appPL.clusteringComplete(cp);
-	}	
+	protected void progressCancelled () {
+		Enumeration<ProgressListener>en = listeners.elements();
+		while (en.hasMoreElements()) {
+			en.nextElement().progressCancelled();
+		}
+	}
+
+	protected void progressUpdated (String message, int current, int max) {
+		Enumeration<ProgressListener>en = listeners.elements();
+		while (en.hasMoreElements()) {
+			en.nextElement().progressUpdated(message, current, max);
+		}
+	}
+
+	protected void progressWarningReceived (Exception e) {
+		Enumeration<ProgressListener>en = listeners.elements();
+		while (en.hasMoreElements()) {
+			en.nextElement().progressWarningReceived(e);
+		}
+	}
+
+	protected void progressExceptionReceived (Exception e) {
+		Enumeration<ProgressListener>en = listeners.elements();
+		while (en.hasMoreElements()) {
+			en.nextElement().progressExceptionReceived(e);
+		}
+	}
+
+	protected void progressComplete (Object o) {
+		Enumeration<ProgressListener>en = listeners.elements();
+		while (en.hasMoreElements()) {
+			en.nextElement().progressComplete("clustering", o);;
+		}
+	}
+	
 } 
