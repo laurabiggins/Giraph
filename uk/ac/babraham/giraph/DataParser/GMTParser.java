@@ -267,8 +267,13 @@ public class GMTParser implements Runnable{
 						functionalSetInfo.setNoOfBackgroundGenesInCategory(noOfBackgroundGenesInCategory);
 						gl.setFunctionalSetInfo(functionalSetInfo);
 						// add the gene list to the collection
-						geneListCollection.addGeneList(gl);
-						
+						try {
+							geneListCollection.addGeneList(gl);
+						}
+						catch(giraphException ge) {
+							// add this functionality in
+							progressWarningReceived();
+						}
 						//geneListArrayList.add(gl);
 					}	
 				}	
