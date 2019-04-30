@@ -23,6 +23,14 @@ import uk.ac.babraham.giraph.giraphApplication;
 
 public class ClusterRValueSelector extends JDialog implements ActionListener, ChangeListener{
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 7094507765827330336L;
+	/**
+	 * 
+	 */
+
 	private giraphApplication application;
 	private JSlider slider;	
 	//private Hashtable<Integer, JLabel> labels = null;

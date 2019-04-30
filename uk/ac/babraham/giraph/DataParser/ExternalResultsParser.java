@@ -12,7 +12,6 @@ import java.util.Vector;
 import java.util.zip.GZIPInputStream;
 
 import javax.swing.JDialog;
-import javax.swing.JOptionPane;
 import uk.ac.babraham.giraph.giraphApplication;
 import uk.ac.babraham.giraph.giraphException;
 import uk.ac.babraham.giraph.DataTypes.FunctionalSetInfo;
@@ -43,12 +42,6 @@ public class ExternalResultsParser implements Cancellable, Runnable {
 
 	// filepath for the gmt file
 	private File file;
-
-	// create a new geneCollection then set this as the query genes in the application
-	//public GeneCollection gc;
-
-	// create a new geneListCollection
-	//public GeneListCollection glc;
 
 	public boolean cancel;
 
@@ -161,26 +154,20 @@ public class ExternalResultsParser implements Cancellable, Runnable {
 
 				if(genesInCategory == null){
 					String msg = "Could not find any genes in category on line " + lineCount + ", skipping this line";
-					//System.err.println(msg + "line = " + line);
-					progressWarningReceived(new giraphException(msg)); // this doesn't seem to do anything
-					//JOptionPane.showMessageDialog(null, msg, "No genes to analyse", JOptionPane.ERROR_MESSAGE);
+					progressWarningReceived(new giraphException(msg)); 
 					continue;
-					//return null;
 				}
 				// either we're not parsing the list of genes properly, or it may be that some reports contain lists of genes with only one gene in - clearly this should not be included.
 				if(genesInCategory.length < 2){
 
 					String msg = ("Only 1 gene found for category on line " + lineCount + ", skipping this line");
 					progressWarningReceived(new giraphException(msg));
-					//JOptionPane.showMessageDialog(null, msg, "No genes to analyse", JOptionPane.ERROR_MESSAGE);
-					//System.err.println(msg);
 					continue; // Skip this line...	  
-					//return null;
+
 				}
 
 				// Create new functional category for each line
 				FunctionalSetInfo functionalSetInfo = new FunctionalSetInfo();
-
 
 				/** These must have been specified */
 				functionalSetInfo.setName(sections[categoryNameColValue]);
@@ -191,8 +178,7 @@ public class ExternalResultsParser implements Cancellable, Runnable {
 				}
 				else {
 					functionalSetInfo.setDescription(sections[categoryNameColValue]);
-				}
-				//System.err.println("adding description " + functionalSetInfo.description());			
+				}		
 
 				/** This will be changed into a gene list once all the genes have been processed */ 
 				ArrayList<Gene> geneArrayList = new ArrayList<Gene>();
@@ -222,13 +208,15 @@ public class ExternalResultsParser implements Cancellable, Runnable {
 					gl.setFunctionalSetInfo(functionalSetInfo);
 
 					PValue pvalue = new PValue();
-					//pvalue.setQ(Double.parseDouble(sections[pValueColValue]));
-
+					
 					if(isNumeric(sections[pValueColValue])) {
 						pvalue.setQ(Double.valueOf(sections[pValueColValue]));
 					}
 					else {
-						JOptionPane.showMessageDialog(giraphApplication.getInstance(),"unexpected values found in p-value column", "incompatible value entered", JOptionPane.ERROR_MESSAGE);
+						String msg = "Unexpected values found in p-value column";
+						
+						progressExceptionReceived(new giraphException(msg));
+						
 						giraphApplication.getInstance().menuBar.clearApplicationNoChoice();
 						return null;
 					}
@@ -242,8 +230,6 @@ public class ExternalResultsParser implements Cancellable, Runnable {
 						// TODO Auto-generated catch block						
 						e.printStackTrace();
 					}
-
-					//System.err.println("adding gene list " + functionalSetInfo.description());
 				}				
 			}
 			// We're finished with the file.

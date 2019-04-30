@@ -4,22 +4,15 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
-import java.io.FileNotFoundException;
-
 import javax.swing.JButton;
-import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
-import uk.ac.babraham.giraph.GiraphPreferences;
 import uk.ac.babraham.giraph.giraphApplication;
 import uk.ac.babraham.giraph.DataParser.CustomBackgroundGeneParser;
-import uk.ac.babraham.giraph.DataParser.DavidParser;
 import uk.ac.babraham.giraph.DataParser.GMTGeneParser;
 import uk.ac.babraham.giraph.DataParser.GMTParser;
-import uk.ac.babraham.giraph.DataParser.OptionsListener;
 import uk.ac.babraham.giraph.DataParser.GeneNameParser;
 import uk.ac.babraham.giraph.DataParser.ProgressListener;
 import uk.ac.babraham.giraph.DataParser.QueryGeneParser;
@@ -28,12 +21,15 @@ import uk.ac.babraham.giraph.DataTypes.GeneList;
 import uk.ac.babraham.giraph.DataTypes.GeneListCollection;
 import uk.ac.babraham.giraph.DataTypes.PValue;
 import uk.ac.babraham.giraph.Dialogs.ProgressDialog;
-import uk.ac.babraham.giraph.Maths.ClusterPair;
 import uk.ac.babraham.giraph.Maths.FishersExactTest;
 import uk.ac.babraham.giraph.Maths.MultipleTestingCorrection;
 
 public class OptionsFrame extends JFrame implements ActionListener, ProgressListener {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	JButton submitButton;
 	GeneUploadPanel optionsPanel;
 	GeneNameParser queryGeneParser;

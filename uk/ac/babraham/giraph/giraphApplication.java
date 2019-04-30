@@ -30,10 +30,8 @@ import uk.ac.babraham.giraph.Utilities.ImageSaver;
 import uk.ac.babraham.giraph.Utilities.StopPauseListener;
 
 /** 
- *  TODO: allow import of generic text file - this should work already, the code just needs tidying up.
  *  TODO: geneInfoPanel gets passed through menuBar, application, graphPanel... clean this up
  *  TODO: stopCalculating is similar in getting passed around 
- *  TODO: remove splitPane, this is no longer needed
  *  
  *  TODO: The DataFilter class and the setFilters method here do half the job of producing messages each - put in one or the other. 
  *   
@@ -44,10 +42,6 @@ import uk.ac.babraham.giraph.Utilities.StopPauseListener;
  *  TODO: put in limit to number of genes you can enter. 
  * 
  *  TODO: print number of genes that were found - of the x genes that were entered, x were matched, and x were not   
- *  
- *  TODO: annotate Result class.
- *  
- * (TODO: Export ontology info for all query genes that matched - save as tab-delimited text file.)
  *  
  * @author bigginsl
  *
@@ -73,8 +67,6 @@ public class giraphApplication extends JFrame implements ProgressListener, Filte
 	/** The main display panel */
 	GraphPanel gp; 
 	
-	//JPanel mainPane;
-	
 	JPanel mainPane;
 	
 	StopPauseListener spl;
@@ -83,7 +75,6 @@ public class giraphApplication extends JFrame implements ProgressListener, Filte
 	
 	private DataFilter df; 
 	
-	// This contains all the genes in the genome. It is needed for the QC plots.
 	public GeneCollection genomicBackgroundGenes;
 	
 	public GeneCollection customBackgroundGenes = null;
@@ -110,7 +101,6 @@ public class giraphApplication extends JFrame implements ProgressListener, Filte
 		getContentPane().add(menuBar.toolbar(),BorderLayout.NORTH);
 		setVisible(true);
 	
-		//mainPane = new JPanel();
 		mainPane = new JPanel();
 		
 		getContentPane().add(mainPane);
@@ -264,17 +254,10 @@ public class giraphApplication extends JFrame implements ProgressListener, Filte
 
 	}
 	
-	public void calculatingCoordinatesStopped(){
+/*	public void calculatingCoordinatesStopped(){
 		
-		
-		/*getGraphPanel().updateCalculatingStatus(false);
-		getGraphPanel().revalidate();
-		getGraphPanel().repaint();
-		menuBar.disableStopButton();
-		menuBar.enablePlayButton();
-		*/
 	}
-	
+*/	
 	
 	/** 
 	 * Used when rValue for clusters is adjusted on the menu bar
@@ -341,8 +324,10 @@ public class giraphApplication extends JFrame implements ProgressListener, Filte
 				"Too many circles", JOptionPane.WARNING_MESSAGE);	
 			}
 			else{
-				JOptionPane.showMessageDialog(giraphApplication.getInstance(), "Setting p value threshold to " + stringency +
-					" leaves "+ noGeneLists + " circles", "filter results", JOptionPane.INFORMATION_MESSAGE);
+				
+				String msg = "Setting p value threshold to " + stringency + " leaves "+ noGeneLists + " circles";
+				JOptionPane.showMessageDialog(giraphApplication.getInstance(), msg, "filter results", JOptionPane.INFORMATION_MESSAGE);
+				//progressUpdated(msg, 0, 0);
 			}
 			return true;	
 		}

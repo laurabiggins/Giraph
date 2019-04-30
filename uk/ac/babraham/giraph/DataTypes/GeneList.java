@@ -16,8 +16,6 @@ package uk.ac.babraham.giraph.DataTypes;
 import java.awt.Color;
 import java.util.ArrayList;
 
-import uk.ac.babraham.giraph.giraphApplication;
-
 public class GeneList {
 	
 	// genes in the gene list

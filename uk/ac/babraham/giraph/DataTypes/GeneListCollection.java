@@ -2,8 +2,6 @@ package uk.ac.babraham.giraph.DataTypes;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Vector;
-
 import uk.ac.babraham.giraph.giraphException;
 
 /**

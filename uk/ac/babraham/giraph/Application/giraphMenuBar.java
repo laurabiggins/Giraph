@@ -30,13 +30,16 @@ import uk.ac.babraham.giraph.Displays.GeneUploadPanel;
 import uk.ac.babraham.giraph.Displays.OptionsFrame;
 import uk.ac.babraham.giraph.Displays.Help.HelpDialog;
 import uk.ac.babraham.giraph.giraphApplication;
-import uk.ac.babraham.giraph.DataParser.DavidParser;
 import uk.ac.babraham.giraph.Dialogs.ClusterRValueSelector;
 import uk.ac.babraham.giraph.Utilities.StopPauseListener;
 
 public class giraphMenuBar extends JMenuBar implements ActionListener{
 		
-	private static final long serialVersionUID = 1L;
+	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -5891671699146288721L;
 	private giraphApplication application;
 	private GiraphToolbar toolbar;
 	
@@ -125,28 +128,14 @@ public class giraphMenuBar extends JMenuBar implements ActionListener{
 			
 			// stop the circles
 			stopCircles();
-			
-			/*if(spl != null){
-				spl.stopCalculating();
-				//application.calculatingCoordinatesStopped();
-				
-				if(application.getGraphPanel() != null){
-				
-					application.getGraphPanel().updateCalculatingStatus(false);
-					application.getGraphPanel().revalidate();
-					application.getGraphPanel().repaint();	
-				}	
-			}	
-			*/				
+							
 			String msg = "This will wipe out your existing data, would you still like to continue?";  
 			int answer = JOptionPane.showConfirmDialog(application, msg);
 			System.err.println("answer is: " + answer);
 			
 			if(answer == 0){
 				reset();
-				//application.removeOldData();
-				//toolbar.resetButtons();
-				//disableButtons();				
+			
 			}
 			return answer;
 		}

@@ -36,20 +36,19 @@ import javax.swing.JPanel;
 import uk.ac.babraham.giraph.CrashReporter;
 import uk.ac.babraham.giraph.giraphApplication;
 import uk.ac.babraham.giraph.DataParser.ProgressListener;
-import uk.ac.babraham.giraph.DataTypes.GeneCollection;
-import uk.ac.babraham.giraph.DataTypes.GeneListCollection;
-import uk.ac.babraham.giraph.Maths.ClusterPair;
 
-//import uk.ac.babraham.SeqMonk.SeqMonkApplication;
-//import uk.ac.babraham.SeqMonk.DataTypes.ProgressListener;
-//import uk.ac.babraham.SeqMonk.Dialogs.CrashReporter;
 
 /**
  * The Class ProgressDialog is a generic progress dialog showing a progress
  * bar and a changing label.  It can also display a cancel button for 
- * progress listners which allow it.
+ * progress listeners which allow it.
  */
 public class ProgressDialog extends JDialog implements Runnable, ProgressListener, ActionListener {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -3758853880899014898L;
 
 	/** The label. */
 	private JLabel label;

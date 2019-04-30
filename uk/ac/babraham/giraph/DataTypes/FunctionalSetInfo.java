@@ -6,7 +6,6 @@ package uk.ac.babraham.giraph.DataTypes;
  * 
  */
 
-import java.util.Vector;
 
 public class FunctionalSetInfo {
 

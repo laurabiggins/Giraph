@@ -9,6 +9,8 @@ import java.net.URLConnection;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Enumeration;
+import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -18,20 +20,52 @@ import org.apache.commons.io.FileUtils;
 
 import uk.ac.babraham.giraph.GiraphPreferences;
 import uk.ac.babraham.giraph.giraphApplication;
+import uk.ac.babraham.giraph.giraphException;
+import uk.ac.babraham.giraph.DataParser.ProgressListener;
+import uk.ac.babraham.giraph.DataTypes.GeneListCollection;
+import uk.ac.babraham.giraph.Dialogs.Cancellable;
 
-public class GMTDownloader {
-	
-	private static String latestVersion = null;
+public class GMTDownloader implements Runnable, Cancellable{
 	
 	String homeDirectory = getHomeDirectory();
-		
+	
+	String species;
+	
+	boolean cancel;
+	
+	File downloadedFile;
+	
 	public String getHomeDirectory(){
 		
 		return System.getProperty("user.home");
 	}
 	
-	public void downloadFile(String species){
+	public void setCancel(boolean cancel){
+		this.cancel = cancel;
+	}
+
+	public void startDownloading () {
+		Thread t = new Thread(this);
+		t.start();
+	}
 	
+	public GMTDownloader(String species){
+		
+		this.species = species;
+	}
+	
+	public void run(){
+
+		downloadedFile = downloadFile();
+
+		if (downloadedFile == null) new giraphException("couldn't download gmt file");
+		
+		progressComplete(downloadedFile);
+	}
+	
+	
+	public File downloadFile(){
+		
 		try {
 			
 			URL downloadURL = new URL("http://download.baderlab.org/EM_Genesets/current_release/" + species + "/symbol/");
@@ -41,7 +75,6 @@ public class GMTDownloader {
 			URLConnection connection = downloadURL.openConnection();
 			connection.setUseCaches(false);
 			
-//<<<<<<< download_gmt
 			BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
 			
 			String line;
@@ -68,12 +101,10 @@ public class GMTDownloader {
 
 			String urlString = downloadURL + urlPart;
 			URL fullDownloadURL = new URL(urlString);
-			String msg = "will try and download " + urlString;
 			
-			JOptionPane.showMessageDialog(giraphApplication.getInstance(), msg, "Downloading...", JOptionPane.INFORMATION_MESSAGE);
-			
-			/** ok or cancel option **/
-			
+			String msg = "Downloading " + urlString;
+			progressUpdated(msg, 0, 0);
+
 			connection = fullDownloadURL.openConnection();
 			connection.setUseCaches(false);
 			
@@ -84,13 +115,73 @@ public class GMTDownloader {
 			
 			File f = new File(filename);
 			
+			if (cancel) {
+				progressCancelled();
+				return null;
+			}
+			
+			// This can't be cancelled
 			FileUtils.copyURLToFile(fullDownloadURL, f);
 			
+			if(f.exists() && !f.isDirectory()) {
+				return f;
+			}
 		}
 		catch (IOException e) {
 			e.printStackTrace();
-			//throw new giraphException("Couldn't contact the update server to check for updates");
-		}	
+			new giraphException("Couldn't download gmt file ");
+		}
+		return null;
 	}
 	
+	public Vector<ProgressListener>listeners = new Vector<ProgressListener>();
+
+	protected void progressCancelled () {
+		Enumeration<ProgressListener>en = listeners.elements();
+		while (en.hasMoreElements()) {
+			en.nextElement().progressCancelled();
+		}
+	}
+
+	protected void progressUpdated (String message, int current, int max) {
+		Enumeration<ProgressListener>en = listeners.elements();
+		while (en.hasMoreElements()) {
+			en.nextElement().progressUpdated(message, current, max);
+		}
+	}
+
+	protected void progressWarningReceived (Exception e) {
+		Enumeration<ProgressListener>en = listeners.elements();
+		while (en.hasMoreElements()) {
+			en.nextElement().progressWarningReceived(e);
+		}
+	}
+
+	protected void progressExceptionReceived (Exception e) {
+		Enumeration<ProgressListener>en = listeners.elements();
+		while (en.hasMoreElements()) {
+			en.nextElement().progressExceptionReceived(e);
+		}
+	}
+
+	protected void progressComplete (Object o) {
+		Enumeration<ProgressListener>en = listeners.elements();
+		while (en.hasMoreElements()) {
+			en.nextElement().progressComplete("gmt_downloader", o);;
+		}
+	}
+
+	public void addProgressListener(ProgressListener pl){
+		if (!listeners.contains(pl)) {
+			listeners.add(pl);
+		}
+	}
+
+	@Override
+	public void cancel() {
+		System.err.println("setting cancel to true");
+		cancel = true;
+		// TODO Auto-generated method stub
+		
+	}
 }

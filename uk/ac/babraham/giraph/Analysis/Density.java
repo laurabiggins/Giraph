@@ -48,8 +48,6 @@ public class Density implements Runnable{
 	// rawValues has been sorted
 	private void setXValues(){
 	
-		int count=0;
-				
 		// this might need adjusting slightly to get the last values right
 		double increment = (rawValues[rawValues.length-1] - rawValues[0]) / xValues.length; 
 		

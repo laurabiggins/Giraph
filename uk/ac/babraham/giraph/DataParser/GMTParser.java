@@ -39,9 +39,6 @@ public class GMTParser implements Runnable, Cancellable {
 	
 	public boolean cancel;
 	
-	// the options listener
-	//protected OptionsListener ol;
-	
 	// the background genes
 	private GeneCollection backgroundGenes; 
 	
@@ -50,8 +47,6 @@ public class GMTParser implements Runnable, Cancellable {
 	
 	// all the genes in the gmt file
 	protected GeneCollection allGMTgenes;
-	
-//	private ArrayList<GeneList> geneListArrayList;
 	
 	private GeneListCollection geneListCollection;
 	

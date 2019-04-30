@@ -38,10 +38,13 @@ import javax.swing.filechooser.FileFilter;
 
 import uk.ac.babraham.giraph.GiraphPreferences;
 import uk.ac.babraham.giraph.giraphApplication;
+import uk.ac.babraham.giraph.DataParser.ProgressListener;
+import uk.ac.babraham.giraph.DataTypes.GeneListCollection;
+import uk.ac.babraham.giraph.Dialogs.ProgressDialog;
 import uk.ac.babraham.giraph.Network.GMTDownloader;
 import uk.ac.babraham.giraph.Utilities.NumberKeyListener;
 
-public class GeneUploadPanel extends JPanel implements ActionListener, KeyListener, ItemListener {
+public class GeneUploadPanel extends JPanel implements ProgressListener, ActionListener, KeyListener, ItemListener {
 	
 	JComboBox featureTypeBox;
 	JComboBox speciesBox;
@@ -384,11 +387,11 @@ public class GeneUploadPanel extends JPanel implements ActionListener, KeyListen
 		}
 		else if (action.equals("downloadGMT")) {
 			
-			new GMTDownloader().downloadFile(species());
-			findGMTFile(species());
-
+			GMTDownloader gmtDownloader = new GMTDownloader(species());
+			gmtDownloader.addProgressListener(this);
+			gmtDownloader.addProgressListener(new ProgressDialog("Downloading GMT file", gmtDownloader));
+			gmtDownloader.startDownloading();
 		}
-		
 	}
 
 	private static boolean fileValid(String filepath){
@@ -534,6 +537,41 @@ public class GeneUploadPanel extends JPanel implements ActionListener, KeyListen
 			throw new IllegalStateException("Unexpected text field "+f+" sending data to keylistener in differences filter");
 		}
 	}
+	
+	@Override
+	public void progressCancelled() {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	@Override
+	public void progressUpdated(String s, int x1, int x2) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	@Override
+	public void progressWarningReceived(Exception e) {
+		// TODO Auto-generated method stub
+	}
+
+
+	@Override
+	public void progressExceptionReceived(Exception e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	@Override
+	public void progressComplete(String process, Object result) {
+		
+		if (process.equals("gmt_downloader")) {
+			findGMTFile(species());
+		}
+	}	
 	
 /*	public boolean isReady() {
 		

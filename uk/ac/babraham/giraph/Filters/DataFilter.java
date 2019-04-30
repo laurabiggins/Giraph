@@ -139,5 +139,6 @@ public class DataFilter implements ActionListener{
 		}
 		//System.out.println("At end of setValidities in dataFilter");
 		updateListeners();
+		//giraphApplication.getInstance().filtersUpdated(stringency);
 	}	
 }
