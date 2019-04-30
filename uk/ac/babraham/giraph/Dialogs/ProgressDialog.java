@@ -230,7 +230,7 @@ public class ProgressDialog extends JDialog implements Runnable, ProgressListene
 
 		if (warningCount > 0) {
 			// We need to display a list of the warnings
-			//new WarningDisplayDialog(this,warningCount,warnings.toArray(new Exception [0]));
+			new WarningDisplayDialog(this,warningCount,warnings.toArray(new Exception [0]));
 		}
 		dispose();
 	}

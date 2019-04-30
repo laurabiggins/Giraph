@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Vector;
 
+import uk.ac.babraham.giraph.giraphException;
+
 /**
  * @author bigginsl
  * 
@@ -43,12 +45,12 @@ public class GeneListCollection {
 		return al.toArray(new GeneList[0]);	
 	}
 	
-	public void addGeneList(GeneList gl){
+	public void addGeneList(GeneList gl) throws giraphException{
 		
 		String categoryName = gl.getFunctionalSetInfo().name();
 		
 		if(geneListCollection.containsKey(categoryName)){
-			System.err.println("Already have a functional set named " + categoryName);
+			throw new giraphException("Duplicate functional sets named " + categoryName + ", keeping first instance from file.");
 		}
 		else{
 			geneListCollection.put(categoryName, gl);

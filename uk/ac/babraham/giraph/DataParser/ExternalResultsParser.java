@@ -1,14 +1,5 @@
 package uk.ac.babraham.giraph.DataParser;
 
-import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -20,18 +11,8 @@ import java.util.Enumeration;
 import java.util.Vector;
 import java.util.zip.GZIPInputStream;
 
-import javax.swing.JButton;
-import javax.swing.JComboBox;
 import javax.swing.JDialog;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.table.AbstractTableModel;
-import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.TableCellRenderer;
-
 import uk.ac.babraham.giraph.giraphApplication;
 import uk.ac.babraham.giraph.giraphException;
 import uk.ac.babraham.giraph.DataTypes.FunctionalSetInfo;
@@ -255,7 +236,12 @@ public class ExternalResultsParser implements Cancellable, Runnable {
 					gl.setPvalue(pvalue);
 
 					// add the gene list to the collection
-					glc.addGeneList(gl);
+					try {
+						glc.addGeneList(gl);
+					} catch (giraphException e) {
+						// TODO Auto-generated catch block						
+						e.printStackTrace();
+					}
 
 					//System.err.println("adding gene list " + functionalSetInfo.description());
 				}				

@@ -1,5 +1,7 @@
 package uk.ac.babraham.giraph.DataParser;
 
+import java.util.Enumeration;
+
 /** 
  * For parsing custom background genes that have been pasted in.
  */
@@ -14,6 +16,13 @@ public class CustomBackgroundGeneParser extends GeneNameParser{
 	}
 	
 
+	protected void progressComplete (Object o) {
+		Enumeration<ProgressListener>en = listeners.elements();
+		while (en.hasMoreElements()) {
+			en.nextElement().progressComplete("custom_background_parser", o);;
+		}
+	}
+	
 	
 	//private String listOfGeneNames;
 	
@@ -51,9 +60,5 @@ public class CustomBackgroundGeneParser extends GeneNameParser{
 		}	
 	}
 */	
-	protected void genesImported(){
-		ol.customBackgroundGenesImported();
 
-	//	else return (" ");
-	}
 }
