@@ -1,4 +1,8 @@
 package uk.ac.babraham.giraph.Maths;
+import java.util.Enumeration;
+import java.util.Vector;
+
+import uk.ac.babraham.giraph.giraphApplication;
 
 /** 
  * This class calculates the optimal positions of the genelists in relation to each other. 
@@ -10,11 +14,10 @@ import uk.ac.babraham.giraph.DataTypes.GeneListCollection;
 import uk.ac.babraham.giraph.DataTypes.GeneList;
 import uk.ac.babraham.giraph.Utilities.StopPauseListener;
 
-
 public class CalculateCoordinates implements Runnable, StopPauseListener {
 
 	boolean continueCalculating;
-	private ProgressListener appPL;
+	private Vector<ProgressListener> listeners = new Vector<ProgressListener>();
 	
 	private GeneListCollection geneListCollection;
 	
@@ -347,7 +350,7 @@ public class CalculateCoordinates implements Runnable, StopPauseListener {
 				//appPL.firstCoordinatesReady();
 			}
 						
-			appPL.updateGraphPanel();
+			giraphApplication.getInstance().updateGraphPanel();
 			
 			/** We want to check whether we're still moving in the right direction, if not, stop if we're getting too few improving positions.
 			 * or stop if the percentage difference is so small that it's not worth carrying on. */
@@ -376,13 +379,14 @@ public class CalculateCoordinates implements Runnable, StopPauseListener {
 					if(improvingMagnitude < 0.0001){	
 						// stopCalculating
 						continueCalculating = false;
-						appPL.calculatingCoordinatesStopped();
 						
 						System.out.println("stopped calculating at x = " + x + " because...");
 						System.out.println("no of improvingPositions " + improvingPositions);	
 						System.out.println("improvingMagnitude " + improvingMagnitude);	
 						System.out.println("sumMoveCloser =  " + sumMoveCloser);
 						System.out.println("sumMoveAway =  " + sumMoveAway);						
+						
+						progressComplete(null);
 					}					
 				}
 			}
@@ -402,9 +406,11 @@ public class CalculateCoordinates implements Runnable, StopPauseListener {
 	
 	/** Add the main giraphApplication as a progress listener */
 	public void addProgressListener(ProgressListener pl){
-		this.appPL = pl;
+		if (!listeners.contains(pl)) {
+			listeners.add(pl);
+		}
 	}
-
+	
 	/** Method inherited from stopPauseListener */
 	public void updateValidGeneLists(){
 		validGeneLists = geneListCollection.getValidGeneLists();
@@ -413,4 +419,40 @@ public class CalculateCoordinates implements Runnable, StopPauseListener {
 	public void stopCalculating(){
 		continueCalculating = false;
 	}
+	
+	protected void progressCancelled () {
+		Enumeration<ProgressListener>en = listeners.elements();
+		while (en.hasMoreElements()) {
+			en.nextElement().progressCancelled();
+		}
+	}
+
+	protected void progressUpdated (String message, int current, int max) {
+		Enumeration<ProgressListener>en = listeners.elements();
+		while (en.hasMoreElements()) {
+			en.nextElement().progressUpdated(message, current, max);
+		}
+	}
+
+	protected void progressWarningReceived (Exception e) {
+		Enumeration<ProgressListener>en = listeners.elements();
+		while (en.hasMoreElements()) {
+			en.nextElement().progressWarningReceived(e);
+		}
+	}
+
+	protected void progressExceptionReceived (Exception e) {
+		Enumeration<ProgressListener>en = listeners.elements();
+		while (en.hasMoreElements()) {
+			en.nextElement().progressExceptionReceived(e);
+		}
+	}
+
+	protected void progressComplete (Object o) {
+		Enumeration<ProgressListener>en = listeners.elements();
+		while (en.hasMoreElements()) {
+			en.nextElement().progressComplete("calculate_coordinates", o);;
+		}
+	}
+
 }	

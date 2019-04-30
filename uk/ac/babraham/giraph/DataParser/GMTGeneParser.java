@@ -1,5 +1,7 @@
 package uk.ac.babraham.giraph.DataParser;
 
+import java.util.Enumeration;
+
 import uk.ac.babraham.giraph.giraphException;
 import uk.ac.babraham.giraph.DataTypes.GeneCollection;
 
@@ -11,14 +13,18 @@ public class GMTGeneParser extends GMTParser{
 		allGMTgenes = new GeneCollection();
 	}
 
-	protected void parseLine(String [] result) throws giraphException {	
-		
-		parseGenes(result);
+	public void parseLine(String [] result, int linenumber) throws giraphException{// throws giraphException {	
+		//System.err.println("we're using this");
+		parseGenes(result, linenumber);
 	
 	}
 	
-	public void notifyGMTFileParsed() {
-		ol.genomicBackgroundGenesImported();		
+	protected void progressComplete (Object o) {
+		Enumeration<ProgressListener>en = listeners.elements();
+		while (en.hasMoreElements()) {
+			en.nextElement().progressComplete("gmt_gene_parser", o);;
+		}
 	}
+
 	
 }

@@ -6,7 +6,7 @@ import javax.swing.JOptionPane;
 
 import uk.ac.babraham.giraph.giraphApplication;
 
-public class DavidParser extends ExternalResultsParser{
+public class DavidParser extends ExternalResultsParser {
 	
 	
 	public DavidParser(File file){

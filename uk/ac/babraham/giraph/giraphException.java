@@ -9,8 +9,5 @@ public class giraphException extends Exception {
 	 */
 	public giraphException (String error) {
 		super(error);
-		System.err.println("supposed to be producing an exception here!!!!!" + error);
-		
 	}
-
 }

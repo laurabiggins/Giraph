@@ -16,6 +16,7 @@ import javax.swing.JPanel;
 import uk.ac.babraham.giraph.GiraphPreferences;
 import uk.ac.babraham.giraph.giraphApplication;
 import uk.ac.babraham.giraph.DataParser.CustomBackgroundGeneParser;
+import uk.ac.babraham.giraph.DataParser.DavidParser;
 import uk.ac.babraham.giraph.DataParser.GMTGeneParser;
 import uk.ac.babraham.giraph.DataParser.GMTParser;
 import uk.ac.babraham.giraph.DataParser.OptionsListener;
@@ -26,10 +27,12 @@ import uk.ac.babraham.giraph.DataTypes.GeneCollection;
 import uk.ac.babraham.giraph.DataTypes.GeneList;
 import uk.ac.babraham.giraph.DataTypes.GeneListCollection;
 import uk.ac.babraham.giraph.DataTypes.PValue;
+import uk.ac.babraham.giraph.Dialogs.ProgressDialog;
+import uk.ac.babraham.giraph.Maths.ClusterPair;
 import uk.ac.babraham.giraph.Maths.FishersExactTest;
 import uk.ac.babraham.giraph.Maths.MultipleTestingCorrection;
 
-public class OptionsFrame extends JFrame implements ActionListener, OptionsListener {
+public class OptionsFrame extends JFrame implements ActionListener, ProgressListener {
 	
 	JButton submitButton;
 	GeneUploadPanel optionsPanel;
@@ -44,11 +47,7 @@ public class OptionsFrame extends JFrame implements ActionListener, OptionsListe
 	GeneCollection customBackgroundGenes = null;
 	GeneListCollection geneListCollection;
 	private boolean usingCustomBackground = false;
-	
-	
-	private ProgressListener pl;
-	
-	
+		
 	public OptionsFrame(){
 	
 		setTitle("info");
@@ -68,9 +67,7 @@ public class OptionsFrame extends JFrame implements ActionListener, OptionsListe
 		setLocationRelativeTo(giraphApplication.getInstance());
 		setVisible(true);
 			
-		//this.setAlwaysOnTop(true);
-		
-		addProgressListener(giraphApplication.getInstance());
+		//this.setAlwaysOnTop(true);		
 	}
 	
 
@@ -118,14 +115,17 @@ public class OptionsFrame extends JFrame implements ActionListener, OptionsListe
 								
 				// parse the genes from the gmt file so that we've got a genomic background set to work from
 				gmtGeneParser = new GMTGeneParser(optionsPanel.validGeneSetFilepath());
-				gmtGeneParser.addOptionsListener(this);
-						
+				gmtGeneParser.addProgressListener(this);
+				gmtGeneParser.addProgressListener(new ProgressDialog("Parsing GMT file", gmtParser));
+				gmtGeneParser.startParsing();
+				
 				setVisible(false);
 				dispose();
 			}		
 		}
 	}	
-			
+	
+/*	@Override
 	public void genomicBackgroundGenesImported() {
 		
 		if(gmtGeneParser.getAllGMTgenes() != null) {
@@ -146,15 +146,16 @@ public class OptionsFrame extends JFrame implements ActionListener, OptionsListe
 		}
 			
 	}		
-	
+*/	
 	public void loadCustomBackgroundGenes() {
 		
 		customBackgroundGeneParser = new CustomBackgroundGeneParser(optionsPanel.backgroundGenes(), gmtGeneParser.getAllGMTgenes());
-		customBackgroundGeneParser.addOptionsListener(this);
+		customBackgroundGeneParser.addProgressListener(this);
 		usingCustomBackground = true;
 	}
 	
 	// If customBackgroundGenes have been used then load the query genes using these as the background
+/*	@Override
 	public void customBackgroundGenesImported(){
 		
 		if(customBackgroundGeneParser.geneCollection() != null) {
@@ -167,13 +168,14 @@ public class OptionsFrame extends JFrame implements ActionListener, OptionsListe
 			JOptionPane.showMessageDialog(this, "couldn't load custom background genes", "No genes to analyse", JOptionPane.ERROR_MESSAGE);
 		}
 	}
-	
+*/	
 	public void loadQueryGenes(String queryGenes, GeneCollection backgroundGenes) {
 		
 		queryGeneParser = new QueryGeneParser(queryGenes, backgroundGenes);
-		queryGeneParser.addOptionsListener(this);
+		queryGeneParser.addProgressListener(this);
 	}	
 	
+/*	@Override
 	public void queryGenesImported(){
 		
 		if(queryGeneParser.geneCollection() != null) {
@@ -194,13 +196,13 @@ public class OptionsFrame extends JFrame implements ActionListener, OptionsListe
 			JOptionPane.showMessageDialog(this, "couldn't load query genes", "No genes to analyse", JOptionPane.ERROR_MESSAGE);
 		}
 	}
-	
+*/	
 	
 	// When all the functional info has been loaded, the rest of the options can be parsed. 
 	/**
 	 * This is only called when all the categories have been loaded.
 	 */
-	public void gmtFileParsed(){
+/*	public void gmtFileParsed(){
 		
 		if ((optionsPanel.loadingMessageThread() != null) && (optionsPanel.loadingMessageThread().isAlive())){
 			optionsPanel.loadingMessageThread().interrupt();
@@ -212,7 +214,7 @@ public class OptionsFrame extends JFrame implements ActionListener, OptionsListe
 		
 		calculatePValues();
 	}
-	
+*/	
 	private void pValuesCalculated(){
 		
 		// let the progress listener know that the parsing is complete
@@ -281,17 +283,108 @@ public class OptionsFrame extends JFrame implements ActionListener, OptionsListe
 			a = a-1;
 		}
 		
-		double[] fishersExactResult = new FishersExactTest().fishersExactTest(a, b, c, d);
+		double[] fishersExactResult = FishersExactTest.fishersExactTest(a, b, c, d);
 		
 		/** select the right tail */
 		PValue pval = new PValue(fishersExactResult[2]);				
 		
 		return(pval);						
 	}
-				
-	public void addProgressListener(ProgressListener pl){
+
+
+	@Override
+	public void progressCancelled() {
+		// TODO Auto-generated method stub
 		
-		this.pl = pl;		
+	}
+
+
+	@Override
+	public void progressUpdated(String s, int x1, int x2) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	@Override
+	public void progressWarningReceived(Exception e) {
+		// TODO Auto-generated method stub
+	}
+
+
+	@Override
+	public void progressExceptionReceived(Exception e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	@Override
+	public void progressComplete(String process, Object result) {
+		
+		if (process.equals("gmt_file_parser")) {
+			
+			this.geneListCollection = (GeneListCollection)result;
+			
+			if(geneListCollection == null){
+				System.err.println("uh oh, no gene list collection");
+			}
+			
+			/*if ((optionsPanel.loadingMessageThread() != null) && (optionsPanel.loadingMessageThread().isAlive())){
+				optionsPanel.loadingMessageThread().interrupt();
+			}	
+			
+			this.geneListCollection = gmtParser.getGeneListCollection();
+			
+			System.out.println(geneListCollection.getAllGeneLists().length + " genelists have been created (from options frame)");
+			*/
+			calculatePValues();
+
+		}
+				
+		else if (process.equals("custom_background_parser")) {
+			
+			customBackgroundGenes = (GeneCollection)result;
+			
+			loadQueryGenes(optionsPanel.queryGenes(), customBackgroundGenes);
+
+		}
+		
+		else if (process.equals("query_gene_parser")) {
+			
+			queryGenes = (GeneCollection)result;
+			
+			if(usingCustomBackground) {
+
+				gmtParser = new GMTParser(optionsPanel.validGeneSetFilepath(), customBackgroundGenes, queryGenes);
+			}
+			else {
+				gmtParser = new GMTParser(optionsPanel.validGeneSetFilepath(), gmtGeneParser.getAllGMTgenes(), queryGenes);
+			}
+			gmtParser.setMaxGenesInCategory(optionsPanel.maxGenesInSet());
+			gmtParser.setMinGenesInCategory(optionsPanel.minGenesInSet());
+			
+			gmtParser.addProgressListener(this);
+			gmtParser.addProgressListener(new ProgressDialog("Parsing GMT file", gmtParser));
+			gmtParser.startParsing();
+			/*dp.addProgressListener(this);
+			dp.addProgressListener(new ProgressDialog("Parsing DAVID file", dp));
+			dp.startParsing();
+			*/
+			
+		}
+		
+		else if (process.equals("gmt_gene_parser")){
+		
+			if(optionsPanel.getBackgroundGenesOption().equals("Enter custom background genes")){
+				System.err.println("loading custom background genes");
+				loadCustomBackgroundGenes();			
+			}
+			// use GMT genes as background
+			else {
+				loadQueryGenes(optionsPanel.queryGenes(), gmtGeneParser.getAllGMTgenes());
+			}
+		}
 	}		
 }	
 	

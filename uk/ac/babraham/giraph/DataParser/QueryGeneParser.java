@@ -1,5 +1,7 @@
 package uk.ac.babraham.giraph.DataParser;
 
+import java.util.Enumeration;
+
 /** 
  * for parsing the query genes
  */
@@ -14,8 +16,16 @@ public class QueryGeneParser extends GeneNameParser {
 		
 	}
 	
-	protected void genesImported(){
+/*	protected void genesImported(){
 		ol.queryGenesImported();
+	}
+*/
+	
+	protected void progressComplete (Object o) {
+		Enumeration<ProgressListener>en = listeners.elements();
+		while (en.hasMoreElements()) {
+			en.nextElement().progressComplete("query_gene_parser", o);;
+		}
 	}
 	
 	protected String unmatchedCountMessage(int unmatchedCount){

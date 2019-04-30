@@ -1,5 +1,8 @@
 package uk.ac.babraham.giraph.DataParser;
 
+import java.util.Enumeration;
+import java.util.Vector;
+
 /** 
  * This class parses the gene names that are entered, if the query gene is in the genomic background list it is saved in the GeneCollection genes.
  * 
@@ -12,8 +15,9 @@ import javax.swing.JOptionPane;
 
 import uk.ac.babraham.giraph.giraphApplication;
 import uk.ac.babraham.giraph.DataTypes.GeneCollection;
+import uk.ac.babraham.giraph.Dialogs.Cancellable;
 
-public class GeneNameParser implements Runnable{
+public class GeneNameParser implements Runnable, Cancellable{
 	
 	// The GeneCollection containing the parsed query/input genes
 	private GeneCollection genes;
@@ -21,10 +25,12 @@ public class GeneNameParser implements Runnable{
 	// The background genes to check the query/input genes against
 	private GeneCollection backgroundGenes; 
 	
+	public boolean cancel;
+	
 	// The query genes
 	private String listOfGeneNames;
 	
-	protected OptionsListener ol;
+	//protected OptionsListener ol;
 	
 	public GeneNameParser(String listOfGeneNames, GeneCollection backgroundGenes){
 		
@@ -69,8 +75,8 @@ public class GeneNameParser implements Runnable{
 			if((genes.getAllGenes().length > 3) && (genes.getAllGenes().length < backgroundGenes.getAllGenes().length)){
 				System.out.println("imported " + genes.getAllGenes().length + " genes, the first one was "+ genes.getAllGenes()[0].getGeneSymbol()+
 						", the last one was "+genes.getAllGenes()[genes.getAllGenes().length - 1].getGeneSymbol());
-				
-				genesImported();
+				progressComplete(genes);
+				//genesImported();
 			}
 			else if(genes.getAllGenes().length <= 3){
 				String msg = ("Fewer than 3 valid query genes were identified," + unmatchedCountMessage + "please enter more genes."); 
@@ -87,10 +93,10 @@ public class GeneNameParser implements Runnable{
 		return (unmatchedCount + " ");
 	}
 	
-	protected void genesImported(){
+/*	protected void genesImported(){
 		
 	}
-	
+*/	
 	public GeneCollection geneCollection(){
 		return genes;
 	}
@@ -129,9 +135,52 @@ public class GeneNameParser implements Runnable{
 		return str3.toUpperCase();
 	}
 	
-	public void addOptionsListener(OptionsListener ol){
-		
-		this.ol = ol;
+	public Vector<ProgressListener>listeners = new Vector<ProgressListener>();
+
+	protected void progressCancelled () {
+		Enumeration<ProgressListener>en = listeners.elements();
+		while (en.hasMoreElements()) {
+			en.nextElement().progressCancelled();
+		}
 	}
-				
+
+	protected void progressUpdated (String message, int current, int max) {
+		Enumeration<ProgressListener>en = listeners.elements();
+		while (en.hasMoreElements()) {
+			en.nextElement().progressUpdated(message, current, max);
+		}
+	}
+
+	protected void progressWarningReceived (Exception e) {
+		Enumeration<ProgressListener>en = listeners.elements();
+		while (en.hasMoreElements()) {
+			en.nextElement().progressWarningReceived(e);
+		}
+	}
+
+	protected void progressExceptionReceived (Exception e) {
+		Enumeration<ProgressListener>en = listeners.elements();
+		while (en.hasMoreElements()) {
+			en.nextElement().progressExceptionReceived(e);
+		}
+	}
+
+	protected void progressComplete (Object o) {
+		Enumeration<ProgressListener>en = listeners.elements();
+		while (en.hasMoreElements()) {
+			en.nextElement().progressComplete("gene_name_parser", o);;
+		}
+	}
+	
+	public void cancel() {
+		cancel = true;
+	}
+
+	public void addProgressListener(ProgressListener pl){
+		if (!listeners.contains(pl)) {
+			listeners.add(pl);
+		}
+	}
+
+	
 }

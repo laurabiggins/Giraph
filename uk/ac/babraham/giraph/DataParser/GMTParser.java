@@ -2,40 +2,31 @@ package uk.ac.babraham.giraph.DataParser;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Hashtable;
+import java.util.Enumeration;
+import java.util.Vector;
 import java.util.zip.GZIPInputStream;
 
-import javax.swing.JOptionPane;
-
-import uk.ac.babraham.giraph.CrashReporter;
 import uk.ac.babraham.giraph.giraphException;
 import uk.ac.babraham.giraph.DataTypes.FunctionalSetInfo;
 import uk.ac.babraham.giraph.DataTypes.Gene;
 import uk.ac.babraham.giraph.DataTypes.GeneCollection;
 import uk.ac.babraham.giraph.DataTypes.GeneList;
 import uk.ac.babraham.giraph.DataTypes.GeneListCollection;
-import uk.ac.babraham.giraph.giraphApplication;
+import uk.ac.babraham.giraph.Dialogs.Cancellable;
 
 /** 
  * this parses the info for all the GO terms etc. It creates FunctionalSetInfo objects which are contained within the FunctionalSetInfoCollection.
  * It is specific for the Bader files. http://baderlab.org/GeneSets
  * http://download.baderlab.org/EM_Genesets/March_14_2013/Mouse/symbol/Mouse_GO_AllPathways_no_GO_iea_March_14_2013_symbol.gmt
- * That file is located in D:\D_drive_other_computer\giraph
  * 
- * 
- *  
  * @author bigginsl
  *
  */
 
-public class GMTParser implements Runnable{
+public class GMTParser implements Runnable, Cancellable {
 	
 	// filepath for the gmt file
 	public String filepath;
@@ -46,8 +37,10 @@ public class GMTParser implements Runnable{
 	// the maximum no of genes in functional category before we disregard it 
 	private int minGenesInCategory = 10;
 	
+	public boolean cancel;
+	
 	// the options listener
-	protected OptionsListener ol;
+	//protected OptionsListener ol;
 	
 	// the background genes
 	private GeneCollection backgroundGenes; 
@@ -81,17 +74,21 @@ public class GMTParser implements Runnable{
 		
 		this.geneListCollection = new GeneListCollection();
 		
-		Thread t = new Thread(this);
-		t.start();
+		//Thread t = new Thread(this);
+		//t.start();
 	}
 	
 	public GMTParser(String file) {
 
 		this.filepath = file;
+		//Thread t = new Thread(this);
+		//t.start();
+	}
+
+	public void startParsing () {
 		Thread t = new Thread(this);
 		t.start();
 	}
-
 	
 	public void run(){
 		
@@ -140,7 +137,7 @@ public class GMTParser implements Runnable{
 			
 			String lineOfFile;	
 					
-			int counter = 0;
+			int counter = 1;
 															
 			while((lineOfFile = in.readLine()) != null){  
 			
@@ -151,40 +148,41 @@ public class GMTParser implements Runnable{
 				String[] result = lineOfFile.split("\t");								
 
 				try{
-					parseLine(result);//, maxGenesInCategory);
+					parseLine(result, counter);//, maxGenesInCategory);
+					//System.err.println("result[0] = " + result[0]);
 					counter++;
 				}
-				catch(giraphException ex){
-					new CrashReporter(ex);
+				catch(giraphException e){
+					
+					progressWarningReceived(e);
 				}
 			}
 			System.out.println("GMTParser: File loaded and parsed, " + counter + " lines were parsed.");
 			//System.out.println("Number of background genes = " + giraphApplication.getInstance().getFunctionalSetInfoCollection().noOfGenes());
 			// let the optionFrame know that the file has been parsed so the rest of the options can be parsed
-			notifyGMTFileParsed();
 			
-			
+			/*if(geneListCollection == null){
+				System.err.println("uh oh, no gene list collection in GMT parser");
+			}
+			*/			
+			progressComplete(geneListCollection);
 			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
-		
-	//	} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-		//	e.printStackTrace();
-		//}		
+		}	
 	}	
 	
 	/**
 	 * Function to just parse the genes, this can be used to get all the background genes.
+	 * @throws giraphException 
 	 **/
-	public void parseGenes(String [] result) {
+	public void parseGenes(String [] result, int linenumber) throws giraphException {
 		
 		String[] nameInfo = result[0].split("%"); 
 		
 		if(nameInfo.length < 3){
-			System.err.println("name info was not in the expected format: " + result[0]);
+			throw new giraphException("category name info was not in the expected format on line " + linenumber);
 		}
 		
 		else{
@@ -204,36 +202,33 @@ public class GMTParser implements Runnable{
 		}	
 	}
 	
-	public void notifyGMTFileParsed() {
-		ol.gmtFileParsed();
-	}
-	
 	// parses the line of a file
 	//private void parseLine(String [] result, int maxGenesInCategory) throws giraphException {
-	protected void parseLine(String [] result) throws giraphException {	
-		
-		// We don't want the categories that have a ridiculous number of genes 
+	protected void parseLine(String [] result, int linenumber) throws giraphException {	
+				// We don't want the categories that have a ridiculous number of genes 
 		// TODO: we should probably have a menu option to set this
 		if ((result.length < maxGenesInCategory) && (result.length > minGenesInCategory)) {
-		
-			/** Each line should be different so a new FunctionalSetInfo needs to be created. */
+			
+			// Each line should be different so a new FunctionalSetInfo needs to be created. 
 			FunctionalSetInfo functionalSetInfo = null;// = new FunctionalSetInfo();
 			
 			ArrayList<Gene> geneArrayList = new ArrayList<Gene>();
 			
 			try {
+				
 				// This is specific for the gmt files. http://baderlab.org/GeneSets
 				String[] nameInfo = result[0].split("%"); 
 				
 				if(nameInfo.length < 3){
-					System.err.println("name info was not in the expected format: " + result[0]);
+					throw new giraphException("category name info was not in the expected format on line " + linenumber + "\n" + result[0]);
+					//System.err.pr  intln("name info was not in the expected format: " + result[0]);
 				}
 				
 				else{
 				
 					int noOfBackgroundGenesInCategory = 0;
 						
-					/** cycle through all the genes, this is going to assume that there are no duplicated genes within the gene set category */ 
+					// cycle through all the genes, this is going to assume that there are no duplicated genes within the gene set category  
 					for (int i = 2; i < result.length; i++){
 						
 						String geneSym = cleanGene(result[i].toUpperCase());
@@ -267,15 +262,21 @@ public class GMTParser implements Runnable{
 						functionalSetInfo.setNoOfBackgroundGenesInCategory(noOfBackgroundGenesInCategory);
 						gl.setFunctionalSetInfo(functionalSetInfo);
 						// add the gene list to the collection
-						geneListCollection.addGeneList(gl);
-						
-						//geneListArrayList.add(gl);
+						try {
+							geneListCollection.addGeneList(gl);
+							//System.err.println("adding gene list " + gl.getFunctionalSetInfo().description());
+						}
+						catch(giraphException ge) {
+							
+							progressWarningReceived(ge);
+						}
 					}	
 				}	
 			}
 			catch (java.lang.NumberFormatException e){
 				String error = e.toString();
-				throw new giraphException(error);
+				System.err.println(error);
+				//throw new giraphException(error);
 			}
 		}
 		//return noCategories;
@@ -290,11 +291,6 @@ public class GMTParser implements Runnable{
 		return str3;
 	}
 	
-/*	public GeneList [] getGeneLists(){
-		
-		return geneListArrayList.toArray(new GeneList[0]);
-	}
-*/	
 	public GeneCollection getAllGMTgenes(){
 		return allGMTgenes;
 	}
@@ -303,28 +299,51 @@ public class GMTParser implements Runnable{
 		return geneListCollection;
 	}
 	
-	/** Add the optionsFrame as a listener */
-	public void addOptionsListener(OptionsListener ol){
-	
-		this.ol = ol;
-	}
-	
-/*	private void createGene(String geneSym, FunctionalSetInfo gsi){
-		
-		giraphApp.getFunctionalSetInfoCollection().addGeneInfo(geneSym, gsi);
-	}
-	
-	public void setBackgroundGenes(String [] genes){
-		
-		backgroundGenes = new HashSet<String>();
+	public Vector<ProgressListener>listeners = new Vector<ProgressListener>();
 
-		for(int i=0; i<genes.length; i++){
-			String cleanGene = genes[i].toUpperCase();
-			cleanGene.replaceAll("\\s","");
-			backgroundGenes.add(cleanGene);
-			
+	protected void progressCancelled () {
+		Enumeration<ProgressListener>en = listeners.elements();
+		while (en.hasMoreElements()) {
+			en.nextElement().progressCancelled();
 		}
-		usingCustomBackgroundGenes = true;
 	}
-*/		
+
+	protected void progressUpdated (String message, int current, int max) {
+		Enumeration<ProgressListener>en = listeners.elements();
+		while (en.hasMoreElements()) {
+			en.nextElement().progressUpdated(message, current, max);
+		}
+	}
+
+	protected void progressWarningReceived (Exception e) {
+		Enumeration<ProgressListener>en = listeners.elements();
+		while (en.hasMoreElements()) {
+			en.nextElement().progressWarningReceived(e);
+		}
+	}
+
+	protected void progressExceptionReceived (Exception e) {
+		Enumeration<ProgressListener>en = listeners.elements();
+		while (en.hasMoreElements()) {
+			en.nextElement().progressExceptionReceived(e);
+		}
+	}
+
+	protected void progressComplete (Object o) {
+		Enumeration<ProgressListener>en = listeners.elements();
+		while (en.hasMoreElements()) {
+			en.nextElement().progressComplete("gmt_file_parser", o);;
+		}
+	}
+
+
+	public void cancel() {
+		cancel = true;
+	}
+
+	public void addProgressListener(ProgressListener pl){
+		if (!listeners.contains(pl)) {
+			listeners.add(pl);
+		}
+	}		
 }
