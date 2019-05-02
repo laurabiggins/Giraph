@@ -19,7 +19,7 @@ import uk.ac.babraham.giraph.Dialogs.Cancellable;
 
 /** 
  * this parses the info for all the GO terms etc. It creates FunctionalSetInfo objects which are contained within the FunctionalSetInfoCollection.
- * It is specific for the Bader files. http://baderlab.org/GeneSets
+ * It is specific for GMT files and mostly uses the Bader files. http://baderlab.org/GeneSets
  * http://download.baderlab.org/EM_Genesets/March_14_2013/Mouse/symbol/Mouse_GO_AllPathways_no_GO_iea_March_14_2013_symbol.gmt
  * 
  * @author bigginsl
@@ -69,15 +69,12 @@ public class GMTParser implements Runnable, Cancellable {
 		
 		this.geneListCollection = new GeneListCollection();
 		
-		//Thread t = new Thread(this);
-		//t.start();
 	}
 	
 	public GMTParser(String file) {
 
 		this.filepath = file;
-		//Thread t = new Thread(this);
-		//t.start();
+
 	}
 
 	public void startParsing () {
@@ -93,7 +90,6 @@ public class GMTParser implements Runnable, Cancellable {
 		else{
 			System.out.println("Now we'd like to load and parse the gmt file " + filepath);
 			try {
-				//giraphApplication.getInstance().functionalSetInfoCollection = new FunctionalSetInfoCollection();
 				try {
 					importFile(filepath);
 				} catch (IOException e) {
@@ -110,41 +106,35 @@ public class GMTParser implements Runnable, Cancellable {
 
 	private void importFile (String filepath) throws giraphException, IOException{
 		
-		//FileReader reader;
-		
 		try {
-			//reader = new FileReader(filepath);
-			//BufferedReader in = new BufferedReader(reader);
-			
+
 			BufferedReader in = null;
 			
 			if (filepath.endsWith(".gz")) {
 				
 				in = new BufferedReader(new InputStreamReader(new GZIPInputStream(new FileInputStream(filepath))));	
 				
-				//in = new BufferedReader(new InputStreamReader(new GZIPInputStream(ClassLoader.getSystemResourceAsStream(filepath))));	
-				
 			}
 			else {
-				//in = new BufferedReader(new InputStreamReader(ClassLoader.getSystemResourceAsStream(filepath)));
+
 				in = new BufferedReader(new InputStreamReader(new FileInputStream(filepath)));	
 			}
 			
 			String lineOfFile;	
 					
 			int counter = 1;
-															
+			int allLinesCounter = 1;
+			
 			while((lineOfFile = in.readLine()) != null){  
 			
 				if(counter%1000 ==0) {
 					System.out.println(counter + " lines parsed");
 				}
-				//lineOfFile = in.readLine();
 				String[] result = lineOfFile.split("\t");								
-
+				allLinesCounter++;
+				
 				try{
-					parseLine(result, counter);//, maxGenesInCategory);
-					//System.err.println("result[0] = " + result[0]);
+					parseLine(result, allLinesCounter);
 					counter++;
 				}
 				catch(giraphException e){
@@ -152,15 +142,14 @@ public class GMTParser implements Runnable, Cancellable {
 					progressWarningReceived(e);
 				}
 			}
-			System.out.println("GMTParser: File loaded and parsed, " + counter + " lines were parsed.");
-			//System.out.println("Number of background genes = " + giraphApplication.getInstance().getFunctionalSetInfoCollection().noOfGenes());
-			// let the optionFrame know that the file has been parsed so the rest of the options can be parsed
 			
-			/*if(geneListCollection == null){
-				System.err.println("uh oh, no gene list collection in GMT parser");
-			}
-			*/			
-			progressComplete(geneListCollection);
+			if (counter < 3){
+				progressExceptionReceived(new giraphException("couldn't parse GMT file"));
+			}			
+
+			else{
+				progressComplete(geneListCollection);
+			}	
 			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -198,10 +187,8 @@ public class GMTParser implements Runnable, Cancellable {
 	}
 	
 	// parses the line of a file
-	//private void parseLine(String [] result, int maxGenesInCategory) throws giraphException {
 	protected void parseLine(String [] result, int linenumber) throws giraphException {	
-				// We don't want the categories that have a ridiculous number of genes 
-		// TODO: we should probably have a menu option to set this
+		// We don't want the categories that have a ridiculous number of genes 
 		if ((result.length < maxGenesInCategory) && (result.length > minGenesInCategory)) {
 			
 			// Each line should be different so a new FunctionalSetInfo needs to be created. 
@@ -209,14 +196,12 @@ public class GMTParser implements Runnable, Cancellable {
 			
 			ArrayList<Gene> geneArrayList = new ArrayList<Gene>();
 			
-			try {
-				
+			try {			
 				// This is specific for the gmt files. http://baderlab.org/GeneSets
 				String[] nameInfo = result[0].split("%"); 
 				
 				if(nameInfo.length < 3){
 					throw new giraphException("category name info was not in the expected format on line " + linenumber + "\n" + result[0]);
-					//System.err.pr  intln("name info was not in the expected format: " + result[0]);
 				}
 				
 				else{
@@ -259,7 +244,7 @@ public class GMTParser implements Runnable, Cancellable {
 						// add the gene list to the collection
 						try {
 							geneListCollection.addGeneList(gl);
-							//System.err.println("adding gene list " + gl.getFunctionalSetInfo().description());
+
 						}
 						catch(giraphException ge) {
 							
@@ -271,10 +256,8 @@ public class GMTParser implements Runnable, Cancellable {
 			catch (java.lang.NumberFormatException e){
 				String error = e.toString();
 				System.err.println(error);
-				//throw new giraphException(error);
 			}
 		}
-		//return noCategories;
 	}  
 		
 	private String cleanGene(String str) {
@@ -330,7 +313,6 @@ public class GMTParser implements Runnable, Cancellable {
 			en.nextElement().progressComplete("gmt_file_parser", o);;
 		}
 	}
-
 
 	public void cancel() {
 		cancel = true;

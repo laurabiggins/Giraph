@@ -14,6 +14,7 @@ import java.util.Vector;
 import javax.swing.JOptionPane;
 
 import uk.ac.babraham.giraph.giraphApplication;
+import uk.ac.babraham.giraph.giraphException;
 import uk.ac.babraham.giraph.DataTypes.GeneCollection;
 import uk.ac.babraham.giraph.Dialogs.Cancellable;
 
@@ -43,14 +44,20 @@ public class GeneNameParser implements Runnable, Cancellable{
 
 	public void run(){
 		
-		parseGenes();
+		try {
+			parseGenes();
+		} catch (giraphException e) {
+			// TODO Auto-generated catch block
+			progressWarningReceived(e);
+		}
 	}
 	
-	public void parseGenes(){
+	public void parseGenes() throws giraphException{
 		
 		if(splitList(listOfGeneNames) == null){
 			String msg =  ("Something went wrong when trying to parse the genes.");
-			System.err.println(msg);
+			//System.err.println(msg);
+			throw new giraphException(msg);
 			//JOptionPane.showMessageDialog(giraphApplication.getInstance(), msg, "couldn't parse genes", JOptionPane.ERROR_MESSAGE);
 		}
 		else {
@@ -73,18 +80,21 @@ public class GeneNameParser implements Runnable, Cancellable{
 			String unmatchedCountMessage = unmatchedCountMessage(unmatchedCount);
 			
 			if((genes.getAllGenes().length > 3) && (genes.getAllGenes().length < backgroundGenes.getAllGenes().length)){
-				System.out.println("imported " + genes.getAllGenes().length + " genes, the first one was "+ genes.getAllGenes()[0].getGeneSymbol()+
-						", the last one was "+genes.getAllGenes()[genes.getAllGenes().length - 1].getGeneSymbol());
+				String msg = "Imported " + genes.getAllGenes().length + " genes, the first one was "+ genes.getAllGenes()[0].getGeneSymbol()+
+						", the last one was "+genes.getAllGenes()[genes.getAllGenes().length - 1].getGeneSymbol();
+				progressUpdated(msg, 0, 0);
 				progressComplete(genes);
 				//genesImported();
 			}
 			else if(genes.getAllGenes().length <= 3){
-				String msg = ("Fewer than 3 valid query genes were identified," + unmatchedCountMessage + "please enter more genes."); 
-				JOptionPane.showMessageDialog(giraphApplication.getInstance(), msg, "couldn't parse genes", JOptionPane.ERROR_MESSAGE);
+				String msg = ("Fewer than 3 valid query genes were identified, " + unmatchedCountMessage); 
+				//JOptionPane.showMessageDialog(giraphApplication.getInstance(), msg, "couldn't parse genes", JOptionPane.ERROR_MESSAGE);
+				throw new giraphException(msg);
 			}
 			else if(genes.getAllGenes().length >= backgroundGenes.getAllGenes().length){
 				String msg = ("The number of background genes does not exceed the number of query genes, please enter a different set of genes."); 
-				JOptionPane.showMessageDialog(giraphApplication.getInstance(), msg, "couldn't parse genes", JOptionPane.ERROR_MESSAGE);				
+				//JOptionPane.showMessageDialog(giraphApplication.getInstance(), msg, "couldn't parse genes", JOptionPane.ERROR_MESSAGE);
+				throw new giraphException(msg);
 			}			
 		}		
 	}
