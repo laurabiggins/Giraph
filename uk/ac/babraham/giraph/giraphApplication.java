@@ -254,11 +254,7 @@ public class giraphApplication extends JFrame implements ProgressListener, Filte
 
 	}
 	
-/*	public void calculatingCoordinatesStopped(){
-		
-	}
-*/	
-	
+
 	/** 
 	 * Used when rValue for clusters is adjusted on the menu bar
 	 */
@@ -377,13 +373,6 @@ public class giraphApplication extends JFrame implements ProgressListener, Filte
 		System.out.println("width: " + this.mainPane.getWidth());
 		System.out.println("height: " + this.mainPane.getHeight());
 		
-		/*if(this.mainPane.getWidth() < this.mainPane.getHeight()){
-			dim = this.mainPane.getWidth();
-		}
-		else{
-			dim = this.mainPane.getHeight();
-		}
-		*/
 		float increment = (float)(1/(Math.ceil(Math.sqrt(n))));
 		//System.out.println("increment: " + increment);
 		int i = 0;
@@ -447,9 +436,6 @@ public class giraphApplication extends JFrame implements ProgressListener, Filte
 			grfp.startParsing();
 		}
 	}
-	
-
-
 	
 	
 	/**
@@ -542,15 +528,8 @@ public class giraphApplication extends JFrame implements ProgressListener, Filte
 		
 		else {
 			System.err.println("Unknown progress type "+process);
-		}
-		
+		}		
 	}
-
-
-
 }
 
-	
-	
-	
 	

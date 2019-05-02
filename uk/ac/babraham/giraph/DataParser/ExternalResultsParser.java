@@ -226,10 +226,12 @@ public class ExternalResultsParser implements Cancellable, Runnable {
 					// add the gene list to the collection
 					try {
 						glc.addGeneList(gl);
-					} catch (giraphException e) {
-						// TODO Auto-generated catch block						
-						e.printStackTrace();
+					} 
+					catch(giraphException ge) {
+						
+						progressWarningReceived(ge);
 					}
+					
 				}				
 			}
 			// We're finished with the file.
@@ -244,12 +246,14 @@ public class ExternalResultsParser implements Cancellable, Runnable {
 
 	}	
 
-	public String[] parseGenes(String string, String delimiter) {
-		// TODO Auto-generated method stub
-		System.err.println("running the generic method - why?");
-		return null;
-	}
 
+	public String [] parseGenes(String genes, String delimiter){
+		
+		return genes.trim().split(delimiter);
+		
+	}
+	
+	
 	public Vector<ProgressListener>listeners = new Vector<ProgressListener>();
 
 	protected void progressCancelled () {

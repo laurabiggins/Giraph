@@ -550,13 +550,6 @@ public class GenericResultsFileParser extends ExternalResultsParser implements A
 		}
 	
 	}
-
-	public String [] parseGenes(String genes, String delimiter){
-		System.err.println("parsing genes from generic file parser");
-		return genes.trim().split(delimiter);
-		
-	}
-	
 	
 	@Override
 	public void keyTyped(KeyEvent e) {
