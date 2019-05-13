@@ -14,6 +14,7 @@ import javax.swing.UIManager;
 import uk.ac.babraham.giraph.Application.giraphMenuBar;
 import uk.ac.babraham.giraph.DataParser.DavidParser;
 import uk.ac.babraham.giraph.DataParser.GOrillaParser;
+import uk.ac.babraham.giraph.DataParser.GProfilerParser;
 import uk.ac.babraham.giraph.DataParser.GenericResultsFileParser;
 import uk.ac.babraham.giraph.DataParser.ProgressListener;
 import uk.ac.babraham.giraph.DataTypes.GeneCollection; 
@@ -429,6 +430,13 @@ public class giraphApplication extends JFrame implements ProgressListener, Filte
 			gp.addProgressListener(new ProgressDialog("Parsing GOrilla file", gp));
 			gp.startParsing();
 		}
+		else if(fileType == "gProfiler"){
+			GProfilerParser gpp = new GProfilerParser(file);
+			gpp.addProgressListener(this);
+			gpp.addProgressListener(new ProgressDialog("Parsing GProfiler file", gpp));
+			gpp.startParsing();
+		}
+		
 		else if(fileType == "generic"){
 			GenericResultsFileParser grfp = new GenericResultsFileParser(file);
 			grfp.addProgressListener(this);
