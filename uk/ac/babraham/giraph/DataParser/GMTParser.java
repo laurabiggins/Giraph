@@ -163,14 +163,14 @@ public class GMTParser implements Runnable, Cancellable {
 	 **/
 	public void parseGenes(String [] result, int linenumber) throws giraphException {
 		
-		String[] nameInfo = result[0].split("%"); 
+		/*String[] nameInfo = result[0].split("%"); 
 		
 		if(nameInfo.length < 3){
 			throw new giraphException("category name info was not in the expected format on line " + linenumber);
 		}
 		
 		else{
-				
+			*/	
 			/** cycle through all the genes, this is going to assume that there are no duplicated genes within the gene set category */ 
 			for (int i = 2; i < result.length; i++){
 				
@@ -183,12 +183,46 @@ public class GMTParser implements Runnable, Cancellable {
 					allGMTgenes.addGene(g);							
 				}
 			}
-		}	
+		//}	
+	}
+	
+	
+	protected String parseNameInfo(String [] result){
+		
+		String name;
+		
+		// the msigdb gmt files have a url in the 2nd column so I think it's preferable to use the first column as the reported name
+		if(result[1].startsWith("http://www.broad")){
+			return(result[0]);
+		}
+		// The pathway commons files have a url in the 1st column and then a name that needs parsing in the 2nd.
+		if(result[0].startsWith("http://")){
+			
+			String [] nameInfo = result[1].split(";");
+			name = nameInfo[0].replaceAll("name: ", "");
+			//System.err.println("name = " + name);
+			return name;
+		}
+		
+		return result[1];
+		
 	}
 	
 	// parses the line of a file
 	protected void parseLine(String [] result, int linenumber) throws giraphException {	
-		// We don't want the categories that have a ridiculous number of genes 
+		
+		if (result == null){
+			String msg = "Could not find any genes in category on line " + linenumber + ", skipping this line";
+			progressWarningReceived(new giraphException(msg)); 
+			return;
+		}
+		else if (result.length < 3){
+			String msg = "Could not find any genes in category on line " + linenumber + ", skipping this line";
+			progressWarningReceived(new giraphException(msg)); 
+			return;
+		}
+		
+		//We don't want the categories that have a ridiculous number of genes 
 		if ((result.length < maxGenesInCategory) && (result.length > minGenesInCategory)) {
 			
 			// Each line should be different so a new FunctionalSetInfo needs to be created. 
@@ -198,13 +232,15 @@ public class GMTParser implements Runnable, Cancellable {
 			
 			try {			
 				// This is specific for the gmt files. http://baderlab.org/GeneSets
-				String[] nameInfo = result[0].split("%"); 
+				/*String[] nameInfo = result[0].split("%"); 
 				
 				if(nameInfo.length < 3){
 					throw new giraphException("category name info was not in the expected format on line " + linenumber + "\n" + result[0]);
 				}
-				
-				else{
+				*/
+				String categoryName = parseNameInfo(result);
+			
+				//else{
 				
 					int noOfBackgroundGenesInCategory = 0;
 						
@@ -226,11 +262,12 @@ public class GMTParser implements Runnable, Cancellable {
 									
 									functionalSetInfo = new FunctionalSetInfo();
 									
-									functionalSetInfo.setName(nameInfo[0]);
+									//functionalSetInfo.setName(nameInfo[0]);
+									functionalSetInfo.setName(categoryName);
 									
 									// this is required for the stats
 									functionalSetInfo.setTotalNoOfGenesInCategory(result.length - 2);
-									functionalSetInfo.setDescription(result[1]);
+									//functionalSetInfo.setDescription(result[1]);
 								}
 							}	
 						}	
@@ -252,7 +289,7 @@ public class GMTParser implements Runnable, Cancellable {
 						}
 					}	
 				}	
-			}
+			//}
 			catch (java.lang.NumberFormatException e){
 				String error = e.toString();
 				System.err.println(error);

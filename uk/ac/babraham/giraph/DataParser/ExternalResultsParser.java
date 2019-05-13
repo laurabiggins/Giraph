@@ -170,16 +170,16 @@ public class ExternalResultsParser implements Cancellable, Runnable {
 				FunctionalSetInfo functionalSetInfo = new FunctionalSetInfo();
 
 				/** These must have been specified */
-				functionalSetInfo.setName(sections[categoryNameColValue]);
-
+				functionalSetInfo.setName(sections[categoryNameColValue]);				
+				
 				// description isn't required
-				if(categoryDescriptionColValue >=0) {
+				/*if(categoryDescriptionColValue >=0) {
 					functionalSetInfo.setDescription(sections[categoryDescriptionColValue]);
 				}
 				else {
 					functionalSetInfo.setDescription(sections[categoryNameColValue]);
 				}		
-
+*/ 
 				/** This will be changed into a gene list once all the genes have been processed */ 
 				ArrayList<Gene> geneArrayList = new ArrayList<Gene>();
 

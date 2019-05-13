@@ -782,9 +782,9 @@ public class GraphPanel extends JPanel implements FilterListener{
 				int yCentre = getYCentre(gl.coordinates().unscaledY, getDiameterOfCircle(gl));		
 								
 				g.setColor(Color.white);
-				g.fillRoundRect((int)(xCentre) -2, (int)(yCentre) -10, fm.stringWidth(gl.getFunctionalSetInfo().description())+5, 12, 4, 4);
+				g.fillRoundRect((int)(xCentre) -2, (int)(yCentre) -10, fm.stringWidth(gl.getFunctionalSetInfo().name())+5, 12, 4, 4);
 				g.setColor(Color.black);
-				g.drawString(gl.getFunctionalSetInfo().description(), (int)(xCentre), (int)(yCentre));				
+				g.drawString(gl.getFunctionalSetInfo().name(), (int)(xCentre), (int)(yCentre));				
 			}
 		}
 			
@@ -807,9 +807,9 @@ public class GraphPanel extends JPanel implements FilterListener{
 			if (goAnnotation == false){
 				
 				g.setColor(Color.white);
-				g.fillRoundRect(xCentre -2 , yCentre-10, fm.stringWidth(currentClickedGeneList.getFunctionalSetInfo().description())+5, 12, 4,4);
+				g.fillRoundRect(xCentre -2 , yCentre-10, fm.stringWidth(currentClickedGeneList.getFunctionalSetInfo().name())+5, 12, 4,4);
 				g.setColor(Color.black);
-				g.drawString(currentClickedGeneList.getFunctionalSetInfo().description(), xCentre, yCentre);
+				g.drawString(currentClickedGeneList.getFunctionalSetInfo().name(), xCentre, yCentre);
 			}
 		}
 		
@@ -831,9 +831,9 @@ public class GraphPanel extends JPanel implements FilterListener{
 			if (goAnnotation == false){
 				
 				g.setColor(Color.white);
-				g.fillRoundRect(xCentre -2 , yCentre-10, fm.stringWidth(currentSelectedGeneList.getFunctionalSetInfo().description())+5, 12, 4,4);
+				g.fillRoundRect(xCentre -2 , yCentre-10, fm.stringWidth(currentSelectedGeneList.getFunctionalSetInfo().name())+5, 12, 4,4);
 				g.setColor(Color.black);
-				g.drawString(currentSelectedGeneList.getFunctionalSetInfo().description(), xCentre, yCentre);
+				g.drawString(currentSelectedGeneList.getFunctionalSetInfo().name(), xCentre, yCentre);
 			}
 		}
 	}
@@ -871,7 +871,7 @@ public class GraphPanel extends JPanel implements FilterListener{
 								float distanceY =  validGeneLists[i].coordinates().unscaledY -  validGeneLists[j].coordinates().unscaledY;
 								
 								/*System.out.println("description i =  " + validGeneLists[i].getFunctionalSetInfo().description());
-								System.out.println("description j =  " + validGeneLists[j].getFunctionalSetInfo().description());
+								System.out.println("name j =  " + validGeneLists[j].getFunctionalSetInfo().description());
 								
 								System.out.println("distanceX = " + distanceX);
 								System.out.println("distanceY = " + distanceY);

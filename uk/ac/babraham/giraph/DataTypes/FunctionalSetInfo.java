@@ -13,7 +13,7 @@ public class FunctionalSetInfo {
 	private String name;
 	
 	// The description of the category
-	private String description;
+	//private String description;
 	
 	// size of category - needed for stats and filtering
 	private int totalNoOfGenesInCategory;
@@ -32,7 +32,7 @@ public class FunctionalSetInfo {
 		
 	}
 
-	// set the name
+	// set the name	
 	public void setName(String name){
 		this.name = name;
 	}
@@ -53,15 +53,15 @@ public class FunctionalSetInfo {
 	}
 */	
 	// set the description
-	public void setDescription(String desc){
+/*	public void setDescription(String desc){
 		description = desc;
 	}
 	
 	// get the description
-	public String description(){
+/*	public String description(){
 		return description;
 	}
-	
+	*/
 	// set total no of genes in functional set
 	public void setTotalNoOfGenesInCategory(int n){
 		totalNoOfGenesInCategory = n;
