@@ -70,7 +70,7 @@ public class giraphMenuBar extends JMenuBar implements ActionListener{
 		loadGorillaFile.setActionCommand("load_gorilla_file");
 		loadGorillaFile.addActionListener(this);
 		
-		JMenuItem loadGProfilerFile = new JMenuItem("gProfiler results file...");
+		JMenuItem loadGProfilerFile = new JMenuItem("gProfiler csv results file...");
 		externalResults.add(loadGProfilerFile);
 		loadGProfilerFile.setActionCommand("load_gProfiler_file");
 		loadGProfilerFile.addActionListener(this);

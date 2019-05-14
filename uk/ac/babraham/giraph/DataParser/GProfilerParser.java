@@ -44,4 +44,13 @@ public class GProfilerParser extends ExternalResultsParser {
 		//"GO Term	Description	P-value	FDR q-value	Enrichment	N	B	n	b	Genes"
 	}
 	
+	public String getGenesForParsing(String line, String [] sections, int queryGeneColValue){
+		
+		String regexSplit = ",\"";
+		String[] genes = line.split(regexSplit,-1);
+		
+		return(cleanGene(genes[1]));
+		
+	}
+	
 }

@@ -149,7 +149,11 @@ public class ExternalResultsParser implements Cancellable, Runnable {
 
 					System.err.println("sections[queryGeneColValue] = " + sections[queryGeneColValue]);
 				}
-				genesInCategory = parseGenes(sections[queryGeneColValue], geneDelimitersValue);
+				
+				String genesForParsing = getGenesForParsing(line, sections, queryGeneColValue);
+				
+				genesInCategory = parseGenes(genesForParsing, geneDelimitersValue);
+				//genesInCategory = parseGenes(sections[queryGeneColValue], geneDelimitersValue);
 
 
 				if(genesInCategory == null){
@@ -246,6 +250,11 @@ public class ExternalResultsParser implements Cancellable, Runnable {
 
 	}	
 
+	public String getGenesForParsing(String line, String [] sections, int queryGeneColValue){
+		
+		return(sections[queryGeneColValue]);
+		
+	}
 
 	public String [] parseGenes(String genes, String delimiter){
 		
